@@ -1,0 +1,26 @@
+{
+  "name": "durga-bhavani-seva-samiti",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Durga Bhavani Seva Samiti - Dodlapahad Web Application",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "build": "npm run build:frontend && npm run build:backend",
+    "install:all": "npm --prefix frontend install && npm --prefix backend install",
+    "typecheck:frontend": "npm --prefix frontend run typecheck",
+    "typecheck:backend": "npm --prefix backend run typecheck",
+    "typecheck": "npm run typecheck:frontend && npm run typecheck:backend"
+  },
+  "keywords": [
+    "durga-bhavani",
+    "temple-management",
+    "react",
+    "express",
+    "typescript"
+  ],
+  "author": "Durga Bhavani Seva Samiti",
+  "license": "ISC"
+}
