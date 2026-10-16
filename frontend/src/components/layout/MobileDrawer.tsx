@@ -10,6 +10,8 @@ import {
   Search,
   MapPin
 } from 'lucide-react';
+import { useAppLanguage } from '../../i18n';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -17,6 +19,8 @@ interface MobileDrawerProps {
 }
 
 export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
+  const { t, isTelugu } = useAppLanguage();
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -36,14 +40,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   const navLinks = [
-    { to: '/', label: 'Home', icon: <Home size={18} /> },
-    { to: '/about', label: 'About Samiti', icon: <Info size={18} /> },
-    { to: '/history', label: 'History & Timeline', icon: <Clock size={18} /> },
-    { to: '/years', label: 'Year Archives', icon: <Calendar size={18} /> },
-    { to: '/events', label: 'Events & Poojas', icon: <Calendar size={18} /> },
-    { to: '/announcements', label: 'Announcements', icon: <Bell size={18} /> },
-    { to: '/search', label: 'Search Archives', icon: <Search size={18} /> },
-    { to: '/contact', label: 'Contact & Location', icon: <MapPin size={18} /> }
+    { to: '/', label: t('nav.home'), icon: <Home size={18} /> },
+    { to: '/about', label: t('nav.about'), icon: <Info size={18} /> },
+    { to: '/history', label: t('nav.history'), icon: <Clock size={18} /> },
+    { to: '/years', label: t('nav.years'), icon: <Calendar size={18} /> },
+    { to: '/events', label: t('nav.events'), icon: <Calendar size={18} /> },
+    { to: '/announcements', label: t('nav.announcements'), icon: <Bell size={18} /> },
+    { to: '/search', label: t('nav.search'), icon: <Search size={18} /> },
+    { to: '/contact', label: t('nav.contact'), icon: <MapPin size={18} /> }
   ];
 
   return (
@@ -61,21 +65,26 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
       >
         <div className="drawer-header">
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '0.95rem', color: '#FFF' }}>
-              Durga Bhavani
+            <span style={{ fontFamily: isTelugu ? 'var(--font-telugu)' : 'var(--font-heading)', fontWeight: 700, fontSize: '0.95rem', color: '#FFF' }}>
+              {t('nav.portalTitle')}
             </span>
             <span style={{ fontSize: '0.72rem', color: 'var(--color-gold-primary)', letterSpacing: '0.06em' }}>
-              Seva Samiti - Dodlapahad
+              {t('nav.portalSubtitle')}
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="drawer-close-btn"
-            aria-label="Close navigation menu"
+            aria-label={t('nav.closeMenu')}
           >
             <X size={20} />
           </button>
+        </div>
+
+        {/* In-drawer Language Switcher */}
+        <div style={{ padding: 'var(--space-3) var(--space-4) 0 var(--space-4)' }}>
+          <LanguageSwitcher className="lang-switcher-drawer" />
         </div>
 
         <nav className="drawer-nav">
@@ -98,7 +107,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
         <div style={{ marginTop: 'auto', padding: 'var(--space-4)', borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}>
           <div style={{ padding: 'var(--space-3)', background: 'rgba(0,0,0,0.3)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-xs)', color: '#D6C8B8' }}>
             <p style={{ margin: 0, fontWeight: 500 }}>
-              🏛️ Dedicated to Sri Durga Bhavani Temple, Dodlapahad.
+              🏛️ {isTelugu ? 'శ్రీ దుర్గాభవాని ఆలయం, దొడ్లపహాడ్ భక్తుల కోసం సమర్పించబడింది.' : 'Dedicated to Sri Durga Bhavani Temple, Dodlapahad.'}
             </p>
           </div>
         </div>

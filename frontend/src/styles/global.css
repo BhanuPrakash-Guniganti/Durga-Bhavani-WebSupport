@@ -46,6 +46,25 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.02em;
 }
 
+/* Language-specific Telugu typography adjustments */
+html[lang="te"],
+[data-lang="te"],
+.font-telugu {
+  font-family: var(--font-telugu), var(--font-body);
+  line-height: 1.68;
+}
+
+html[lang="te"] h1,
+html[lang="te"] h2,
+html[lang="te"] h3,
+html[lang="te"] h4,
+html[lang="te"] h5,
+html[lang="te"] h6 {
+  font-family: var(--font-telugu), var(--font-heading);
+  letter-spacing: normal;
+  line-height: 1.38;
+}
+
 h1 {
   font-size: clamp(1.75rem, 5vw, 2.75rem);
   margin-bottom: var(--space-4);

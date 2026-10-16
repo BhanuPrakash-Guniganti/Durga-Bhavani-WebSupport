@@ -4,9 +4,34 @@ Engine: **MongoDB (Mongoose ODM)**
 
 ---
 
-## 1. Collections & Data Models
+## 1. Bilingual Data Model Standard
 
-### 1.1 `User`
+To satisfy mandatory bilingual support across English and Telugu, all administrator-managed public textual content uses structured localized fields. No duplicate documents are created.
+
+```typescript
+export interface ILocalizedString {
+  en: string; // English text
+  te: string; // Telugu text (తెలుగు)
+}
+
+export interface ILocalizedArray {
+  en: string[]; // English array items
+  te: string[]; // Telugu array items
+}
+
+export type TranslationStatus = 'complete' | 'en-only' | 'te-only' | 'untranslated';
+```
+
+### Fallback & Publication Rules:
+1. **Fallback Sequence**: When client requests Telugu content and `te` is empty, system falls back to `en` with a fallback flag, avoiding broken UI.
+2. **Admin Visibility**: Missing translations are flagged with status badges (`EN + TE Complete`, `Telugu Missing`, `English Missing`) so administrators never inadvertently publish incomplete language content.
+3. **Draft & Publication Workflow**: Editors can keep an item in `draft` until both language versions are verified by the organizing committee.
+
+---
+
+## 2. Collections & Data Models
+
+### 2.1 `User`
 Stores authenticated committee members and administrators.
 ```typescript
 interface IUser {
@@ -26,14 +51,15 @@ interface IUser {
 
 ---
 
-### 1.2 `Year`
+### 2.2 `Year`
 Represents an annual Navaratri festival / celebration year.
 ```typescript
 interface IYear {
   year: number; // e.g. 2024 (unique)
-  title: string; // e.g. "Navaratri Celebrations 2024"
+  title: ILocalizedString; // e.g. { en: "Navaratri Celebrations 2024", te: "2024 నవరాత్రి ఉత్సవాలు" }
   slug: string; // e.g. "2024" (unique)
-  description: string;
+  description: ILocalizedString;
+  highlights?: ILocalizedArray; // Array of key rituals and milestones
   coverMediaId?: Types.ObjectId; // Ref: Media
   startDate?: Date;
   endDate?: Date;
@@ -51,13 +77,13 @@ interface IYear {
 
 ---
 
-### 1.3 `Album`
+### 2.3 `Album`
 Photo and video albums associated with celebration years.
 ```typescript
 interface IAlbum {
-  title: string;
+  title: ILocalizedString;
   slug: string; // e.g. "dussehra-shobha-yatra-2024" (unique)
-  description?: string;
+  description?: ILocalizedString;
   yearId: Types.ObjectId; // Ref: Year
   coverMediaId?: Types.ObjectId; // Ref: Media
   status: 'draft' | 'published' | 'archived'; // default: 'draft'
@@ -75,13 +101,13 @@ interface IAlbum {
 
 ---
 
-### 1.4 `Media`
+### 2.4 `Media`
 Stores metadata for photos and videos hosted on Cloudinary or YouTube.
 ```typescript
 interface IMedia {
-  title?: string;
-  caption?: string;
-  altText: string; // Required for accessibility
+  title?: ILocalizedString;
+  caption?: ILocalizedString;
+  altText: ILocalizedString; // Required for accessibility in both languages
   yearId?: Types.ObjectId; // Ref: Year
   albumId?: Types.ObjectId; // Ref: Album
   mediaType: 'image' | 'video'; // default: 'image'
@@ -107,16 +133,17 @@ interface IMedia {
 
 ---
 
-### 1.5 `Event`
+### 2.5 `Event`
 Temple celebrations, poojas, community meetings, and rituals.
 ```typescript
 interface IEvent {
-  title: string;
+  title: ILocalizedString;
   slug: string;
-  description: string;
+  description: ILocalizedString;
   startDate: Date;
   endDate?: Date;
-  location: string; // e.g., "Dodlapahad Temple Premises"
+  time?: string;
+  location: ILocalizedString; // e.g., { en: "Dodlapahad Temple Premises", te: "దొడ్లపహాడ్ ఆలయ ప్రాంగణం" }
   posterMediaId?: Types.ObjectId; // Ref: Media
   status: 'draft' | 'published' | 'archived';
   createdBy: Types.ObjectId;
@@ -131,13 +158,14 @@ interface IEvent {
 
 ---
 
-### 1.6 `Announcement`
+### 2.6 `Announcement`
 Notice board items, festival updates, circulars.
 ```typescript
 interface IAnnouncement {
-  title: string;
+  title: ILocalizedString;
   slug: string;
-  content: string; // Markdown or rich text
+  content: ILocalizedString; // Rich text / markdown in both languages
+  imageUrl?: string;
   imageMediaId?: Types.ObjectId; // Ref: Media
   publishedAt: Date;
   expiresAt?: Date; // Optional expiration date
@@ -155,14 +183,16 @@ interface IAnnouncement {
 
 ---
 
-### 1.7 `HistoricalMilestone`
-Editable timeline entries of temple origins and key community developments.
+### 2.7 `HistoricalMilestone`
+Editable timeline entries of celebration history and sacred milestones.
+Celebrations began in 2024; 2026 is the third year.
 ```typescript
 interface IHistoricalMilestone {
-  title: string;
-  yearOrDate: string; // e.g. "1998" or "October 2005"
-  description: string;
+  title: ILocalizedString;
+  yearOrDate: string; // e.g. "2024" or "2026"
+  description: ILocalizedString;
   imageMediaId?: Types.ObjectId; // Ref: Media
+  imageUrl?: string;
   sortOrder: number; // default: 0
   status: 'draft' | 'published' | 'archived';
   createdBy: Types.ObjectId;
@@ -176,24 +206,26 @@ interface IHistoricalMilestone {
 
 ---
 
-### 1.8 `SiteSetting`
+### 2.8 `SiteSetting`
 Global key-value configuration for temple contact info, banner, and social links.
 ```typescript
 interface ISiteSetting {
-  organizationName: string; // Default: "Durga Bhavani Seva Samiti - Dodlapahad"
+  organizationName: ILocalizedString; // { en: "Durga Bhavani Seva Samiti - Dodlapahad", te: "శ్రీ దుర్గాభవాని సేవా సమితి - దొడ్లపహాడ్" }
   logoMediaId?: Types.ObjectId;
   bannerMediaId?: Types.ObjectId;
-  aboutText: string;
+  aboutText: ILocalizedString;
+  missionText: ILocalizedString;
+  visionText: ILocalizedString;
   contactEmail?: string;
   contactPhone?: string;
-  locationAddress: string;
+  locationAddress: ILocalizedString;
   googleMapsEmbedUrl?: string;
   socialLinks: {
     youtube?: string;
     facebook?: string;
     whatsapp?: string;
   };
-  footerNotice?: string;
+  footerNotice?: ILocalizedString;
   updatedBy: Types.ObjectId;
   updatedAt: Date;
 }
@@ -201,7 +233,7 @@ interface ISiteSetting {
 
 ---
 
-### 1.9 `AuditLog`
+### 2.9 `AuditLog`
 Audit trails of administrative actions. Never stores passwords or secrets.
 ```typescript
 interface IAuditLog {
@@ -221,8 +253,9 @@ interface IAuditLog {
 
 ---
 
-## 2. Integrity & Deletion Rules
+## 3. Integrity & Deletion Rules
 
 1. **Year Deletion**: Cannot be deleted if albums or events are linked to the year. Must either reassign or delete sub-records first.
 2. **Album Deletion**: Cannot be deleted until media is unlinked or confirmed for deletion.
 3. **Media Deletion**: A media record cannot be deleted if set as `coverMediaId` for a Year or Album, or `posterMediaId` for an Event, without explicit confirmation.
+

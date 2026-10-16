@@ -75,6 +75,53 @@
 
 ---
 
+### Phase 1.5: Bilingual Architecture & Internationalization (Telugu & English) 🟢 COMPLETED
+- [x] **Internationalization Infrastructure**:
+  - Integrated `i18next` and `react-i18next` configured with English default.
+  - Client-side language persistence (`localStorage` key: `durga_bhavani_language`).
+  - Dynamic HTML document metadata updating (`<html lang="te">` and `<html data-lang="te">`).
+  - Strict preservation of current URL route when switching languages without redirecting to homepage.
+- [x] **Language Switcher UI**:
+  - Visible language switcher button toggle (`తెలుగు` / `English`) with globe icon.
+  - Displayed in public navbar on desktop, tablet, and mobile headers.
+  - Embedded inside mobile navigation drawer with active state indicator.
+- [x] **Cultural Content Accuracy (Celebrations & Milestones)**:
+  - Celebration name: English: *"History of Sri Durga Bhavani Utsav - Dodlapahad"* / Telugu: *"శ్రీ దుర్గాభవాని ఉత్సవాల చరిత్ర - దొడ్లపహాడ్"*.
+  - Correct annual celebrations timeline:
+    - 2024 — First Year / మొదటి సంవత్సరం: The beginning of Sri Durga Bhavani Utsav celebrations at Dodlapahad.
+    - 2025 — Second Year / రెండవ సంవత్సరం: The second year of celebrations.
+    - 2026 — Third Year / మూడవ సంవత్సరం: The third year of celebrations.
+  - Clear preservation of historical accuracy: does not claim the temple itself was established in 2024.
+- [x] **Application-wide Public Interface Translations**:
+  - Structured locale files: `frontend/src/locales/en/common.json` and `frontend/src/locales/te/common.json`.
+  - Translated all navigation items, drawer links, banners, badges, buttons, and footers.
+  - Fully translated public pages:
+    - **Home**: Hero banner, cultural legacy, latest year, photo albums, announcements, upcoming events, community seva.
+    - **About**: Committee purpose, core responsibilities, mission and vision.
+    - **History**: Sacred milestones timeline, archival photos, cultural notices.
+    - **Years Archive**: Year selector tabs, festival dates, album counts, year cards.
+    - **Year Detail**: Highlights, rituals, photo album grids, video presentation, events.
+    - **Album Detail & Lightbox**: Fullscreen modal viewer, photo counter (`Image X of Y`), captions, credits, share link copy.
+    - **Events**: Status filters (All, Upcoming, Past), bilingual locations and dates.
+    - **Announcements**: Circulars, featured badges, notice details.
+    - **Search**: Category tabs, bilingual keyword indexing matching both Telugu and English queries.
+    - **Contact**: Form labels, placeholders, live validation error messages, success feedback dialog, office address.
+    - **Not Found (404)**: Bilingual error heading, description, navigation buttons.
+- [x] **Telugu Typography & Responsive Layout**:
+  - Integrated Google Font `Noto Sans Telugu` with fallback stack.
+  - Cultural CSS tokens: `--font-telugu: 'Noto Sans Telugu', system-ui, sans-serif;`.
+  - Added line-height adjustments (`1.68` for body, `1.38` for headings) in `global.css` under `html[lang="te"]` to prevent Telugu vowel diacritics clipping.
+- [x] **Database-Driven Bilingual Content Model**:
+  - Updated `types/index.ts` with `LocalizedString`, `LocalizedArray`, `SupportedLanguage`.
+  - Configured sample data in `sampleData.ts` with complete dual-language records.
+  - Fallback policy implemented: `getLocalized(field, lang)` falls back cleanly to English if Telugu is absent.
+- [x] **Admin Bilingual Management Readiness**:
+  - Created `TranslationStatusBadge.tsx` (`EN + TE Complete`, `Telugu Missing`, `English Missing`, `Untranslated`).
+  - Created `BilingualField.tsx` with side-by-side or tabbed input modes for admin content editors.
+  - Updated `docs/DATABASE_SCHEMA.md` and `docs/API_CONTRACTS.md` with bilingual schema contracts.
+
+---
+
 ### Phase 2: Database and Public Backend ⚪ PENDING
 - [ ] Configure MongoDB connection with Mongoose and retry logic.
 - [ ] Implement Mongoose models with validation and indexes:

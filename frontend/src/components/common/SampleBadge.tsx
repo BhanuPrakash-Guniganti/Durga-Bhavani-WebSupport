@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
+import { useAppLanguage } from '../../i18n';
 
 interface SampleBadgeProps {
   label?: string;
@@ -7,16 +8,19 @@ interface SampleBadgeProps {
 }
 
 export const SampleBadge: React.FC<SampleBadgeProps> = ({
-  label = 'Sample Demonstration Record',
+  label,
   size = 'md'
 }) => {
+  const { t } = useAppLanguage();
+  const displayLabel = label || t('common.sampleBadgeDefault');
+
   return (
     <span
       className={`badge badge-sample ${size === 'sm' ? 'btn-sm' : ''}`}
-      title="This record contains temporary demonstration information and will be replaced by verified temple committee records."
+      title={displayLabel}
     >
       <AlertCircle size={size === 'sm' ? 12 : 14} />
-      <span>{label}</span>
+      <span>{displayLabel}</span>
     </span>
   );
 };

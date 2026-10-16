@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Search as SearchIcon, ArrowRight } from 'lucide-react';
 import {
   sampleYears,
@@ -10,82 +11,126 @@ import {
 } from '../data/sampleData';
 import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
+import { useAppLanguage, getLocalized } from '../i18n';
 
 type SearchCategory = 'all' | 'years' | 'albums' | 'events' | 'announcements' | 'history';
 
-interface SearchResult {
+interface SearchResultItem {
   id: string;
   category: 'Year' | 'Album' | 'Event' | 'Announcement' | 'History';
-  title: string;
-  description: string;
+  titleEn: string;
+  titleTe: string;
+  descEn: string;
+  descTe: string;
   link: string;
-  badge: string;
+  badgeEn: string;
+  badgeTe: string;
 }
 
 export const SearchPage: React.FC = () => {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<SearchCategory>('all');
+  const { t } = useTranslation();
+  const { currentLang } = useAppLanguage();
 
-  const allRecords = useMemo<SearchResult[]>(() => {
-    const list: SearchResult[] = [];
+  const allRecords = useMemo<SearchResultItem[]>(() => {
+    const list: SearchResultItem[] = [];
 
     // Years
     sampleYears.forEach((y) => {
+      const titleEn = getLocalized(y.title, 'en');
+      const titleTe = getLocalized(y.title, 'te');
+      const descEn = getLocalized(y.description, 'en');
+      const descTe = getLocalized(y.description, 'te');
       list.push({
         id: `yr-${y.year}`,
         category: 'Year',
-        title: y.title,
-        description: y.description,
+        titleEn,
+        titleTe,
+        descEn,
+        descTe,
         link: `/years/${y.year}`,
-        badge: `Year ${y.year}`
+        badgeEn: `Year ${y.year}`,
+        badgeTe: `${y.year} సంవత్సరం`
       });
     });
 
     // Albums
     sampleAlbums.forEach((a) => {
+      const titleEn = getLocalized(a.title, 'en');
+      const titleTe = getLocalized(a.title, 'te');
+      const descEn = getLocalized(a.description, 'en');
+      const descTe = getLocalized(a.description, 'te');
       list.push({
         id: `alb-${a.id}`,
         category: 'Album',
-        title: a.title,
-        description: a.description,
+        titleEn,
+        titleTe,
+        descEn,
+        descTe,
         link: `/albums/${a.slug}`,
-        badge: `Album · ${a.year}`
+        badgeEn: `Album · ${a.year}`,
+        badgeTe: `ఆల్బమ్ · ${a.year}`
       });
     });
 
     // Events
     sampleEvents.forEach((e) => {
+      const titleEn = getLocalized(e.title, 'en');
+      const titleTe = getLocalized(e.title, 'te');
+      const descEn = `${e.startDate} · ${getLocalized(e.location, 'en')} - ${getLocalized(e.description, 'en')}`;
+      const descTe = `${e.startDate} · ${getLocalized(e.location, 'te')} - ${getLocalized(e.description, 'te')}`;
+      const isUpcoming = e.status === 'upcoming';
       list.push({
         id: `evt-${e.id}`,
         category: 'Event',
-        title: e.title,
-        description: `${e.startDate} · ${e.location} - ${e.description}`,
+        titleEn,
+        titleTe,
+        descEn,
+        descTe,
         link: '/events',
-        badge: `Event · ${e.status}`
+        badgeEn: `Event · ${isUpcoming ? 'Upcoming' : 'Concluded'}`,
+        badgeTe: `కార్యక్రమం · ${isUpcoming ? 'రాబోయేది' : 'పూర్తయినది'}`
       });
     });
 
     // Announcements
     sampleAnnouncements.forEach((ann) => {
+      const titleEn = getLocalized(ann.title, 'en');
+      const titleTe = getLocalized(ann.title, 'te');
+      const descEn = getLocalized(ann.content, 'en');
+      const descTe = getLocalized(ann.content, 'te');
       list.push({
         id: `ann-${ann.id}`,
         category: 'Announcement',
-        title: ann.title,
-        description: ann.content,
+        titleEn,
+        titleTe,
+        descEn,
+        descTe,
         link: '/announcements',
-        badge: 'Announcement'
+        badgeEn: 'Announcement',
+        badgeTe: 'ప్రకటన'
       });
     });
 
     // History
     sampleHistoryMilestones.forEach((m) => {
+      const titleEn = getLocalized(m.title, 'en');
+      const titleTe = getLocalized(m.title, 'te');
+      const descEn = getLocalized(m.description, 'en');
+      const descTe = getLocalized(m.description, 'te');
+      const yearEn = getLocalized(m.yearOrDate, 'en');
+      const yearTe = getLocalized(m.yearOrDate, 'te');
       list.push({
         id: `hist-${m.id}`,
         category: 'History',
-        title: m.title.includes(m.yearOrDate) ? m.title : `${m.title} (${m.yearOrDate})`,
-        description: m.description,
+        titleEn: titleEn.includes(yearEn) ? titleEn : `${titleEn} (${yearEn})`,
+        titleTe: titleTe.includes(yearTe) ? titleTe : `${titleTe} (${yearTe})`,
+        descEn,
+        descTe,
         link: '/history',
-        badge: 'Milestone'
+        badgeEn: 'Milestone',
+        badgeTe: 'మైలురాయి'
       });
     });
 
@@ -94,7 +139,7 @@ export const SearchPage: React.FC = () => {
 
   const results = useMemo(() => {
     return allRecords.filter((item) => {
-      // Category match
+      // Category filter
       if (category !== 'all') {
         const catLower = item.category.toLowerCase();
         if (category === 'years' && catLower !== 'year') return false;
@@ -104,10 +149,17 @@ export const SearchPage: React.FC = () => {
         if (category === 'history' && catLower !== 'history') return false;
       }
 
-      // Keyword match
+      // Bilingual keyword match
       if (!query.trim()) return true;
-      const q = query.toLowerCase();
-      return item.title.toLowerCase().includes(q) || item.description.toLowerCase().includes(q);
+      const q = query.toLowerCase().trim();
+      const matchEn =
+        item.titleEn.toLowerCase().includes(q) ||
+        item.descEn.toLowerCase().includes(q);
+      const matchTe =
+        item.titleTe.toLowerCase().includes(q) ||
+        item.descTe.toLowerCase().includes(q);
+
+      return matchEn || matchTe;
     });
   }, [allRecords, category, query]);
 
@@ -116,14 +168,11 @@ export const SearchPage: React.FC = () => {
       <div className="container">
         {/* Header */}
         <div className="section-header">
-          <span className="sub-heading">Unified Portal Search</span>
-          <h1>Search Temple Archives</h1>
-          <p>
-            Search across celebration years, photo albums, upcoming & past events, committee notices, and
-            celebration milestones.
-          </p>
+          <span className="sub-heading">{t('search.sub')}</span>
+          <h1>{t('search.title')}</h1>
+          <p>{t('search.desc')}</p>
           <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label="Sample Search Index" />
+            <SampleBadge label={t('search.badge')} />
           </div>
         </div>
 
@@ -134,9 +183,9 @@ export const SearchPage: React.FC = () => {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type keywords (e.g., Shobha Yatra, 2024, Chandi Homam, Annadanam)..."
+            placeholder={t('search.placeholder')}
             className="search-input"
-            aria-label="Search temple records"
+            aria-label={t('search.title')}
           />
         </div>
 
@@ -147,83 +196,90 @@ export const SearchPage: React.FC = () => {
             className={`filter-tab ${category === 'all' ? 'active' : ''}`}
             onClick={() => setCategory('all')}
           >
-            All Results ({results.length})
+            {t('search.all')} ({results.length})
           </button>
           <button
             type="button"
             className={`filter-tab ${category === 'years' ? 'active' : ''}`}
             onClick={() => setCategory('years')}
           >
-            Years
+            {t('search.years')}
           </button>
           <button
             type="button"
             className={`filter-tab ${category === 'albums' ? 'active' : ''}`}
             onClick={() => setCategory('albums')}
           >
-            Albums
+            {t('search.albums')}
           </button>
           <button
             type="button"
             className={`filter-tab ${category === 'events' ? 'active' : ''}`}
             onClick={() => setCategory('events')}
           >
-            Events
+            {t('search.events')}
           </button>
           <button
             type="button"
             className={`filter-tab ${category === 'announcements' ? 'active' : ''}`}
             onClick={() => setCategory('announcements')}
           >
-            Notices
+            {t('search.announcements')}
           </button>
           <button
             type="button"
             className={`filter-tab ${category === 'history' ? 'active' : ''}`}
             onClick={() => setCategory('history')}
           >
-            History
+            {t('search.history')}
           </button>
         </div>
 
         {/* Results List */}
         {results.length === 0 ? (
           <EmptyState
-            title="No matching records found"
-            description={`No results found for "${query}". Please try different keywords or choose a different category.`}
+            title={t('search.noResults')}
+            description={t('search.noResultsDesc')}
           />
         ) : (
           <div style={{ maxWidth: '850px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            {results.map((item) => (
-              <div key={item.id} className="card card-hover" style={{ padding: 'var(--space-5)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
-                  <span className="badge badge-gold" style={{ fontSize: 'var(--font-size-xs)' }}>
-                    {item.badge}
-                  </span>
-                  <SampleBadge size="sm" />
+            {results.map((item) => {
+              const displayTitle = currentLang === 'te' ? item.titleTe : item.titleEn;
+              const displayDesc = currentLang === 'te' ? item.descTe : item.descEn;
+              const displayBadge = currentLang === 'te' ? item.badgeTe : item.badgeEn;
+
+              return (
+                <div key={item.id} className="card card-hover" style={{ padding: 'var(--space-5)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
+                    <span className="badge badge-gold" style={{ fontSize: 'var(--font-size-xs)' }}>
+                      {displayBadge}
+                    </span>
+                    <SampleBadge size="sm" />
+                  </div>
+
+                  <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
+                    <Link to={item.link} style={{ color: 'var(--color-maroon-dark)' }}>
+                      {displayTitle}
+                    </Link>
+                  </h3>
+
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)' }}>
+                    {displayDesc.length > 180 ? `${displayDesc.slice(0, 180)}...` : displayDesc}
+                  </p>
+
+                  <div>
+                    <Link to={item.link} className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span>{currentLang === 'te' ? 'వివరాలు చూడండి' : 'Open Record'}</span>
+                      <ArrowRight size={14} />
+                    </Link>
+                  </div>
                 </div>
-
-                <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
-                  <Link to={item.link} style={{ color: 'var(--color-maroon-dark)' }}>
-                    {item.title}
-                  </Link>
-                </h3>
-
-                <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)' }}>
-                  {item.description.length > 180 ? `${item.description.slice(0, 180)}...` : item.description}
-                </p>
-
-                <div>
-                  <Link to={item.link} className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <span>Open Record</span>
-                    <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
     </div>
   );
 };
+

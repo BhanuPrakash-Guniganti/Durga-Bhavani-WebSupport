@@ -1,11 +1,31 @@
 export type PublicationStatus = 'draft' | 'published' | 'archived';
+export type SupportedLanguage = 'en' | 'te';
+
+/**
+ * Standard bilingual localized string container.
+ * Supports both English ('en') and Telugu ('te') translations.
+ */
+export interface LocalizedString {
+  en: string;
+  te: string;
+}
+
+/**
+ * Standard bilingual localized string array container.
+ */
+export interface LocalizedArray {
+  en: string[];
+  te: string[];
+}
+
+export type Localizable<T = string> = LocalizedString | T;
 
 export interface MediaPhoto {
   id: string;
   url: string;
-  caption: string;
-  altText: string;
-  photographerCredit?: string;
+  caption: LocalizedString | string;
+  altText: LocalizedString | string;
+  photographerCredit?: LocalizedString | string;
   year?: number;
   albumSlug?: string;
   isSample: boolean;
@@ -14,8 +34,8 @@ export interface MediaPhoto {
 export interface AlbumRecord {
   id: string;
   slug: string;
-  title: string;
-  description: string;
+  title: LocalizedString | string;
+  description: LocalizedString | string;
   year: number;
   coverImage: string;
   photoCount: number;
@@ -26,27 +46,27 @@ export interface AlbumRecord {
 
 export interface YearRecord {
   year: number;
-  title: string;
+  title: LocalizedString | string;
   slug: string;
-  description: string;
+  description: LocalizedString | string;
   coverImage: string;
   startDate?: string;
   endDate?: string;
   status: PublicationStatus;
   albumCount: number;
-  highlights: string[];
+  highlights: LocalizedArray | string[];
   isSample: boolean;
 }
 
 export interface EventRecord {
   id: string;
   slug: string;
-  title: string;
-  description: string;
+  title: LocalizedString | string;
+  description: LocalizedString | string;
   startDate: string;
   endDate?: string;
-  time?: string;
-  location: string;
+  time?: LocalizedString | string;
+  location: LocalizedString | string;
   posterUrl?: string;
   status: 'upcoming' | 'past';
   year: number;
@@ -56,8 +76,8 @@ export interface EventRecord {
 export interface AnnouncementRecord {
   id: string;
   slug: string;
-  title: string;
-  content: string;
+  title: LocalizedString | string;
+  content: LocalizedString | string;
   publishedAt: string;
   expiresAt?: string;
   imageUrl?: string;
@@ -67,9 +87,9 @@ export interface AnnouncementRecord {
 
 export interface HistoricalMilestoneRecord {
   id: string;
-  title: string;
-  yearOrDate: string;
-  description: string;
+  title: LocalizedString | string;
+  yearOrDate: LocalizedString | string;
+  description: LocalizedString | string;
   imageUrl?: string;
   sortOrder: number;
   status: PublicationStatus;
@@ -77,19 +97,20 @@ export interface HistoricalMilestoneRecord {
 }
 
 export interface SiteSettingsRecord {
-  organizationName: string;
-  tagline: string;
-  aboutText: string;
-  mission: string;
-  vision: string;
+  organizationName: LocalizedString | string;
+  tagline: LocalizedString | string;
+  aboutText: LocalizedString | string;
+  mission: LocalizedString | string;
+  vision: LocalizedString | string;
   contactEmail: string;
   contactPhone: string;
-  locationAddress: string;
+  locationAddress: LocalizedString | string;
   googleMapsEmbedUrl: string;
   socialLinks: {
     youtube?: string;
     facebook?: string;
     whatsapp?: string;
   };
-  footerNotice: string;
+  celebrationHistoryTitle?: LocalizedString | string;
+  footerNotice: LocalizedString | string;
 }

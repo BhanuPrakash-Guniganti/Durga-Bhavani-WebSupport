@@ -32,24 +32,29 @@ All responses follow a consistent JSON envelope:
 
 ---
 
-## 1. Public Endpoints (Read-Only)
+## 1. Bilingual Architecture & Public Endpoints (Read-Only)
 
 All public endpoints only return items where `status === 'published'`.
+
+### Language Negotiation:
+- Clients can specify preferred language via `?lang=te` or `?lang=en` or header `Accept-Language`.
+- When `?lang` is omitted, API returns full bilingual objects `{ en: "...", te: "..." }` allowing clients to render or switch without additional network requests.
+- When `?lang=te` is specified, if Telugu text is missing, API falls back to English text with `"fallback": true` flag.
 
 | Method | Endpoint | Description | Query Parameters |
 |---|---|---|---|
 | `GET` | `/health` | Server health check | None |
-| `GET` | `/settings/public` | Public site configuration (name, logo, banner, contact, social) | None |
-| `GET` | `/history` | Chronological list of published historical milestones | `sort` (asc/desc) |
-| `GET` | `/years` | List of all published celebration years | `page`, `limit` |
-| `GET` | `/years/:year` | Detailed year record by 4-digit year, including highlights, albums, and videos | None |
-| `GET` | `/albums` | List of published albums | `year`, `page`, `limit` |
-| `GET` | `/albums/:slug` | Specific album with photo list, cover image, and credits | None |
-| `GET` | `/media` | Direct media query (filtered to published) | `albumId`, `yearId`, `page`, `limit` |
-| `GET` | `/events` | List of published events | `status` (upcoming, past, all), `year` |
-| `GET` | `/announcements` | Active announcements | `featured` (true/false), `includeExpired` (false by default) |
-| `GET` | `/search` | Global search across years, albums, events, announcements, and milestones | `q`, `category`, `page`, `limit` |
-| `POST` | `/contact` | Rate-limited public feedback/inquiry submission | Body: `name`, `email`, `phone`, `message` |
+| `GET` | `/settings/public` | Public site configuration (name, logo, banner, contact, social) | `lang` (en/te) |
+| `GET` | `/history` | Chronological list of published historical milestones (Celebrations began in 2024, 2026 is Third Year) | `lang`, `sort` (asc/desc) |
+| `GET` | `/years` | List of all published celebration years | `lang`, `page`, `limit` |
+| `GET` | `/years/:year` | Detailed year record by 4-digit year, including highlights, albums, and videos | `lang` |
+| `GET` | `/albums` | List of published albums | `lang`, `year`, `page`, `limit` |
+| `GET` | `/albums/:slug` | Specific album with photo list, cover image, and credits | `lang` |
+| `GET` | `/media` | Direct media query (filtered to published) | `lang`, `albumId`, `yearId`, `page`, `limit` |
+| `GET` | `/events` | List of published events | `lang`, `status` (upcoming, past, all), `year` |
+| `GET` | `/announcements` | Active announcements | `lang`, `featured` (true/false), `includeExpired` (false by default) |
+| `GET` | `/search` | Global search across both English and Telugu content (years, albums, events, announcements, milestones) | `q`, `category`, `lang`, `page`, `limit` |
+| `POST` | `/contact` | Rate-limited public feedback/inquiry submission | Body: `name`, `email`, `phone`, `subject`, `message` |
 
 ---
 
@@ -67,41 +72,49 @@ All public endpoints only return items where `status === 'published'`.
 
 Protected by JWT authentication and Role-Based Access Control (RBAC).
 
+All content creation and update requests accept bilingual objects:
+```json
+{
+  "title": { "en": "Grand Shobha Yatra 2024", "te": "భవ్య శోభాయాత్ర 2024" },
+  "description": { "en": "...", "te": "..." }
+}
+```
+
 ### Year Management
 - `POST /admin/years` (Roles: `super-admin`, `editor`): Create new year record.
-- `GET /admin/years` (Roles: `super-admin`, `editor`, `media-manager`): List all years (draft, published, archived).
+- `GET /admin/years` (Roles: `super-admin`, `editor`, `media-manager`): List all years (draft, published, archived) with translation status.
 - `GET /admin/years/:id` (Roles: `super-admin`, `editor`): Get year by ID.
-- `PATCH /admin/years/:id` (Roles: `super-admin`, `editor`): Update year info, dates, status.
+- `PATCH /admin/years/:id` (Roles: `super-admin`, `editor`): Update year info, bilingual titles, dates, status.
 - `DELETE /admin/years/:id` (Roles: `super-admin` only): Delete empty year (safety check prevents deleting year with albums).
 
 ### Album Management
-- `POST /admin/albums` (Roles: `super-admin`, `editor`): Create album.
-- `GET /admin/albums` (Roles: `super-admin`, `editor`, `media-manager`): List all albums.
+- `POST /admin/albums` (Roles: `super-admin`, `editor`): Create album with bilingual title & description.
+- `GET /admin/albums` (Roles: `super-admin`, `editor`, `media-manager`): List all albums with translation status.
 - `GET /admin/albums/:id` (Roles: `super-admin`, `editor`, `media-manager`): Get album by ID.
 - `PATCH /admin/albums/:id` (Roles: `super-admin`, `editor`): Update title, description, cover, status, sortOrder.
 - `DELETE /admin/albums/:id` (Roles: `super-admin` only): Delete album with reference check.
 
 ### Media Management
 - `POST /admin/media/upload-signature` (Roles: `super-admin`, `editor`, `media-manager`): Generates signed parameters for direct Cloudinary upload.
-- `POST /admin/media` (Roles: `super-admin`, `editor`, `media-manager`): Save uploaded media metadata in MongoDB.
+- `POST /admin/media` (Roles: `super-admin`, `editor`, `media-manager`): Save uploaded media metadata in MongoDB with bilingual caption and altText.
 - `GET /admin/media` (Roles: `super-admin`, `editor`, `media-manager`): Query media with filters.
 - `PATCH /admin/media/:id` (Roles: `super-admin`, `editor`, `media-manager`): Update caption, alt-text, album, status.
 - `DELETE /admin/media/:id` (Roles: `super-admin`, `editor`): Delete media record and Cloudinary asset (verifies no dependency).
 
 ### Event Management
-- `POST /admin/events` (Roles: `super-admin`, `editor`): Create event.
+- `POST /admin/events` (Roles: `super-admin`, `editor`): Create event with bilingual title, description, and location.
 - `GET /admin/events` (Roles: `super-admin`, `editor`): List events.
 - `PATCH /admin/events/:id` (Roles: `super-admin`, `editor`): Update event.
 - `DELETE /admin/events/:id` (Roles: `super-admin` only): Delete event.
 
 ### Announcement Management
-- `POST /admin/announcements` (Roles: `super-admin`, `editor`): Create announcement.
+- `POST /admin/announcements` (Roles: `super-admin`, `editor`): Create announcement with bilingual title and content.
 - `GET /admin/announcements` (Roles: `super-admin`, `editor`): List announcements.
 - `PATCH /admin/announcements/:id` (Roles: `super-admin`, `editor`): Update announcement.
 - `DELETE /admin/announcements/:id` (Roles: `super-admin` only): Delete announcement.
 
 ### History Milestones
-- `POST /admin/history` (Roles: `super-admin`, `editor`): Create milestone.
+- `POST /admin/history` (Roles: `super-admin`, `editor`): Create milestone with bilingual title and description.
 - `PATCH /admin/history/:id` (Roles: `super-admin`, `editor`): Update milestone.
 - `DELETE /admin/history/:id` (Roles: `super-admin` only): Delete milestone.
 - `POST /admin/history/reorder` (Roles: `super-admin`, `editor`): Update sort order.
@@ -113,7 +126,7 @@ Protected by JWT authentication and Role-Based Access Control (RBAC).
 - `DELETE /admin/users/:id`: Deactivate/delete user account.
 
 ### Site Settings (`super-admin` only)
-- `GET /admin/settings`: Retrieve all editable site settings.
+- `GET /admin/settings`: Retrieve all editable site settings with bilingual fields.
 - `PUT /admin/settings`: Update settings (organization name, contact, links, hero banner).
 
 ### Audit Logs (`super-admin` only)
@@ -123,3 +136,4 @@ Protected by JWT authentication and Role-Based Access Control (RBAC).
 - `POST /admin/import/drive/preview`: Preview contents of folder.
 - `POST /admin/import/drive/start`: Initiate migration job to target Year/Album.
 - `GET /admin/import/jobs/:jobId`: Check status of import job.
+

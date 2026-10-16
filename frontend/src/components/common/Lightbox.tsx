@@ -1,6 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, ChevronLeft, ChevronRight, User, Image as ImageIcon } from 'lucide-react';
 import type { MediaPhoto } from '../../types';
+import { useAppLanguage, getLocalized } from '../../i18n';
 
 interface LightboxProps {
   photos: MediaPhoto[];
@@ -17,6 +19,8 @@ export const Lightbox: React.FC<LightboxProps> = ({
   onClose,
   onNavigate
 }) => {
+  const { t } = useTranslation();
+  const { currentLang } = useAppLanguage();
   const currentPhoto = photos[currentIndex];
 
   const handlePrev = useCallback(() => {
@@ -55,25 +59,28 @@ export const Lightbox: React.FC<LightboxProps> = ({
 
   if (!isOpen || !currentPhoto) return null;
 
+  const captionText = getLocalized(currentPhoto.caption, currentLang);
+  const altText = getLocalized(currentPhoto.altText, currentLang) || captionText;
+
   return (
     <div
       className="lightbox-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label="Photo Lightbox Viewer"
+      aria-label={t('albums.lightboxAlt', { caption: captionText })}
     >
       <div className="lightbox-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <ImageIcon size={18} color="var(--color-gold-light)" />
           <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>
-            Photo {currentIndex + 1} of {photos.length}
+            {t('albums.lightboxCounter', { current: currentIndex + 1, total: photos.length })}
           </span>
         </div>
         <button
           type="button"
           onClick={onClose}
           className="drawer-close-btn"
-          aria-label="Close Lightbox (Esc)"
+          aria-label={t('albums.lightboxClose')}
         >
           <X size={20} />
         </button>
@@ -85,7 +92,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
             type="button"
             onClick={handlePrev}
             className="lightbox-nav-btn lightbox-nav-prev"
-            aria-label="Previous photograph"
+            aria-label={t('albums.lightboxPrev')}
           >
             <ChevronLeft size={28} />
           </button>
@@ -93,7 +100,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
 
         <img
           src={currentPhoto.url}
-          alt={currentPhoto.altText || currentPhoto.caption}
+          alt={altText}
           className="lightbox-image"
         />
 
@@ -102,7 +109,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
             type="button"
             onClick={handleNext}
             className="lightbox-nav-btn lightbox-nav-next"
-            aria-label="Next photograph"
+            aria-label={t('albums.lightboxNext')}
           >
             <ChevronRight size={28} />
           </button>
@@ -110,14 +117,15 @@ export const Lightbox: React.FC<LightboxProps> = ({
       </div>
 
       <div className="lightbox-footer">
-        <p className="lightbox-caption">{currentPhoto.caption}</p>
+        <p className="lightbox-caption">{captionText}</p>
         {currentPhoto.photographerCredit && (
           <p className="lightbox-credit" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             <User size={12} />
-            <span>Credit: {currentPhoto.photographerCredit}</span>
+            <span>{t('albums.photoCredit', { name: currentPhoto.photographerCredit })}</span>
           </p>
         )}
       </div>
     </div>
   );
 };
+

@@ -3,23 +3,33 @@ import { Calendar, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { sampleHistoryMilestones } from '../data/sampleData';
 import { SampleBadge } from '../components/common/SampleBadge';
 import { Lightbox } from '../components/common/Lightbox';
+import { useAppLanguage } from '../i18n';
 import type { MediaPhoto } from '../types';
 
 export const HistoryPage: React.FC = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const { t, getLocalized } = useAppLanguage();
 
   // Convert milestone images into MediaPhoto format for lightbox viewer
   const milestonePhotos: MediaPhoto[] = sampleHistoryMilestones
     .filter((m) => !!m.imageUrl)
-    .map((m) => ({
-      id: m.id,
-      url: m.imageUrl!,
-      caption: m.title.includes(m.yearOrDate) ? m.title : `${m.title} (${m.yearOrDate})`,
-      altText: m.title,
-      photographerCredit: 'Utsav Committee Archives (Sample)',
-      isSample: true
-    }));
+    .map((m) => {
+      const localizedTitle = getLocalized(m.title);
+      const localizedYear = getLocalized(m.yearOrDate);
+      const displayCaption = localizedTitle.includes(localizedYear)
+        ? localizedTitle
+        : `${localizedTitle} (${localizedYear})`;
+
+      return {
+        id: m.id,
+        url: m.imageUrl!,
+        caption: displayCaption,
+        altText: localizedTitle,
+        photographerCredit: t('albums.photoCredit', { name: 'Utsav Committee Archives (Sample)' }),
+        isSample: true
+      };
+    });
 
   const handleOpenPhoto = (imageUrl: string) => {
     const idx = milestonePhotos.findIndex((p) => p.url === imageUrl);
@@ -34,14 +44,11 @@ export const HistoryPage: React.FC = () => {
       <div className="container">
         {/* Header */}
         <div className="section-header">
-          <span className="sub-heading">Sacred Milestones</span>
-          <h1>History of Sri Durga Bhavani Utsav - Dodlapahad</h1>
-          <p>
-            The annual celebrations of Sri Durga Bhavani Utsav - Dodlapahad began in 2024, with
-            the year 2026 marking our third year of celebrations.
-          </p>
+          <span className="sub-heading">{t('history.sub')}</span>
+          <h1>{t('history.title')}</h1>
+          <p>{t('history.desc')}</p>
           <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label="Sri Durga Bhavani Utsav - Dodlapahad Timeline" />
+            <SampleBadge label={t('history.badge')} />
           </div>
         </div>
 
@@ -50,77 +57,79 @@ export const HistoryPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 'var(--space-2)' }}>
             <Sparkles size={20} color="var(--color-gold-primary)" />
             <h2 style={{ fontSize: 'var(--font-size-xl)', margin: 0 }}>
-              Sri Durga Bhavani Utsav - Dodlapahad
+              {t('history.bannerTitle')}
             </h2>
           </div>
-          <p>
-            The worship of Sri Durga Bhavani is central to the spiritual and communal life of Dodlapahad.
-            Our annual Sri Durga Bhavani Utsav celebrations began in 2024, bringing together devotees and villagers
-            in collective prayer, devotional rituals, and community service. The year 2026 marks our third year of celebrations.
-          </p>
+          <p>{t('history.bannerDesc')}</p>
           <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
-            <em>Note: The timeline below chronicles the annual celebration milestones of Sri Durga Bhavani Utsav - Dodlapahad.</em>
+            <em>{t('history.bannerNote')}</em>
           </p>
         </div>
 
         {/* Chronological Timeline */}
         <div className="timeline">
-          {sampleHistoryMilestones.map((item) => (
-            <div key={item.id} className="timeline-item">
-              <div className="timeline-dot" aria-hidden="true" />
-              <div className="card" style={{ padding: 'var(--space-5)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
-                  <span className="badge badge-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <Calendar size={12} />
-                    <span>{item.yearOrDate}</span>
-                  </span>
-                  <SampleBadge size="sm" />
-                </div>
+          {sampleHistoryMilestones.map((item) => {
+            const itemTitle = getLocalized(item.title);
+            const itemYear = getLocalized(item.yearOrDate);
+            const itemDesc = getLocalized(item.description);
 
-                <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
-                  {item.title}
-                </h3>
-
-                <p style={{ fontSize: 'var(--font-size-sm)', marginBottom: item.imageUrl ? 'var(--space-3)' : 0 }}>
-                  {item.description}
-                </p>
-
-                {item.imageUrl && (
-                  <div
-                    style={{ position: 'relative', cursor: 'pointer', borderRadius: 'var(--radius-md)', overflow: 'hidden', maxHeight: '180px' }}
-                    onClick={() => handleOpenPhoto(item.imageUrl!)}
-                    title="Click to view full photo in lightbox"
-                  >
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      loading="lazy"
-                    />
-                    <div
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        insetInline: 0,
-                        padding: '4px 8px',
-                        background: 'rgba(0,0,0,0.6)',
-                        color: '#FFF',
-                        fontSize: '0.72rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}
-                    >
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <ImageIcon size={12} /> Click to enlarge
-                      </span>
-                      <span>Sample Photo</span>
-                    </div>
+            return (
+              <div key={item.id} className="timeline-item">
+                <div className="timeline-dot" aria-hidden="true" />
+                <div className="card" style={{ padding: 'var(--space-5)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
+                    <span className="badge badge-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <Calendar size={12} />
+                      <span>{itemYear}</span>
+                    </span>
+                    <SampleBadge size="sm" />
                   </div>
-                )}
+
+                  <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
+                    {itemTitle}
+                  </h3>
+
+                  <p style={{ fontSize: 'var(--font-size-sm)', marginBottom: item.imageUrl ? 'var(--space-3)' : 0 }}>
+                    {itemDesc}
+                  </p>
+
+                  {item.imageUrl && (
+                    <div
+                      style={{ position: 'relative', cursor: 'pointer', borderRadius: 'var(--radius-md)', overflow: 'hidden', maxHeight: '180px' }}
+                      onClick={() => handleOpenPhoto(item.imageUrl!)}
+                      title={t('history.clickToEnlarge')}
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={itemTitle}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        loading="lazy"
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          insetInline: 0,
+                          padding: '4px 8px',
+                          background: 'rgba(0,0,0,0.6)',
+                          color: '#FFF',
+                          fontSize: '0.72rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ImageIcon size={12} /> {t('history.clickToEnlarge')}
+                        </span>
+                        <span>{t('history.samplePhoto')}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Mail, Phone, Send, CheckCircle2 } from 'lucide-react';
 import { sampleSiteSettings } from '../data/sampleData';
 import { SampleBadge } from '../components/common/SampleBadge';
+import { useAppLanguage, getLocalized } from '../i18n';
 
 export const ContactPage: React.FC = () => {
+  const { t } = useTranslation();
+  const { currentLang } = useAppLanguage();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,13 +22,13 @@ export const ContactPage: React.FC = () => {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!formData.name.trim()) errs.name = 'Please provide your full name.';
+    if (!formData.name.trim()) errs.name = t('contact.errName');
     if (!formData.email.trim() || !formData.email.includes('@')) {
-      errs.email = 'Please provide a valid email address.';
+      errs.email = t('contact.errEmail');
     }
-    if (!formData.subject.trim()) errs.subject = 'Please enter a message subject.';
+    if (!formData.subject.trim()) errs.subject = t('contact.errSubject');
     if (!formData.message.trim() || formData.message.length < 10) {
-      errs.message = 'Please enter a detailed message (at least 10 characters).';
+      errs.message = t('contact.errMessage');
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -42,19 +47,18 @@ export const ContactPage: React.FC = () => {
     }, 800);
   };
 
+  const localizedAddress = getLocalized(sampleSiteSettings.locationAddress, currentLang);
+
   return (
     <div className="section">
       <div className="container">
         {/* Header */}
         <div className="section-header">
-          <span className="sub-heading">Get in Touch</span>
-          <h1>Contact the Organizing Committee</h1>
-          <p>
-            Reach out to Durga Bhavani Seva Samiti for festival inquiries, pooja participation, volunteer seva,
-            or festival photo submissions.
-          </p>
+          <span className="sub-heading">{t('contact.sub')}</span>
+          <h1>{t('contact.title')}</h1>
+          <p>{t('contact.desc')}</p>
           <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label="Sample Contact & Location Information" />
+            <SampleBadge label={t('contact.badge')} />
           </div>
         </div>
 
@@ -63,22 +67,22 @@ export const ContactPage: React.FC = () => {
           <div>
             <div className="card card-cultural-top" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-8)' }}>
               <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                Temple Location & Office
+                {t('contact.contactInfoHeading')}
               </h2>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', fontSize: 'var(--font-size-base)' }}>
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <MapPin size={22} color="var(--color-maroon-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
-                    <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>Address:</strong>
-                    <span>{sampleSiteSettings.locationAddress}</span>
+                    <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>{t('contact.locationTitle')}:</strong>
+                    <span>{localizedAddress}</span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <Mail size={20} color="var(--color-maroon-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
-                    <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>Email:</strong>
+                    <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>{t('contact.emailTitle')}:</strong>
                     <span>{sampleSiteSettings.contactEmail}</span>
                   </div>
                 </div>
@@ -86,7 +90,7 @@ export const ContactPage: React.FC = () => {
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <Phone size={20} color="var(--color-maroon-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
-                    <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>Phone:</strong>
+                    <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>{t('contact.phoneTitle')}:</strong>
                     <span>{sampleSiteSettings.contactPhone}</span>
                   </div>
                 </div>
@@ -96,7 +100,7 @@ export const ContactPage: React.FC = () => {
             {/* Embedded Google Map Preview */}
             <div className="card" style={{ padding: 'var(--space-2)', overflow: 'hidden' }}>
               <div style={{ padding: 'var(--space-3)', fontWeight: 600, fontSize: 'var(--font-size-sm)', color: 'var(--color-maroon-primary)' }}>
-                🗺️ Dodlapahad Location Map
+                🗺️ {t('contact.mapsTitle')}
               </div>
               <div style={{ width: '100%', height: '260px', background: 'var(--color-cream-alt)', position: 'relative' }}>
                 <iframe
@@ -115,10 +119,12 @@ export const ContactPage: React.FC = () => {
           {/* Right Column: Contact Message Form */}
           <div className="card card-gold-top" style={{ padding: 'var(--space-6)' }}>
             <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-2)' }}>
-              Send an Inquiry or Message
+              {t('contact.formTitle')}
             </h2>
             <p style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-5)' }}>
-              Have questions about upcoming poojas or want to submit feedback? Leave a message below.
+              {currentLang === 'te'
+                ? 'ఉత్సవాల గురించి సందేహాలు లేదా సలహాలు ఉన్నాయా? మీ సందేశాన్ని ఇక్కడ నమోదు చేయండి.'
+                : 'Have questions about upcoming poojas or want to submit feedback? Leave a message below.'}
             </p>
 
             {submitted ? (
@@ -133,11 +139,10 @@ export const ContactPage: React.FC = () => {
               >
                 <CheckCircle2 size={40} color="var(--color-success)" style={{ margin: '0 auto var(--space-3) auto' }} />
                 <h3 style={{ color: 'var(--color-success)', marginBottom: 'var(--space-2)' }}>
-                  Message Received!
+                  {t('contact.successTitle')}
                 </h3>
                 <p style={{ fontSize: 'var(--font-size-sm)', color: '#2E7D32', margin: 0 }}>
-                  Thank you for contacting Durga Bhavani Seva Samiti. This is a layout demonstration; no actual
-                  emails are dispatched without verified committee backend configuration.
+                  {t('contact.successMsg')}
                 </p>
                 <button
                   type="button"
@@ -145,7 +150,7 @@ export const ContactPage: React.FC = () => {
                   className="btn btn-secondary btn-sm"
                   style={{ marginTop: 'var(--space-4)' }}
                 >
-                  Send Another Message
+                  {t('contact.sendAnother')}
                 </button>
               </div>
             ) : (
@@ -153,7 +158,7 @@ export const ContactPage: React.FC = () => {
                 {/* Name */}
                 <div style={{ marginBottom: 'var(--space-4)' }}>
                   <label htmlFor="name" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--font-size-sm)', marginBottom: '4px' }}>
-                    Full Name <span style={{ color: 'var(--color-danger)' }}>*</span>
+                    {t('contact.nameLabel')} <span style={{ color: 'var(--color-danger)' }}>*</span>
                   </label>
                   <input
                     id="name"
@@ -162,7 +167,7 @@ export const ContactPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="search-input"
                     style={{ borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)' }}
-                    placeholder="Enter your name"
+                    placeholder={t('contact.namePlaceholder')}
                   />
                   {errors.name && (
                     <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)', marginTop: '4px', display: 'block' }}>
@@ -175,7 +180,7 @@ export const ContactPage: React.FC = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
                   <div>
                     <label htmlFor="email" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--font-size-sm)', marginBottom: '4px' }}>
-                      Email Address <span style={{ color: 'var(--color-danger)' }}>*</span>
+                      {t('contact.emailLabel')} <span style={{ color: 'var(--color-danger)' }}>*</span>
                     </label>
                     <input
                       id="email"
@@ -184,7 +189,7 @@ export const ContactPage: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="search-input"
                       style={{ borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)' }}
-                      placeholder="you@example.com"
+                      placeholder={t('contact.emailPlaceholder')}
                     />
                     {errors.email && (
                       <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)', marginTop: '4px', display: 'block' }}>
@@ -195,7 +200,7 @@ export const ContactPage: React.FC = () => {
 
                   <div>
                     <label htmlFor="phone" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--font-size-sm)', marginBottom: '4px' }}>
-                      Phone (Optional)
+                      {t('contact.phoneLabel')}
                     </label>
                     <input
                       id="phone"
@@ -204,7 +209,7 @@ export const ContactPage: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="search-input"
                       style={{ borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)' }}
-                      placeholder="+91 98765 43210"
+                      placeholder={t('contact.phonePlaceholder')}
                     />
                   </div>
                 </div>
@@ -212,7 +217,7 @@ export const ContactPage: React.FC = () => {
                 {/* Subject */}
                 <div style={{ marginBottom: 'var(--space-4)' }}>
                   <label htmlFor="subject" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--font-size-sm)', marginBottom: '4px' }}>
-                    Subject <span style={{ color: 'var(--color-danger)' }}>*</span>
+                    {t('contact.subjectLabel')} <span style={{ color: 'var(--color-danger)' }}>*</span>
                   </label>
                   <input
                     id="subject"
@@ -221,7 +226,7 @@ export const ContactPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="search-input"
                     style={{ borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)' }}
-                    placeholder="e.g. Navaratri Pooja Inquiry or Festival Photo Submission"
+                    placeholder={t('contact.subjectPlaceholder')}
                   />
                   {errors.subject && (
                     <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)', marginTop: '4px', display: 'block' }}>
@@ -233,7 +238,7 @@ export const ContactPage: React.FC = () => {
                 {/* Message */}
                 <div style={{ marginBottom: 'var(--space-5)' }}>
                   <label htmlFor="message" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--font-size-sm)', marginBottom: '4px' }}>
-                    Message <span style={{ color: 'var(--color-danger)' }}>*</span>
+                    {t('contact.messageLabel')} <span style={{ color: 'var(--color-danger)' }}>*</span>
                   </label>
                   <textarea
                     id="message"
@@ -242,7 +247,7 @@ export const ContactPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="search-input"
                     style={{ borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)', resize: 'vertical' }}
-                    placeholder="Write your message here..."
+                    placeholder={t('contact.messagePlaceholder')}
                   />
                   {errors.message && (
                     <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)', marginTop: '4px', display: 'block' }}>
@@ -258,7 +263,7 @@ export const ContactPage: React.FC = () => {
                   style={{ width: '100%', justifyContent: 'center' }}
                 >
                   <Send size={16} />
-                  <span>{submitting ? 'Submitting Message...' : 'Send Message to Committee'}</span>
+                  <span>{submitting ? t('contact.submitting') : t('contact.sendButton')}</span>
                 </button>
               </form>
             )}
@@ -268,3 +273,4 @@ export const ContactPage: React.FC = () => {
     </div>
   );
 };
+
