@@ -7,7 +7,9 @@ import {
   AlertTriangle,
   CheckCircle,
   X,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Upload
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
@@ -51,12 +53,26 @@ export const AdminAuctionsPage: React.FC = () => {
       winnerName: '',
       fatherName: '',
       winningAmount: undefined,
+      photoUrl: undefined,
       itemType: 'saree',
       status: 'draft',
       isComplete: false,
       sortOrder: auctions.length + 1,
       isSample: false
     });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setEditingItem((prev) => (prev ? { ...prev, photoUrl: reader.result as string } : null));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -207,7 +223,8 @@ export const AdminAuctionsPage: React.FC = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
           <thead>
             <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>
-              <th style={{ padding: '12px 14px', width: '50px' }}>#</th>
+              <th style={{ padding: '12px 14px', width: '40px' }}>#</th>
+              <th style={{ padding: '12px 14px', width: '60px' }}>Photo</th>
               <th style={{ padding: '12px 14px' }}>Item Name (తెలుగు / EN)</th>
               <th style={{ padding: '12px 14px' }}>Associated Avatar</th>
               <th style={{ padding: '12px 14px' }}>Winner Name</th>
@@ -221,6 +238,33 @@ export const AdminAuctionsPage: React.FC = () => {
             {filteredAuctions.map((item, idx) => (
               <tr key={item.id} style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
                 <td style={{ padding: '12px 14px', color: 'var(--color-text-muted)' }}>{idx + 1}</td>
+
+                {/* Photo Thumbnail */}
+                <td style={{ padding: '8px 14px' }}>
+                  <div
+                    style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: 'var(--radius-sm)',
+                      overflow: 'hidden',
+                      background: 'var(--color-cream-alt)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '1px solid var(--color-border-subtle)'
+                    }}
+                  >
+                    {item.photoUrl ? (
+                      <img
+                        src={item.photoUrl}
+                        alt={getLocalized(item.itemName)}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <Trophy size={16} color="var(--color-gold-dark)" opacity={0.6} />
+                    )}
+                  </div>
+                </td>
 
                 {/* Item Name */}
                 <td style={{ padding: '12px 14px' }}>
@@ -493,6 +537,101 @@ export const AdminAuctionsPage: React.FC = () => {
                 <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', display: 'block', marginTop: '4px' }}>
                   Do not treat missing amounts as zero. Leave blank if amount has not yet been confirmed.
                 </span>
+              </div>
+
+              {/* Auction Item Photograph */}
+              <div
+                style={{
+                  marginBottom: 'var(--space-4)',
+                  padding: 'var(--space-4)',
+                  background: 'var(--color-cream-alt)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border-subtle)'
+                }}
+              >
+                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: '8px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <ImageIcon size={16} color="var(--color-maroon-primary)" />
+                    <span>{currentLang === 'te' ? 'వేలం వస్తువు / విజేత ఫోటో' : 'Auction Item / Winner Photograph'}</span>
+                  </span>
+                </label>
+
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap' }}>
+                  <div
+                    style={{
+                      width: '130px',
+                      height: '90px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: '#FFF',
+                      border: '1px solid var(--color-border-medium)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      position: 'relative'
+                    }}
+                  >
+                    {editingItem.photoUrl ? (
+                      <img
+                        src={editingItem.photoUrl}
+                        alt="Auction Preview"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '6px' }}>
+                        <Trophy size={24} color="var(--color-gold-dark)" style={{ margin: '0 auto 4px auto' }} />
+                        <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', display: 'block' }}>
+                          {currentLang === 'te' ? 'ఫోటో లేదు' : 'No Photo'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: '180px' }}>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                      <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <Upload size={14} />
+                        <span>{editingItem.photoUrl ? (currentLang === 'te' ? 'ఫోటో మార్చండి' : 'Replace Image') : (currentLang === 'te' ? 'ఫోటో అప్‌లోడ్' : 'Upload Image')}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          style={{ display: 'none' }}
+                        />
+                      </label>
+
+                      {editingItem.photoUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setEditingItem({ ...editingItem, photoUrl: undefined })}
+                          className="btn btn-secondary btn-sm"
+                          style={{ color: 'var(--color-danger)' }}
+                        >
+                          {currentLang === 'te' ? 'ఫోటో తొలగించండి' : 'Remove Image'}
+                        </button>
+                      )}
+                    </div>
+
+                    <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
+                      {currentLang === 'te'
+                        ? 'పరికరము నుండి ఫోటోను ఎంచుకోండి లేదా క్రింద వెబ్ URL నమోదు చేయండి.'
+                        : 'Upload an image file from your device or paste a URL below.'}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
+                    {currentLang === 'te' ? 'లేదా ఫోటో వెబ్ URL నమోదు చేయండి:' : 'Or enter direct image URL:'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.photoUrl || ''}
+                    onChange={(e) => setEditingItem({ ...editingItem, photoUrl: e.target.value.trim() || undefined })}
+                    placeholder="https://example.com/photo.jpg or data:image/..."
+                    style={{ width: '100%', padding: '6px 10px', fontSize: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border-subtle)', background: '#FFF' }}
+                  />
+                </div>
               </div>
 
               {/* Item Type & Status */}

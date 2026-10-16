@@ -108,10 +108,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           const parsed: AuctionItemRecord[] = JSON.parse(saved);
           return parsed.map((auc) => {
-            if (auc.id === 'auc-2025-07' && auc.avatarName?.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
-              return { ...auc, avatarName: { ...auc.avatarName, te: 'శ్రీ సరస్వతీ దేవి' } };
+            const initial = sampleAuctionItems.find((s) => s.id === auc.id);
+            let updated = auc;
+            if (auc.id === 'auc-2025-07' && auc.avatarName && auc.avatarName.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
+              updated = { ...updated, avatarName: { en: auc.avatarName.en, te: 'శ్రీ సరస్వతీ దేవి' } };
             }
-            return auc;
+            if (updated.photoUrl === undefined && initial?.photoUrl) {
+              updated = { ...updated, photoUrl: initial.photoUrl };
+            }
+            return updated;
           });
         } catch {
           // fallback

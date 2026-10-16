@@ -253,7 +253,20 @@
     "notSupplied": "—",
     "pendingNoticeTitle": "Pending Auction Item Confirmations",
     "pendingNoticeDesc": "The official winners and winning amounts for Laddu, Mukku Pudaka, Kalasham, and Lakshmi Maala have not yet been supplied. They will be published here once officially verified by the committee.",
-    "congratulations": "Heartfelt gratitude and blessings to all auction participants and winners for supporting the temple's seva activities."
+    "congratulations": "Heartfelt gratitude and blessings to all auction participants and winners for supporting the temple's seva activities.",
+    "viewCards": "Cards View",
+    "viewTable": "Table View",
+    "cardDetails": "Auction Details & Photo",
+    "noPhotoTitle": "Photograph Pending Upload",
+    "noPhotoDesc": "Official photograph for this auction record will be uploaded upon committee review.",
+    "modalTitle": "Auction Winner & Offering Details",
+    "sacredSaree": "Sacred Saree Auction",
+    "specialItem": "Special Offering",
+    "winnerDetails": "Winner Details",
+    "winningBid": "Winning Bid Amount",
+    "offeringDetails": "Offering & Ritual Context",
+    "festivalYear": "Navaratri Celebrations 2025",
+    "closeModal": "Close"
   },
   "donors": {
     "title": "Donors & Sponsors",
@@ -298,6 +311,12 @@
     "status": "Status",
     "draft": "Draft",
     "published": "Published",
-    "archived": "Archived"
+    "archived": "Archived",
+    "uploadImage": "Upload Image",
+    "replaceImage": "Replace Image",
+    "removeImage": "Remove Image",
+    "imagePreview": "Photograph Preview",
+    "orImageUrl": "Or Paste Image URL",
+    "noImageAssigned": "No Image Assigned (Using Neutral Placeholder)"
   }
 }

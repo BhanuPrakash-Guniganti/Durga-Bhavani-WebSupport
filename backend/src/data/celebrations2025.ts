@@ -30,6 +30,7 @@ export interface IAuctionItem {
   winnerName: string;
   fatherName: string;
   winningAmount?: number;
+  photoUrl?: string;
   itemType: 'saree' | 'special_item';
   status: 'published' | 'draft' | 'archived';
   isComplete: boolean;
