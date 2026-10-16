@@ -86,7 +86,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEYS.AVATARS);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const parsed: AvatarRecord[] = JSON.parse(saved);
+          return parsed.map((av) => {
+            if (av.id === 'avatar-2025-07' && av.name?.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
+              return { ...av, name: { ...av.name, te: 'శ్రీ సరస్వతీ దేవి' } };
+            }
+            return av;
+          });
         } catch {
           // fallback
         }
@@ -100,7 +106,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEYS.AUCTIONS);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const parsed: AuctionItemRecord[] = JSON.parse(saved);
+          return parsed.map((auc) => {
+            if (auc.id === 'auc-2025-07' && auc.avatarName?.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
+              return { ...auc, avatarName: { ...auc.avatarName, te: 'శ్రీ సరస్వతీ దేవి' } };
+            }
+            return auc;
+          });
         } catch {
           // fallback
         }

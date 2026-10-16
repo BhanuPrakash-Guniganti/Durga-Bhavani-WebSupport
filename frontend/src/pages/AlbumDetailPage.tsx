@@ -171,8 +171,6 @@ export const AlbumDetailPage: React.FC = () => {
                 const primaryName = currentLang === 'te' ? avatar.name.te : avatar.name.en;
                 const secondaryName = currentLang === 'te' ? avatar.name.en : avatar.name.te;
                 const desc = getLocalized(avatar.description);
-                // Find associated saree auction record
-                const sareeAuction = auctions.find((auc) => auc.avatarId === avatar.id);
 
                 return (
                   <article
@@ -271,38 +269,6 @@ export const AlbumDetailPage: React.FC = () => {
                       <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', lineHeight: 1.6, marginBottom: 'var(--space-4)', flex: 1 }}>
                         {desc}
                       </p>
-
-                      {/* Linked Saree Auction Winner Info */}
-                      {sareeAuction && (
-                        <div
-                          style={{
-                            padding: '10px 14px',
-                            background: 'var(--color-gold-pale)',
-                            borderRadius: 'var(--radius-md)',
-                            border: '1px solid var(--color-gold-border)',
-                            marginBottom: 'var(--space-4)',
-                            fontSize: 'var(--font-size-xs)'
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                            <Trophy size={14} color="var(--color-gold-dark)" />
-                            <strong style={{ color: 'var(--color-gold-dark)' }}>
-                              {currentLang === 'te' ? 'చీర వేలం పాట విజేత:' : 'Saree Auction Winner:'}
-                            </strong>
-                          </div>
-                          <div style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>
-                            {sareeAuction.winnerName}
-                            {sareeAuction.fatherName && (
-                              <span style={{ fontWeight: 400, color: 'var(--color-text-secondary)' }}>
-                                {' '}({currentLang === 'te' ? 'తండ్రి' : "Father"}: {sareeAuction.fatherName})
-                              </span>
-                            )}
-                          </div>
-                          <div style={{ color: 'var(--color-maroon-primary)', fontWeight: 700, fontSize: 'var(--font-size-sm)', marginTop: '2px' }}>
-                            {formatRupees(sareeAuction.winningAmount)}
-                          </div>
-                        </div>
-                      )}
 
                       {/* Action Button */}
                       <button
@@ -713,38 +679,6 @@ export const AlbumDetailPage: React.FC = () => {
                   </div>
                 )}
               </div>
-
-              {/* Associated Saree Info */}
-              {auctions.find((auc) => auc.avatarId === selectedAvatarModal.id) && (
-                <div
-                  style={{
-                    padding: 'var(--space-4)',
-                    background: 'var(--color-gold-pale)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--color-gold-border)',
-                    marginBottom: 'var(--space-6)'
-                  }}
-                >
-                  <div style={{ fontWeight: 600, color: 'var(--color-gold-dark)', fontSize: '12px', marginBottom: '4px' }}>
-                    {t('alankaranalu.associatedSaree')}
-                  </div>
-                  {(() => {
-                    const matched = auctions.find((auc) => auc.avatarId === selectedAvatarModal.id);
-                    if (!matched) return null;
-                    return (
-                      <div>
-                        <div>
-                          <strong>{matched.winnerName}</strong>
-                          {matched.fatherName && <span> ({currentLang === 'te' ? 'తండ్రి' : "Father"}: {matched.fatherName})</span>}
-                        </div>
-                        <div style={{ fontWeight: 700, color: 'var(--color-maroon-primary)', marginTop: '2px' }}>
-                          {formatRupees(matched.winningAmount)}
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
 
               <div style={{ textAlign: 'right' }}>
                 <button

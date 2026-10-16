@@ -231,10 +231,6 @@
     "noPhotosTitle": "Photographs Pending Upload",
     "noPhotosDesc": "Official photographs of this avatar will be uploaded here upon committee review.",
     "adminUploadHint": "Administrators can upload high-resolution images with bilingual captions via the Admin Portal.",
-    "associatedSaree": "Associated Saree Auction",
-    "sareeWinner": "Auction Winner",
-    "fatherName": "Father's Name",
-    "winningBid": "Winning Bid",
     "photoCount": "{{count}} Photos",
     "closeModal": "Close"
   },

@@ -257,7 +257,7 @@ export const initialAvatars: IAvatar[] = [
     dayNumber: 7,
     name: {
       en: 'Sri Saraswati Devi - Moola Nakshatram',
-      te: 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం'
+      te: 'శ్రీ సరస్వతీ దేవి'
     },
     description: {
       en: 'The sacred form of Sri Saraswati Devi adorned on Moola Nakshatram, blessing devotees with learning, arts, and speech on Day 7.',
@@ -459,7 +459,7 @@ export const initialAuctionItems: IAuctionItem[] = [
     avatarId: 'avatar-2025-07',
     avatarName: {
       en: 'Sri Saraswati Devi - Moola Nakshatram',
-      te: 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం'
+      te: 'శ్రీ సరస్వతీ దేవి'
     },
     winnerName: 'కారింగు తిరుపతయ్య',
     fatherName: 'జంగయ్య',
