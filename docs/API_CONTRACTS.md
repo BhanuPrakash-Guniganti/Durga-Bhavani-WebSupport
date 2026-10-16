@@ -132,8 +132,23 @@ All content creation and update requests accept bilingual objects:
 ### Audit Logs (`super-admin` only)
 - `GET /admin/audit-logs`: Paginated audit log of system actions.
 
+### 2025 Celebrations Administration
+- `GET /admin/avatars`: List all 10 avatars with photos, bilingual details, and sort orders.
+- `POST /admin/avatars`: Create avatar record.
+- `PATCH /admin/avatars/:id`: Update day assignment, bilingual names, captions, alt-text, photos, or status.
+- `DELETE /admin/avatars/:id`: Remove avatar record.
+- `GET /admin/auctions`: List all 15 auction items (including draft/incomplete records with `isComplete` flag).
+- `POST /admin/auctions`: Create new auction record with Indian Rupee amount validation.
+- `PATCH /admin/auctions/:id`: Update item name, winner name, father's name, winning amount, avatar link, or draft status.
+- `DELETE /admin/auctions/:id`: Remove auction record.
+- `GET /admin/donors`: List all sponsors/donors.
+- `POST /admin/donors`: Create donor record with bilingual name/notes and optional INR contribution.
+- `PATCH /admin/donors/:id`: Update donor information.
+- `DELETE /admin/donors/:id`: Remove donor record.
+
 ### Google Drive Migration
 - `POST /admin/import/drive/preview`: Preview contents of folder.
 - `POST /admin/import/drive/start`: Initiate migration job to target Year/Album.
 - `GET /admin/import/jobs/:jobId`: Check status of import job.
+
 

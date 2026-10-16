@@ -122,7 +122,39 @@
 
 ---
 
-### Phase 2: Database and Public Backend ⚪ PENDING
+### Phase 2.5: 2025 Celebrations & Admin Dashboard System 🟢 COMPLETED
+- [x] **2025 Three Core Albums**:
+  - `Album 1: అమ్మవారి అలంకరణలు / Devi Alankaranalu` (`devi-alankaranalu-2025`):
+    - 10 distinct, separately identifiable avatar records for Navaratri 10 daily avatars.
+    - Full bilingual Telugu & English names, day numbers (1-10), multi-photo support, bilingual captions, and alt-text.
+    - Interactive Avatar Detail modal viewer on public website and editable day assignments in admin.
+  - `Album 2: వేలం పాట విజేతలు / Auction Winners` (`auction-winners-2025`):
+    - 10 Saree auction records mapped to their respective Devi avatars.
+    - 1 Additional auction record for "మెడలు మీద చీర" / "Garland-Adorned Saree (Medalu Meeda Cheera)" for ₹5,116 to ఉడుతల నవీన్ (Father: వెంకటయ్య).
+    - 4 Unfilled draft items: Laddu (లడ్డూ), Mukku Pudaka (ముక్కు పుడక), Kalasham (కలశం), Lakshmi Maala (లక్ష్మీ మాల).
+    - Incomplete draft records clearly flagged in admin dashboard and hidden from public confirmed winners.
+    - Strict preservation of missing details (Komiri Vasu's father name preserved as blank, not fabricated).
+    - Accurate Indian Rupee currency formatting (`₹4,08,116` total raised across confirmed items).
+  - `Album 3: దాతలు మరియు స్పాన్సర్లు / Donors & Sponsors` (`donors-and-sponsors-2025`):
+    - Dedicated collection for 2025 celebrations sponsors and donors.
+    - Zero fabricated names/amounts (initialized cleanly with dedicated empty state and admin entry form).
+- [x] **Admin Dashboard & RBAC**:
+  - Role-based permissions (`super-admin`, `editor`, `media-manager`) with role switcher.
+  - Avatars Management (`/admin/avatars`): Reordering, editing day assignments, photo upload modal with bilingual captions & alt-text, live card preview.
+  - Auctions Management (`/admin/auctions`): Avatar linking, INR numeric validation, draft status badges.
+  - Donors Management (`/admin/donors`): Dedicated bilingual management with contribution types and optional amounts.
+  - Audit Trail (`/admin/audit-logs`): Full real-time audit logging for all create, update, delete operations.
+- [x] **Public Web UI Experience**:
+  - Responsive gallery at `/years/2025` with cultural badges for Avatars, Auctions, and Donors.
+  - Custom views inside `/albums/:slug` tailored for Avatars (modal gallery), Auctions (summary banner + detailed cards), and Donors (empty-state / contributor list).
+- [x] **Backend REST API**:
+  - Public endpoints: `GET /api/v1/avatars`, `GET /api/v1/auctions` (only complete confirmed items), `GET /api/v1/donors`.
+  - Admin endpoints: `GET/POST/PATCH/DELETE` for avatars, auctions, donors, and `GET /api/v1/admin/audit-logs`.
+
+---
+
+### Phase 2: Database and Public Backend ⚪ IN PROGRESS
+
 - [ ] Configure MongoDB connection with Mongoose and retry logic.
 - [ ] Implement Mongoose models with validation and indexes:
   - `User`, `Year`, `Album`, `Media`, `Event`, `Announcement`, `HistoricalMilestone`, `SiteSetting`, `AuditLog`.

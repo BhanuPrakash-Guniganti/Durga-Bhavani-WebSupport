@@ -9,7 +9,8 @@ import {
   Video,
   Sparkles
 } from 'lucide-react';
-import { sampleYears, sampleAlbums, sampleEvents } from '../data/sampleData';
+import { sampleEvents } from '../data/sampleData';
+import { useData } from '../context/DataContext';
 import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAppLanguage, getLocalized, getLocalizedArray } from '../i18n';
@@ -19,9 +20,10 @@ export const YearDetailPage: React.FC = () => {
   const yearNumber = parseInt(year || '2024', 10);
   const { t } = useTranslation();
   const { currentLang } = useAppLanguage();
+  const { albums, years } = useData();
 
-  const yearRecord = sampleYears.find((y) => y.year === yearNumber);
-  const yearAlbums = sampleAlbums.filter((a) => a.year === yearNumber);
+  const yearRecord = years.find((y) => y.year === yearNumber);
+  const yearAlbums = albums.filter((a) => a.year === yearNumber && a.status === 'published');
   const yearEvents = sampleEvents.filter((e) => e.year === yearNumber);
 
   if (!yearRecord) {
@@ -131,7 +133,15 @@ export const YearDetailPage: React.FC = () => {
                     </div>
                     <div className="card-body">
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span className="badge badge-gold">{t('years.albumsCount', { count: album.photoCount })}</span>
+                        <span className="badge badge-gold">
+                          {album.albumType === 'avatars'
+                            ? (currentLang === 'te' ? '10 అమ్మవారి అవతారాలు' : '10 Daily Avatars')
+                            : album.albumType === 'auction'
+                            ? (currentLang === 'te' ? 'వేలం పాట విజేతలు' : 'Auction Winners')
+                            : album.albumType === 'donors'
+                            ? (currentLang === 'te' ? 'దాతలు & స్పాన్సర్లు' : 'Donors & Sponsors')
+                            : t('years.albumsCount', { count: album.photoCount })}
+                        </span>
                         <SampleBadge size="sm" />
                       </div>
                       <h3>{albumTitle}</h3>

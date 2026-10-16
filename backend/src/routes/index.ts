@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import celebrations2025Router from './celebrations2025.js';
 
 const apiRouter = Router();
 
@@ -10,5 +11,8 @@ apiRouter.get('/health', (_req, res) => {
     service: 'durga-bhavani-backend'
   });
 });
+
+// Mount 2025 celebrations and admin endpoints
+apiRouter.use('/', celebrations2025Router);
 
 export default apiRouter;

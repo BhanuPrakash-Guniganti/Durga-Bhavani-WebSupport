@@ -31,6 +31,8 @@ export interface MediaPhoto {
   isSample: boolean;
 }
 
+export type AlbumType = 'general' | 'avatars' | 'auction' | 'donors';
+
 export interface AlbumRecord {
   id: string;
   slug: string;
@@ -42,6 +44,88 @@ export interface AlbumRecord {
   photos: MediaPhoto[];
   status: PublicationStatus;
   isSample: boolean;
+  albumType?: AlbumType;
+}
+
+export interface AvatarRecord {
+  id: string;
+  albumSlug: string;
+  year: number;
+  dayNumber: number; // 1 to 10 or editable order
+  name: LocalizedString; // Telugu and English names
+  description?: LocalizedString;
+  photos: MediaPhoto[];
+  sortOrder: number;
+  status: PublicationStatus;
+  isSample?: boolean;
+}
+
+export interface AuctionItemRecord {
+  id: string;
+  albumSlug: string;
+  year: number;
+  itemName: LocalizedString;
+  avatarId?: string; // Linked avatar id when applicable
+  avatarName?: LocalizedString; // Associated avatar name in Telugu and English
+  winnerName?: string; // Winner's name (Telugu or English as provided)
+  fatherName?: string; // Father's name if provided, empty string if not supplied
+  winningAmount?: number; // In Indian rupees, non-negative number
+  photoUrl?: string;
+  notes?: LocalizedString | string;
+  itemType: 'saree' | 'special_item';
+  status: PublicationStatus;
+  isComplete: boolean; // false for draft/unfilled records like laddu, mukku pudaka, kalasham, lakshmi maala
+  sortOrder: number;
+  isSample?: boolean;
+}
+
+export interface DonorRecord {
+  id: string;
+  albumSlug: string;
+  year: number;
+  name: LocalizedString; // Person or organization name in Telugu and English
+  contributionType: LocalizedString;
+  amount?: number; // Optional contribution amount in INR
+  photoOrLogoUrl?: string;
+  notes?: LocalizedString | string;
+  status: PublicationStatus;
+  sortOrder: number;
+  isSample?: boolean;
+}
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'super-admin' | 'editor' | 'media-manager';
+  active: boolean;
+}
+
+export interface AuditLogRecord {
+  id: string;
+  actorName: string;
+  actorRole: string;
+  action: 'create' | 'update' | 'delete' | 'publish' | 'unpublish' | 'upload';
+  resourceType: 'Album' | 'Avatar' | 'Auction' | 'Donor' | 'Media' | 'Year';
+  resourceId?: string;
+  resourceTitle?: string;
+  timestamp: string;
+  details?: string;
+}
+
+/**
+ * Format numeric amount as Indian Rupees (e.g. ₹25,000, ₹5,116).
+ * Returns empty string if amount is undefined, null, or NaN.
+ */
+export function formatRupees(amount?: number | null): string {
+  if (amount === undefined || amount === null || isNaN(amount)) {
+    return '';
+  }
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(amount);
 }
 
 export interface YearRecord {

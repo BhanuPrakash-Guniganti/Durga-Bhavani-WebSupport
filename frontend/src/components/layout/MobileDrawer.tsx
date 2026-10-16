@@ -8,7 +8,8 @@ import {
   Calendar,
   Bell,
   Search,
-  MapPin
+  MapPin,
+  ShieldCheck
 } from 'lucide-react';
 import { useAppLanguage } from '../../i18n';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
@@ -47,7 +48,8 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
     { to: '/events', label: t('nav.events'), icon: <Calendar size={18} /> },
     { to: '/announcements', label: t('nav.announcements'), icon: <Bell size={18} /> },
     { to: '/search', label: t('nav.search'), icon: <Search size={18} /> },
-    { to: '/contact', label: t('nav.contact'), icon: <MapPin size={18} /> }
+    { to: '/contact', label: t('nav.contact'), icon: <MapPin size={18} /> },
+    { to: '/admin', label: isTelugu ? 'అడ్మిన్ పోర్టల్' : 'Admin Portal', icon: <ShieldCheck size={18} /> }
   ];
 
   return (

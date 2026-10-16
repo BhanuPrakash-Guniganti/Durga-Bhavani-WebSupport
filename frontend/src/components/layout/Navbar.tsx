@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, Search } from 'lucide-react';
+import { Menu, Search, ShieldCheck } from 'lucide-react';
 import { MobileDrawer } from './MobileDrawer';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
 import { useAppLanguage } from '../../i18n';
@@ -54,6 +54,16 @@ export const Navbar: React.FC = () => {
               aria-label={t('nav.search')}
             >
               <Search size={16} />
+            </NavLink>
+            <NavLink
+              to="/admin"
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              title={t('admin.portalTitle')}
+              aria-label={t('admin.portalTitle')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+            >
+              <ShieldCheck size={16} />
+              <span>Admin</span>
             </NavLink>
             {/* Desktop Language Switcher */}
             <div style={{ marginLeft: 'var(--space-2)' }}>
