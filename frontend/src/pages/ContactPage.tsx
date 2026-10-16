@@ -51,7 +51,7 @@ export const ContactPage: React.FC = () => {
           <h1>Contact the Organizing Committee</h1>
           <p>
             Reach out to Durga Bhavani Seva Samiti for festival inquiries, pooja participation, volunteer seva,
-            or historical photo submissions.
+            or festival photo submissions.
           </p>
           <div style={{ marginTop: 'var(--space-3)' }}>
             <SampleBadge label="Sample Contact & Location Information" />
@@ -221,7 +221,7 @@ export const ContactPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="search-input"
                     style={{ borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)' }}
-                    placeholder="e.g. Navaratri Pooja Inquiry or Historical Photo Submission"
+                    placeholder="e.g. Navaratri Pooja Inquiry or Festival Photo Submission"
                   />
                   {errors.subject && (
                     <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)', marginTop: '4px', display: 'block' }}>

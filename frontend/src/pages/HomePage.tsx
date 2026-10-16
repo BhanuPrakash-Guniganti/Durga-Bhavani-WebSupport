@@ -41,8 +41,8 @@ export const HomePage: React.FC = () => {
           </h1>
 
           <p className="hero-subtitle">
-            Preserving and presenting Dodlapahad's annual Navaratri celebrations, sacred traditions,
-            photo & video archives, and community service across generations.
+            Preserving and presenting Dodlapahad's annual Sri Durga Bhavani Utsav celebrations, sacred traditions,
+            photo & video archives, and community devotion.
           </p>
 
           <div className="hero-actions">
@@ -79,7 +79,7 @@ export const HomePage: React.FC = () => {
               <div style={{ marginTop: 'var(--space-6)', display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
                 <Link to="/history" className="btn btn-primary">
                   <Clock size={16} />
-                  <span>View Temple Timeline</span>
+                  <span>View Utsav Timeline</span>
                 </Link>
                 <Link to="/contact" className="btn btn-secondary">
                   <MapPin size={16} />

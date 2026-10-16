@@ -82,7 +82,7 @@ export const SearchPage: React.FC = () => {
       list.push({
         id: `hist-${m.id}`,
         category: 'History',
-        title: `${m.title} (${m.yearOrDate})`,
+        title: m.title.includes(m.yearOrDate) ? m.title : `${m.title} (${m.yearOrDate})`,
         description: m.description,
         link: '/history',
         badge: 'Milestone'
@@ -120,7 +120,7 @@ export const SearchPage: React.FC = () => {
           <h1>Search Temple Archives</h1>
           <p>
             Search across celebration years, photo albums, upcoming & past events, committee notices, and
-            historical milestones.
+            celebration milestones.
           </p>
           <div style={{ marginTop: 'var(--space-3)' }}>
             <SampleBadge label="Sample Search Index" />

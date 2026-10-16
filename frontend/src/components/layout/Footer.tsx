@@ -32,7 +32,7 @@ export const Footer: React.FC = () => {
               <ul className="footer-links">
                 <li><Link to="/years">Year Archives</Link></li>
                 <li><Link to="/years/2024">Navaratri 2024 Highlights</Link></li>
-                <li><Link to="/history">Temple History & Timeline</Link></li>
+                <li><Link to="/history">Utsav History & Timeline</Link></li>
                 <li><Link to="/events">Events & Poojas</Link></li>
                 <li><Link to="/announcements">Public Notices</Link></li>
               </ul>

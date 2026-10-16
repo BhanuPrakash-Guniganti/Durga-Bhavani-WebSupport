@@ -15,9 +15,9 @@ export const HistoryPage: React.FC = () => {
     .map((m) => ({
       id: m.id,
       url: m.imageUrl!,
-      caption: `${m.title} (${m.yearOrDate})`,
+      caption: m.title.includes(m.yearOrDate) ? m.title : `${m.title} (${m.yearOrDate})`,
       altText: m.title,
-      photographerCredit: 'Temple Committee Archives (Sample)',
+      photographerCredit: 'Utsav Committee Archives (Sample)',
       isSample: true
     }));
 
@@ -35,13 +35,13 @@ export const HistoryPage: React.FC = () => {
         {/* Header */}
         <div className="section-header">
           <span className="sub-heading">Sacred Milestones</span>
-          <h1>History of Sri Durga Bhavani Temple</h1>
+          <h1>History of Sri Durga Bhavani Utsav - Dodlapahad</h1>
           <p>
-            Dodlapahad's cultural journey, temple foundations, and the evolution of our annual
-            celebrations over the decades.
+            The annual celebrations of Sri Durga Bhavani Utsav - Dodlapahad began in 2024, with
+            the year 2026 marking our third year of celebrations.
           </p>
           <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label="Sample Historical Records - Awaiting Official Verification" />
+            <SampleBadge label="Sri Durga Bhavani Utsav - Dodlapahad Timeline" />
           </div>
         </div>
 
@@ -50,18 +50,16 @@ export const HistoryPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 'var(--space-2)' }}>
             <Sparkles size={20} color="var(--color-gold-primary)" />
             <h2 style={{ fontSize: 'var(--font-size-xl)', margin: 0 }}>
-              Preserving Our Heritage
+              Sri Durga Bhavani Utsav - Dodlapahad
             </h2>
           </div>
           <p>
-            The worship of Sri Durga Bhavani has been central to the spiritual and communal life of Dodlapahad.
-            Generations of villagers have contributed their time, resources, and reverence to keep these sacred
-            traditions alive.
+            The worship of Sri Durga Bhavani is central to the spiritual and communal life of Dodlapahad.
+            Our annual Sri Durga Bhavani Utsav celebrations began in 2024, bringing together devotees and villagers
+            in collective prayer, devotional rituals, and community service. The year 2026 marks our third year of celebrations.
           </p>
           <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
-            <em>Note: The milestones below illustrate the interactive timeline layout. Exact founding dates, names of
-            founding elders, and authentic historical documentation will be incorporated once verified by the organizing
-            committee.</em>
+            <em>Note: The timeline below chronicles the annual celebration milestones of Sri Durga Bhavani Utsav - Dodlapahad.</em>
           </p>
         </div>
 

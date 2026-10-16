@@ -32,7 +32,7 @@ export const AboutPage: React.FC = () => {
               Navaratri celebrations.
             </p>
             <p>
-              Over the decades, the committee has fostered a spirit of inclusivity, ensuring that devotees from all
+              The committee fosters a spirit of inclusivity, ensuring that devotees from all
               walks of life actively participate in festival rituals, cultural programs, and community dining.
             </p>
             <p>
@@ -108,7 +108,7 @@ export const AboutPage: React.FC = () => {
               <ArrowRight size={14} />
             </Link>
             <Link to="/history" className="btn btn-secondary btn-sm">
-              <span>Read Historical Milestones</span>
+              <span>View Celebration Milestones</span>
             </Link>
           </div>
         </div>

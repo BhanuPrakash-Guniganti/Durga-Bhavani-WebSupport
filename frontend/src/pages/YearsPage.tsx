@@ -6,13 +6,11 @@ import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
 
 export const YearsPage: React.FC = () => {
-  const [selectedDecade, setSelectedDecade] = useState<string>('all');
+  const [selectedYearFilter, setSelectedYearFilter] = useState<string>('all');
 
   const filteredYears = sampleYears.filter((yr) => {
-    if (selectedDecade === 'all') return true;
-    if (selectedDecade === '2020s') return yr.year >= 2020;
-    if (selectedDecade === '2010s') return yr.year >= 2010 && yr.year < 2020;
-    return true;
+    if (selectedYearFilter === 'all') return true;
+    return yr.year.toString() === selectedYearFilter;
   });
 
   return (
@@ -23,11 +21,11 @@ export const YearsPage: React.FC = () => {
           <span className="sub-heading">Annual Archives</span>
           <h1>Celebration Years Archive</h1>
           <p>
-            Browse through Dodlapahad's annual Navaratri celebrations year by year. Access festival albums,
-            pooja reports, video highlights, and community memories.
+            Browse through Dodlapahad's annual Sri Durga Bhavani Utsav celebrations. Access festival albums,
+            pooja reports, video highlights, and community memories starting from our inaugural year in 2024.
           </p>
           <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label="Sample Demonstration Years" />
+            <SampleBadge label="Celebration Archives (2024–2026)" />
           </div>
         </div>
 
@@ -35,24 +33,31 @@ export const YearsPage: React.FC = () => {
         <div className="filter-tabs">
           <button
             type="button"
-            className={`filter-tab ${selectedDecade === 'all' ? 'active' : ''}`}
-            onClick={() => setSelectedDecade('all')}
+            className={`filter-tab ${selectedYearFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setSelectedYearFilter('all')}
           >
             All Years ({sampleYears.length})
           </button>
           <button
             type="button"
-            className={`filter-tab ${selectedDecade === '2020s' ? 'active' : ''}`}
-            onClick={() => setSelectedDecade('2020s')}
+            className={`filter-tab ${selectedYearFilter === '2026' ? 'active' : ''}`}
+            onClick={() => setSelectedYearFilter('2026')}
           >
-            2020s (Current Era)
+            2026 (Third Year)
           </button>
           <button
             type="button"
-            className={`filter-tab ${selectedDecade === '2010s' ? 'active' : ''}`}
-            onClick={() => setSelectedDecade('2010s')}
+            className={`filter-tab ${selectedYearFilter === '2025' ? 'active' : ''}`}
+            onClick={() => setSelectedYearFilter('2025')}
           >
-            2010s Archive
+            2025 (Second Year)
+          </button>
+          <button
+            type="button"
+            className={`filter-tab ${selectedYearFilter === '2024' ? 'active' : ''}`}
+            onClick={() => setSelectedYearFilter('2024')}
+          >
+            2024 (First Year)
           </button>
         </div>
 
@@ -60,7 +65,7 @@ export const YearsPage: React.FC = () => {
         {filteredYears.length === 0 ? (
           <EmptyState
             title="No celebration years found"
-            description="There are currently no records for this decade filter."
+            description="There are currently no records for this filter."
             actionLabel="Show All Years"
             actionLink="/years"
           />
