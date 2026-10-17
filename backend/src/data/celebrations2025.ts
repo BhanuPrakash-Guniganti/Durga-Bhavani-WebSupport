@@ -27,8 +27,8 @@ export interface IAuctionItem {
   itemName: ILocalizedString;
   avatarId?: string;
   avatarName?: ILocalizedString;
-  winnerName: string;
-  fatherName: string;
+  winnerName: ILocalizedString | string;
+  fatherName?: ILocalizedString | string;
   winningAmount?: number;
   photoUrl?: string;
   itemType: 'saree' | 'special_item';

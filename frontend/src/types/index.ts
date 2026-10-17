@@ -67,8 +67,8 @@ export interface AuctionItemRecord {
   itemName: LocalizedString;
   avatarId?: string; // Linked avatar id when applicable
   avatarName?: LocalizedString; // Associated avatar name in Telugu and English
-  winnerName?: string; // Winner's name (Telugu or English as provided)
-  fatherName?: string; // Father's name if provided, empty string if not supplied
+  winnerName?: LocalizedString | string; // Winner's name (Telugu, English, or bilingual where available)
+  fatherName?: LocalizedString | string; // Father's name if provided, empty string if not supplied
   winningAmount?: number; // In Indian rupees, non-negative number
   photoUrl?: string;
   notes?: LocalizedString | string;

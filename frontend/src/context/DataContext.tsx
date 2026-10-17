@@ -113,7 +113,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (auc.id === 'auc-2025-07' && auc.avatarName && auc.avatarName.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
               updated = { ...updated, avatarName: { en: auc.avatarName.en, te: 'శ్రీ సరస్వతీ దేవి' } };
             }
-            if (updated.photoUrl === undefined && initial?.photoUrl) {
+            if (!('photoUrl' in auc) && initial?.photoUrl) {
               updated = { ...updated, photoUrl: initial.photoUrl };
             }
             return updated;
