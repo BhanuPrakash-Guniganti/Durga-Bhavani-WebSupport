@@ -105,6 +105,53 @@ const seedInitialDataIfEmpty = async () => {
   }
 };
 
+const syncDatabaseSchemas = async () => {
+  try {
+    // 1. Ensure existing albums have albumType
+    const albums = await AlbumModel.find({});
+    for (const alb of albums) {
+      if (!alb.albumType) {
+        const type =
+          alb.slug.includes('auction') ? 'auction' :
+          alb.slug.includes('alankaranalu') || alb.slug.includes('avatar') ? 'avatars' :
+          alb.slug.includes('donor') ? 'donors' : 'general';
+        await AlbumModel.updateOne({ id: alb.id }, { $set: { albumType: type } });
+      }
+    }
+
+    // 2. Ensure existing auction records have avatarId & itemType if missing
+    for (const initAuc of initialAuctionItems) {
+      await AuctionItemModel.updateOne(
+        { id: initAuc.id, $or: [{ avatarId: { $exists: false } }, { avatarId: null }] },
+        { $set: { avatarId: initAuc.avatarId, itemType: initAuc.itemType } }
+      );
+    }
+
+    // 3. Ensure existing avatars have description if missing
+    for (const initAv of initialAvatars) {
+      if (initAv.description) {
+        await AvatarModel.updateOne(
+          { id: initAv.id, $or: [{ description: { $exists: false } }, { description: null }] },
+          { $set: { description: initAv.description } }
+        );
+      }
+    }
+
+    // 4. Ensure existing donors have contributionType if missing
+    for (const initDon of initialDonors) {
+      if (initDon.contributionType) {
+        await DonorModel.updateOne(
+          { id: initDon.id, $or: [{ contributionType: { $exists: false } }, { contributionType: null }] },
+          { $set: { contributionType: initDon.contributionType, albumSlug: initDon.albumSlug } }
+        );
+      }
+    }
+    console.log('[Database] Schema compatibility sync completed.');
+  } catch (err) {
+    console.warn('[Database] Schema compatibility sync notice:', err);
+  }
+};
+
 export const connectDatabase = async (): Promise<boolean> => {
   if (!env.MONGODB_URI) {
     console.warn('[Database] MONGODB_URI not provided. Running in in-memory fallback mode.');
@@ -121,6 +168,7 @@ export const connectDatabase = async (): Promise<boolean> => {
     dbConnected = true;
     console.log(`[Database] Successfully connected to MongoDB database.`);
     await seedInitialDataIfEmpty();
+    await syncDatabaseSchemas();
     return true;
   } catch (error) {
     dbConnected = false;

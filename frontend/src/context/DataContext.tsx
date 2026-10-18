@@ -73,17 +73,33 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
 
+const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
+  return list.map((a) => ({
+    ...a,
+    albumType:
+      a.albumType ||
+      (a.slug?.includes('auction')
+        ? 'auction'
+        : a.slug?.includes('alankaranalu') || a.slug?.includes('avatar')
+        ? 'avatars'
+        : a.slug?.includes('donor')
+        ? 'donors'
+        : 'general'),
+    photos: a.photos || []
+  }));
+};
+
   // Initialize from cache or sample data
   const [albums, setAlbums] = useState<AlbumRecord[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(STORAGE_KEYS.ALBUMS);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          return sanitizeAlbums(JSON.parse(saved));
         } catch {}
       }
     }
-    return sampleAlbums;
+    return sanitizeAlbums(sampleAlbums);
   });
 
   const [avatars, setAvatars] = useState<AvatarRecord[]>(() => {
@@ -185,7 +201,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           api.getAdminAuditLogs().catch(() => null)
         ]);
 
-        if (albData && albData.length > 0) setAlbums(albData);
+        if (albData && albData.length > 0) setAlbums(sanitizeAlbums(albData));
         if (avData && avData.length > 0) setAvatars(avData);
         if (aucData && aucData.length > 0) setAuctions(aucData);
         if (donData && donData.length > 0) setDonors(donData);
@@ -202,7 +218,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           api.getYears().catch(() => null)
         ]);
 
-        if (albData && albData.length > 0) setAlbums(albData);
+        if (albData && albData.length > 0) setAlbums(sanitizeAlbums(albData));
         if (avData && avData.length > 0) setAvatars(avData);
         if (aucData && aucData.length > 0) setAuctions(aucData);
         if (donData && donData.length > 0) setDonors(donData);
@@ -256,6 +272,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Send to central backend
     try {
       await api.saveAdminAlbum(album);
+      refreshData();
     } catch (err) {
       console.warn('[Data] Failed to sync album to backend:', err);
     }
@@ -332,6 +349,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       await api.saveAdminAvatar(avatar);
+      refreshData();
     } catch (err) {
       console.warn('[Data] Failed to sync avatar to backend:', err);
     }
@@ -461,6 +479,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       await api.saveAdminAuction(item);
+      refreshData();
     } catch (err) {
       console.warn('[Data] Failed to sync auction item to backend:', err);
     }

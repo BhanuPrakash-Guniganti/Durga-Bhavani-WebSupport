@@ -84,14 +84,22 @@ export const AlbumDetailPage: React.FC = () => {
   const localizedTitle = getLocalized(album.title);
   const localizedDesc = getLocalized(album.description);
 
+  // Robust albumType derivation: ensures page layout renders even if backend albumType was omitted
+  const effectiveAlbumType = album.albumType || (
+    album.slug?.includes('auction') ? 'auction' :
+    album.slug?.includes('alankaranalu') || album.slug?.includes('avatar') ? 'avatars' :
+    album.slug?.includes('donor') ? 'donors' : 'general'
+  );
+
   // For Devi Alankaranalu
   const sortedAvatars = [...avatars].sort((a, b) => a.sortOrder - b.sortOrder);
 
   // For Auction Winners
   const confirmedAuctions = auctions.filter((a) => a.status === 'published' && a.isComplete);
   const filteredConfirmedAuctions = confirmedAuctions.filter((item) => {
-    if (auctionFilter === 'sarees') return !!item.avatarId;
-    if (auctionFilter === 'additional') return !item.avatarId;
+    const isSaree = Boolean(item.avatarId || item.itemType === 'saree' || (item.sortOrder && item.sortOrder <= 10));
+    if (auctionFilter === 'sarees') return isSaree;
+    if (auctionFilter === 'additional') return !isSaree;
     return true;
   });
   const totalRaised = confirmedAuctions.reduce((acc, curr) => acc + (curr.winningAmount || 0), 0);
@@ -133,28 +141,28 @@ export const AlbumDetailPage: React.FC = () => {
                 <Calendar size={12} />
                 <span>{t('yearDetail.festivalYear', { year: album.year })}</span>
               </Link>
-              {album.albumType === 'avatars' && (
+              {effectiveAlbumType === 'avatars' && (
                 <span className="badge badge-gold">
                   <Flower2 size={12} />
                   <span>10 {currentLang === 'te' ? 'దివ్య అవతారాలు' : 'Daily Avatars'}</span>
                 </span>
               )}
-              {album.albumType === 'auction' && (
+              {effectiveAlbumType === 'auction' && (
                 <span className="badge badge-gold">
                   <Trophy size={12} />
                   <span>{confirmedAuctions.length} {currentLang === 'te' ? 'విజేతల రికార్డులు' : 'Confirmed Items'}</span>
                 </span>
               )}
-              {album.albumType === 'donors' && (
+              {effectiveAlbumType === 'donors' && (
                 <span className="badge badge-gold">
                   <HeartHandshake size={12} />
                   <span>{currentLang === 'te' ? 'దాతృత్వ రికార్డులు' : 'Sponsors Registry'}</span>
                 </span>
               )}
-              {album.albumType === 'general' && (
+              {effectiveAlbumType === 'general' && (
                 <span className="badge badge-gold">
                   <ImageIcon size={12} />
-                  <span>{t('albums.allPhotos', { count: album.photos.length })}</span>
+                  <span>{t('albums.allPhotos', { count: album.photos?.length || 0 })}</span>
                 </span>
               )}
             </div>
@@ -173,7 +181,7 @@ export const AlbumDetailPage: React.FC = () => {
         {/* =========================================================================
             ALBUM 1: DEVI ALANKARANALU (AVATARS VIEW)
             ========================================================================= */}
-        {album.albumType === 'avatars' && (
+        {effectiveAlbumType === 'avatars' && (
           <div style={{ marginBottom: 'var(--space-12)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '8px' }}>
               <div>
@@ -315,7 +323,7 @@ export const AlbumDetailPage: React.FC = () => {
         {/* =========================================================================
             ALBUM 2: AUCTION WINNERS VIEW
             ========================================================================= */}
-        {album.albumType === 'auction' && (
+        {effectiveAlbumType === 'auction' && (
           <div style={{ marginBottom: 'var(--space-12)' }}>
             {/* Total Raised Statistics Showcase */}
             <div
@@ -716,7 +724,7 @@ export const AlbumDetailPage: React.FC = () => {
         {/* =========================================================================
             ALBUM 3: DONORS & SPONSORS VIEW
             ========================================================================= */}
-        {album.albumType === 'donors' && (
+        {effectiveAlbumType === 'donors' && (
           <div style={{ marginBottom: 'var(--space-12)' }}>
             {publishedDonors.length === 0 ? (
               <div
@@ -779,7 +787,7 @@ export const AlbumDetailPage: React.FC = () => {
         {/* =========================================================================
             GENERAL PHOTO ALBUM VIEW (Standard photos grid)
             ========================================================================= */}
-        {album.albumType === 'general' && (
+        {effectiveAlbumType === 'general' && (
           <div style={{ marginBottom: 'var(--space-10)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
               <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: 0 }}>
@@ -791,7 +799,7 @@ export const AlbumDetailPage: React.FC = () => {
             </div>
 
             <div className="grid-3" role="region" aria-label={localizedTitle}>
-              {album.photos.map((photo, index) => {
+              {(album.photos || []).map((photo, index) => {
                 const photoCaption = getLocalized(photo.caption);
                 const photoAlt = getLocalized(photo.altText) || photoCaption;
                 return (
@@ -800,13 +808,13 @@ export const AlbumDetailPage: React.FC = () => {
                     className="card card-hover"
                     style={{ cursor: 'pointer', overflow: 'hidden' }}
                     onClick={() => {
-                      setActivePhotosList(album.photos);
+                      setActivePhotosList(album.photos || []);
                       setActivePhotoIndex(index);
                       setLightboxOpen(true);
                     }}
                     tabIndex={0}
                     role="button"
-                    aria-label={`${photoCaption} (${index + 1}/${album.photos.length})`}
+                    aria-label={`${photoCaption} (${index + 1}/${album.photos?.length || 0})`}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();

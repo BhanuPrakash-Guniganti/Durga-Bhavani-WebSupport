@@ -207,7 +207,7 @@ export const AdminAuctionsPage: React.FC = () => {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem) return;
 
@@ -238,7 +238,7 @@ export const AdminAuctionsPage: React.FC = () => {
       avatarName
     };
 
-    saveAuctionItem(toSave);
+    await saveAuctionItem(toSave);
     setEditingItem(null);
   };
 

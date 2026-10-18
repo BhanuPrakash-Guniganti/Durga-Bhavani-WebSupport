@@ -110,6 +110,16 @@ router.get('/years', async (_req: Request, res: Response) => {
   });
 });
 
+const ensureAlbumType = <T extends { slug?: string; albumType?: string }>(alb: T): T => {
+  if (!alb.albumType && alb.slug) {
+    alb.albumType =
+      alb.slug.includes('auction') ? 'auction' :
+      alb.slug.includes('alankaranalu') || alb.slug.includes('avatar') ? 'avatars' :
+      alb.slug.includes('donor') ? 'donors' : 'general';
+  }
+  return alb;
+};
+
 // GET /albums (Public)
 router.get('/albums', async (req: Request, res: Response) => {
   const { year } = req.query;
@@ -120,14 +130,14 @@ router.get('/albums', async (req: Request, res: Response) => {
       const filter: Record<string, unknown> = { status: 'published' };
       if (parsedYear) filter.year = parsedYear;
       const albums = await AlbumModel.find(filter).sort({ sortOrder: 1 }).lean();
-      res.status(200).json({ success: true, data: albums });
+      res.status(200).json({ success: true, data: albums.map(ensureAlbumType) });
       return;
     } catch {
       // fallback to memory
     }
   }
 
-  let result = albumsStore.filter((a) => a.status === 'published');
+  let result = albumsStore.filter((a) => a.status === 'published').map(ensureAlbumType);
   if (parsedYear) {
     result = result.filter((a) => a.year === parsedYear);
   }
@@ -141,7 +151,7 @@ router.get('/albums/:slug', async (req: Request, res: Response) => {
     try {
       const album = await AlbumModel.findOne({ slug: req.params.slug, status: 'published' }).lean();
       if (album) {
-        res.status(200).json({ success: true, data: album });
+        res.status(200).json({ success: true, data: ensureAlbumType(album) });
         return;
       }
     } catch {
@@ -157,7 +167,7 @@ router.get('/albums/:slug', async (req: Request, res: Response) => {
     });
     return;
   }
-  res.status(200).json({ success: true, data: album });
+  res.status(200).json({ success: true, data: ensureAlbumType(album) });
 });
 
 // GET /avatars (Public: 10 daily avatars)
@@ -225,7 +235,17 @@ router.get('/auctions', async (req: Request, res: Response) => {
       if (parsedYear) filter.year = parsedYear;
       if (albumSlug) filter.albumSlug = albumSlug;
       const auctions = await AuctionItemModel.find(filter).sort({ sortOrder: 1 }).lean();
-      res.status(200).json({ success: true, data: auctions });
+      const sanitized = auctions.map((auc) => {
+        if (!auc.avatarId) {
+          const match = initialAuctionItems.find((init) => init.id === auc.id);
+          if (match?.avatarId) {
+            auc.avatarId = match.avatarId;
+            auc.itemType = match.itemType;
+          }
+        }
+        return auc;
+      });
+      res.status(200).json({ success: true, data: sanitized });
       return;
     } catch {
       // fallback
@@ -293,13 +313,13 @@ router.get('/admin/albums', requireAuth, async (_req: Request, res: Response) =>
   if (isDbConnected()) {
     try {
       const albums = await AlbumModel.find({}).sort({ sortOrder: 1 }).lean();
-      res.status(200).json({ success: true, data: albums });
+      res.status(200).json({ success: true, data: albums.map(ensureAlbumType) });
       return;
     } catch {
       // fallback
     }
   }
-  res.status(200).json({ success: true, data: albumsStore });
+  res.status(200).json({ success: true, data: albumsStore.map(ensureAlbumType) });
 });
 
 router.post('/admin/albums', requireAuth, requirePublisher, async (req: Request, res: Response) => {
@@ -334,7 +354,7 @@ router.patch('/admin/albums/:id', requireAuth, requirePublisher, async (req: Req
       const doc = await AlbumModel.findOneAndUpdate(
         { id: req.params.id },
         { $set: req.body },
-        { new: true }
+        { new: true, upsert: true }
       ).lean();
       if (doc) updatedRecord = doc as unknown as IAlbum;
     } catch (err) {
@@ -416,7 +436,7 @@ router.patch('/admin/avatars/:id', requireAuth, requirePublisher, async (req: Re
       const doc = await AvatarModel.findOneAndUpdate(
         { id: req.params.id },
         { $set: req.body },
-        { new: true }
+        { new: true, upsert: true }
       ).lean();
       if (doc) updatedRecord = doc as unknown as IAvatar;
     } catch (err) {
@@ -504,7 +524,7 @@ router.patch('/admin/auctions/:id', requireAuth, requirePublisher, async (req: R
       const doc = await AuctionItemModel.findOneAndUpdate(
         { id: req.params.id },
         { $set: req.body },
-        { new: true }
+        { new: true, upsert: true }
       ).lean();
       if (doc) updatedRecord = doc as unknown as IAuctionItem;
     } catch (err) {
@@ -592,7 +612,7 @@ router.patch('/admin/donors/:id', requireAuth, requirePublisher, async (req: Req
       const doc = await DonorModel.findOneAndUpdate(
         { id: req.params.id },
         { $set: req.body },
-        { new: true }
+        { new: true, upsert: true }
       ).lean();
       if (doc) updatedRecord = doc as unknown as IDonor;
     } catch (err) {
