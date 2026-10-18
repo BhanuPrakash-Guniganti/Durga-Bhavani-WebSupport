@@ -1,69 +1,73 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { AdminUser } from '../types';
+import { api, getStoredUser, getStoredToken, clearStoredAuth } from '../services/api';
 
 interface AuthContextType {
   user: AdminUser | null;
   isAuthenticated: boolean;
-  login: (email: string, role?: AdminUser['role'], name?: string) => void;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, password?: string) => Promise<void>;
+  logout: () => Promise<void>;
   canPublish: () => boolean;
   canDelete: () => boolean;
   canUpload: () => boolean;
   canManageUsers: () => boolean;
 }
 
-const AUTH_STORAGE_KEY = 'durga_bhavani_admin_user';
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AdminUser | null>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          // ignore corrupted data
-        }
-      }
-    }
-    // Default logged in admin for preview / testing
-    return {
-      id: 'usr-admin-01',
-      name: 'Temple Committee Admin',
-      email: 'admin@dodlapahad.org',
-      role: 'super-admin',
-      active: true
-    };
-  });
+  const [user, setUser] = useState<AdminUser | null>(() => getStoredUser());
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Validate stored session with backend on initial mount
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-    }
-  }, [user]);
+    const initAuth = async () => {
+      const token = getStoredToken();
+      if (!token) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
 
-  const login = (email: string, role: AdminUser['role'] = 'super-admin', name?: string) => {
-    const newUser: AdminUser = {
-      id: `usr-${Date.now()}`,
-      name: name || (email.split('@')[0] || 'Administrator'),
-      email,
-      role,
-      active: true
+      try {
+        const currentUser = await api.getCurrentUser();
+        setUser(currentUser);
+      } catch (err) {
+        console.warn('[Auth] Stored session invalid or expired:', err);
+        clearStoredAuth();
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    setUser(newUser);
+
+    initAuth();
+  }, []);
+
+  const login = async (email: string, password = 'DurgaBhavani@2025') => {
+    setIsLoading(true);
+    try {
+      const res = await api.login(email, password);
+      setUser(res.user);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      await api.logout();
+    } finally {
+      setUser(null);
+      setIsLoading(false);
+    }
   };
 
   const canPublish = () => user?.role === 'super-admin' || user?.role === 'editor';
   const canDelete = () => user?.role === 'super-admin';
-  const canUpload = () => !!user; // all roles can upload photos
+  const canUpload = () => !!user; // all authorized roles can upload photos
   const canManageUsers = () => user?.role === 'super-admin';
 
   return (
@@ -71,6 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         isAuthenticated: !!user,
+        isLoading,
         login,
         logout,
         canPublish,

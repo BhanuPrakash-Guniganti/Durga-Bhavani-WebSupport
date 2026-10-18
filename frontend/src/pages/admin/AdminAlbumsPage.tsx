@@ -238,11 +238,11 @@ export const AdminAlbumsPage: React.FC = () => {
           <div
             className="card"
             style={{
-              maxWidth: '650px',
+              maxWidth: 'min(650px, 95vw)',
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              padding: 'var(--space-8)'
+              padding: 'clamp(14px, 3vw, 32px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>

@@ -92,7 +92,7 @@ export const AdminAuditLogsPage: React.FC = () => {
       </div>
 
       {/* Logs Table */}
-      <div className="card" style={{ padding: 'var(--space-6)', overflowX: 'auto' }}>
+      <div className="card table-responsive" style={{ padding: 'clamp(10px, 2vw, 24px)', overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
           <thead>
             <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -13,18 +13,49 @@ import {
   Menu,
   X,
   LogOut,
-  UserCheck
+  UserCheck,
+  Database,
+  CloudOff
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
 import { useAppLanguage } from '../../i18n';
-import type { AdminUser } from '../../types';
 
 export const AdminLayout: React.FC = () => {
-  const { user, logout, login } = useAuth();
+  const { user, logout } = useAuth();
+  const { isBackendConnected } = useData();
   const { currentLang, toggleLanguage } = useAppLanguage();
   const location = useLocation();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileDrawerOpen(false);
+  }, [location.pathname]);
+
+  // Handle Escape key to close mobile drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileDrawerOpen) {
+        setMobileDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileDrawerOpen]);
+
+  // Lock body scroll when drawer is open on mobile
+  useEffect(() => {
+    if (mobileDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileDrawerOpen]);
 
   const navItems = [
     {
@@ -60,18 +91,47 @@ export const AdminLayout: React.FC = () => {
     }
   ];
 
-  const handleRoleChange = (role: AdminUser['role']) => {
-    login(user?.email || 'admin@dodlapahad.org', role, user?.name);
+  const handleLogout = async () => {
+    await logout();
+    navigate('/admin/login');
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const renderNavLinks = (onItemClick?: () => void) => (
+    <nav style={{ flex: 1, padding: 'var(--space-3) 0', overflowY: 'auto' }}>
+      {navItems.map((item) => {
+        const isActive = item.exact
+          ? location.pathname === item.to
+          : location.pathname.startsWith(item.to);
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            onClick={onItemClick}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 20px',
+              color: isActive ? '#FFE082' : '#E0D6C8',
+              background: isActive ? 'rgba(212, 175, 55, 0.18)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--color-gold-primary)' : '4px solid transparent',
+              textDecoration: 'none',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: isActive ? 600 : 400,
+              transition: 'all 0.15s ease'
+            }}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-cream-bg)' }}>
-      {/* Sidebar for Desktop */}
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-cream-bg)', position: 'relative' }}>
+      {/* 1. DESKTOP STICKY SIDEBAR (Hidden on screens <= 900px) */}
       <aside
         style={{
           width: '260px',
@@ -114,67 +174,32 @@ export const AdminLayout: React.FC = () => {
           </div>
         </div>
 
-        {/* User Card & Role Switcher */}
-        <div style={{ padding: 'var(--space-4) var(--space-6)', background: 'rgba(0, 0, 0, 0.25)', borderBottom: '1px solid rgba(212, 175, 55, 0.2)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+        {/* User Card */}
+        <div style={{ padding: 'var(--space-3) var(--space-6)', background: 'rgba(0, 0, 0, 0.25)', borderBottom: '1px solid rgba(212, 175, 55, 0.2)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <ShieldCheck size={16} color="var(--color-gold-primary)" />
             <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600, color: '#FFF' }}>
-              {user?.name || 'Admin User'}
+              {user?.name || user?.email}
             </span>
           </div>
-
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '11px', color: '#D6C8B8' }}>Role:</span>
-            <select
-              value={user?.role || 'super-admin'}
-              onChange={(e) => handleRoleChange(e.target.value as AdminUser['role'])}
-              style={{
-                fontSize: '11px',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                background: '#2B0404',
-                color: '#FFE082',
-                border: '1px solid var(--color-gold-dark)'
-              }}
-              title="Switch role for testing permissions"
-            >
-              <option value="super-admin">Super Admin</option>
-              <option value="editor">Editor</option>
-              <option value="media-manager">Media Manager</option>
-            </select>
+            <span className="badge" style={{ background: 'var(--color-maroon-primary)', color: '#FFF', fontSize: '10px', padding: '2px 6px' }}>
+              {user?.role.toUpperCase()}
+            </span>
+            {isBackendConnected ? (
+              <span title="Backend connected & shared across devices" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: '#81C784' }}>
+                <Database size={12} /> Live
+              </span>
+            ) : (
+              <span title="Operating with local cache" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '10px', color: '#FFB74D' }}>
+                <CloudOff size={12} /> Cache
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Nav Links */}
-        <nav style={{ flex: 1, padding: 'var(--space-4) 0', overflowY: 'auto' }}>
-          {navItems.map((item) => {
-            const isActive = item.exact
-              ? location.pathname === item.to
-              : location.pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 24px',
-                  color: isActive ? '#FFE082' : '#E0D6C8',
-                  background: isActive ? 'rgba(212, 175, 55, 0.15)' : 'transparent',
-                  borderLeft: isActive ? '4px solid var(--color-gold-primary)' : '4px solid transparent',
-                  textDecoration: 'none',
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: isActive ? 600 : 400,
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Desktop Nav Links */}
+        {renderNavLinks()}
 
         {/* Bottom Actions */}
         <div style={{ padding: 'var(--space-4) var(--space-6)', borderTop: '1px solid rgba(212, 175, 55, 0.2)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -220,15 +245,150 @@ export const AdminLayout: React.FC = () => {
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      {/* 2. MOBILE DRAWER OVERLAY & SLIDING DRAWER */}
+      {mobileDrawerOpen && (
+        <div
+          className="admin-drawer-backdrop show-mobile"
+          onClick={() => setMobileDrawerOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {mobileDrawerOpen && (
+        <aside
+          className="admin-drawer show-mobile"
+          role="dialog"
+          aria-modal="true"
+          aria-label={currentLang === 'te' ? 'నిర్వాహక నావిగేషన్ మెను' : 'Admin navigation menu'}
+        >
+          {/* Drawer Header with Close Button */}
+          <div
+            style={{
+              padding: 'var(--space-4) var(--space-5)',
+              borderBottom: '1px solid rgba(212, 175, 55, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: 'var(--radius-full)',
+                  background: 'var(--color-gold-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-maroon-dark)',
+                  fontWeight: 700
+                }}
+              >
+                🔱
+              </div>
+              <div style={{ fontWeight: 700, fontSize: 'var(--font-size-sm)', color: '#FFE082' }}>
+                {currentLang === 'te' ? 'అడ్మిన్ మెను' : 'Admin Menu'}
+              </div>
+            </div>
+
+            {/* Clearly Visible Close Button */}
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen(false)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                borderRadius: 'var(--radius-md)',
+                color: '#FFE082',
+                cursor: 'pointer',
+                padding: '6px 10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '12px'
+              }}
+              aria-label="Close navigation menu"
+            >
+              <X size={18} />
+              <span>{currentLang === 'te' ? 'మూసివేయి' : 'Close'}</span>
+            </button>
+          </div>
+
+          {/* User Badge */}
+          <div style={{ padding: 'var(--space-3) var(--space-5)', background: 'rgba(0,0,0,0.25)', borderBottom: '1px solid rgba(212, 175, 55, 0.15)' }}>
+            <div style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600, color: '#FFF', marginBottom: '2px' }}>
+              {user?.name || user?.email}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="badge" style={{ background: 'var(--color-maroon-primary)', color: '#FFF', fontSize: '10px', padding: '1px 6px' }}>
+                {user?.role.toUpperCase()}
+              </span>
+              <span style={{ fontSize: '10px', color: isBackendConnected ? '#81C784' : '#FFB74D' }}>
+                {isBackendConnected ? '● Online' : '○ Offline Cache'}
+              </span>
+            </div>
+          </div>
+
+          {/* Navigation Links inside Mobile Drawer */}
+          {renderNavLinks(() => setMobileDrawerOpen(false))}
+
+          {/* Drawer Footer Actions */}
+          <div style={{ padding: 'var(--space-4) var(--space-5)', borderTop: '1px solid rgba(212, 175, 55, 0.2)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="btn btn-secondary btn-sm"
+              style={{ width: '100%', justifyContent: 'center', gap: '6px', fontSize: '12px', padding: '8px' }}
+            >
+              <Globe size={14} />
+              <span>{currentLang === 'en' ? 'తెలుగులోకి మార్చండి' : 'Switch to English'}</span>
+            </button>
+
+            <Link
+              to="/years/2025"
+              target="_blank"
+              onClick={() => setMobileDrawerOpen(false)}
+              className="btn btn-gold btn-sm"
+              style={{ width: '100%', justifyContent: 'center', gap: '6px', fontSize: '12px', padding: '8px' }}
+            >
+              <ExternalLink size={14} />
+              <span>{currentLang === 'te' ? '2025 పబ్లిక్ సైట్' : 'Public 2025 Site'}</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              style={{
+                background: 'rgba(255, 82, 82, 0.15)',
+                border: '1px solid #FF5252',
+                borderRadius: 'var(--radius-md)',
+                color: '#FF8A80',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                fontSize: '12px',
+                cursor: 'pointer',
+                padding: '8px'
+              }}
+            >
+              <LogOut size={14} />
+              <span>{currentLang === 'te' ? 'లాగ్ అవుట్' : 'Log Out'}</span>
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* 3. MAIN CONTENT VIEWPORT */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%', overflowX: 'hidden' }}>
         {/* Top Navbar */}
         <header
           style={{
-            height: '64px',
+            height: '60px',
             background: 'var(--color-surface)',
             borderBottom: '1px solid var(--color-border-subtle)',
-            padding: '0 var(--space-6)',
+            padding: '0 var(--space-4)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -237,29 +397,51 @@ export const AdminLayout: React.FC = () => {
             zIndex: 30
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Mobile Menu Toggle Button with clear visual icon & tap area */}
             <button
               type="button"
               className="show-mobile"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setMobileDrawerOpen(true)}
               style={{
-                background: 'none',
-                border: 'none',
+                background: 'rgba(128, 0, 32, 0.08)',
+                border: '1px solid var(--color-gold-dark)',
+                borderRadius: 'var(--radius-md)',
                 cursor: 'pointer',
-                color: 'var(--color-maroon-primary)'
+                color: 'var(--color-maroon-primary)',
+                padding: '8px 10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                minHeight: '40px'
               }}
-              aria-label="Toggle navigation menu"
+              aria-label="Open navigation menu"
+              aria-expanded={mobileDrawerOpen}
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <Menu size={20} />
+              <span style={{ fontSize: '12px', fontWeight: 600 }}>
+                {currentLang === 'te' ? 'మెను' : 'Menu'}
+              </span>
             </button>
-            <h1 style={{ fontSize: 'var(--font-size-base)', margin: 0, fontWeight: 700, color: 'var(--color-maroon-primary)' }}>
-              {currentLang === 'te' ? 'శ్రీ దుర్గాభవాని సేవా సమితి - అడ్మిన్ డ్యాష్‌బోర్డ్' : 'Durga Bhavani Seva Samiti - Admin Dashboard'}
+
+            <h1
+              style={{
+                fontSize: 'clamp(0.85rem, 3vw, 1.05rem)',
+                margin: 0,
+                fontWeight: 700,
+                color: 'var(--color-maroon-primary)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              {currentLang === 'te' ? 'అడ్మిన్ పోర్టల్' : 'Admin Portal'}
             </h1>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
-              className="badge"
+              className="badge hide-mobile"
               style={{
                 background: user?.role === 'super-admin' ? 'var(--color-maroon-primary)' : 'var(--color-gold-dark)',
                 color: '#FFF',
@@ -283,68 +465,17 @@ export const AdminLayout: React.FC = () => {
           </div>
         </header>
 
-        {/* Mobile Drawer Menu */}
-        {mobileMenuOpen && (
-          <div
-            className="show-mobile"
-            style={{
-              position: 'fixed',
-              top: '64px',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'var(--color-maroon-dark)',
-              zIndex: 50,
-              padding: 'var(--space-6)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--space-4)'
-            }}
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 16px',
-                  color: '#FFE082',
-                  textDecoration: 'none',
-                  fontSize: 'var(--font-size-base)',
-                  borderBottom: '1px solid rgba(212, 175, 55, 0.2)'
-                }}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
-
-            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <Link
-                to="/years/2025"
-                onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-gold btn-sm"
-                style={{ justifyContent: 'center' }}
-              >
-                {currentLang === 'te' ? 'పబ్లిక్ 2025 సైట్ చూడండి' : 'View Public 2025 Site'}
-              </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="btn btn-secondary btn-sm"
-                style={{ justifyContent: 'center' }}
-              >
-                {currentLang === 'te' ? 'లాగ్ అవుట్' : 'Log Out'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Main Content Body */}
-        <main style={{ flex: 1, padding: 'var(--space-8)', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+        {/* Main Content Body - Responsive Padding across 320px to Desktop */}
+        <main
+          style={{
+            flex: 1,
+            padding: 'clamp(12px, 3vw, 32px)',
+            maxWidth: '1400px',
+            width: '100%',
+            margin: '0 auto',
+            boxSizing: 'border-box'
+          }}
+        >
           <Outlet />
         </main>
       </div>

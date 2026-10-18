@@ -11,7 +11,11 @@ const envSchema = z.object({
   JWT_SECRET: z.string().default('development_insecure_jwt_secret_min_32_chars_long'),
   CLOUDINARY_CLOUD_NAME: z.string().optional().default(''),
   CLOUDINARY_API_KEY: z.string().optional().default(''),
-  CLOUDINARY_API_SECRET: z.string().optional().default('')
+  CLOUDINARY_API_SECRET: z.string().optional().default(''),
+  ADMIN_ALLOWED_EMAILS: z.string().default('admin@durgabhavani-dodlapahad.org,admin@dodlapahad.org'),
+  INITIAL_ADMIN_EMAIL: z.string().default('admin@durgabhavani-dodlapahad.org'),
+  INITIAL_ADMIN_PASSWORD: z.string().default('DurgaBhavani@2025'),
+  INITIAL_ADMIN_NAME: z.string().default('Super Administrator')
 });
 
 export const env = envSchema.parse(process.env);

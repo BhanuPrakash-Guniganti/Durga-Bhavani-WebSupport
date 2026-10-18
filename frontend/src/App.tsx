@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import { PublicLayout } from './components/layout/PublicLayout';
 import { AdminLayout } from './components/layout/AdminLayout';
+import { ProtectedRoute } from './components/admin/ProtectedRoute';
 
 // Public Pages
 import { HomePage } from './pages/HomePage';
@@ -19,6 +20,7 @@ import { ContactPage } from './pages/ContactPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 // Admin Pages
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminAlbumsPage } from './pages/admin/AdminAlbumsPage';
 import { AdminAvatarsPage } from './pages/admin/AdminAvatarsPage';
@@ -47,8 +49,18 @@ export const App: React.FC = () => {
               <Route path="*" element={<NotFoundPage />} />
             </Route>
 
-            {/* Admin Management Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
+            {/* Admin Login Route (Publicly accessible to authenticating admins) */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+
+            {/* Private Admin Management Routes (Protected by session verification) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<AdminDashboardPage />} />
               <Route path="dashboard" element={<AdminDashboardPage />} />
               <Route path="albums" element={<AdminAlbumsPage />} />

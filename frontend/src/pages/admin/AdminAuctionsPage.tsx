@@ -13,7 +13,8 @@ import {
   Upload,
   FolderKanban,
   Check,
-  Search
+  Search,
+  Loader2
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
@@ -21,6 +22,7 @@ import { useAppLanguage } from '../../i18n';
 import { BilingualField } from '../../components/admin/BilingualField';
 import { formatRupees, type AuctionItemRecord, type LocalizedString } from '../../types';
 import { createSampleSvgImage } from '../../data/sampleData';
+import { api } from '../../services/api';
 
 const isTelugu = (text?: string) => !!text && /[\u0C00-\u0C7F]/.test(text);
 
@@ -36,6 +38,8 @@ export const AdminAuctionsPage: React.FC = () => {
   const [mediaSelectorOpen, setMediaSelectorOpen] = useState(false);
   const [mediaCategoryFilter, setMediaCategoryFilter] = useState<'all' | 'auctions' | 'avatars' | 'albums' | 'motifs'>('all');
   const [mediaSearchQuery, setMediaSearchQuery] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   // Filter logic
   const filteredAuctions = auctions.filter((item) => {
@@ -177,9 +181,20 @@ export const AdminAuctionsPage: React.FC = () => {
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setUploadingImage(true);
+    setUploadError(null);
+
+    try {
+      const res = await api.uploadImage(file, 'durga-bhavani/auctions');
+      setEditingItem((prev) => (prev ? { ...prev, photoUrl: res.url, photoPublicId: res.publicId } : null));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Image upload failed';
+      setUploadError(msg);
+      // Fallback to local data URL so admin preview still works
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
@@ -187,6 +202,8 @@ export const AdminAuctionsPage: React.FC = () => {
         }
       };
       reader.readAsDataURL(file);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -342,7 +359,7 @@ export const AdminAuctionsPage: React.FC = () => {
       </div>
 
       {/* Auction Records Table */}
-      <div className="card" style={{ padding: 'var(--space-6)', overflowX: 'auto' }}>
+      <div className="card table-responsive" style={{ padding: 'clamp(10px, 2vw, 24px)', overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
           <thead>
             <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>
@@ -548,11 +565,11 @@ export const AdminAuctionsPage: React.FC = () => {
           <div
             className="card"
             style={{
-              maxWidth: '680px',
+              maxWidth: 'min(680px, 95vw)',
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              padding: 'var(--space-8)'
+              padding: 'clamp(14px, 3vw, 32px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
@@ -854,16 +871,19 @@ export const AdminAuctionsPage: React.FC = () => {
                       </button>
 
                       {/* Upload from Device */}
-                      <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <Upload size={14} />
+                      <label className="btn btn-secondary btn-sm" style={{ cursor: uploadingImage ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        {uploadingImage ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                         <span>
-                          {editingItem.photoUrl && editingItem.photoUrl.trim().length > 0
-                            ? t('auctions.replaceImage')
-                            : t('auctions.uploadImage')}
+                          {uploadingImage
+                            ? (currentLang === 'te' ? 'అప్‌లోడ్ అవుతోంది...' : 'Uploading...')
+                            : (editingItem.photoUrl && editingItem.photoUrl.trim().length > 0
+                                ? t('auctions.replaceImage')
+                                : t('auctions.uploadImage'))}
                         </span>
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={uploadingImage}
                           onChange={handleImageUpload}
                           style={{ display: 'none' }}
                         />
@@ -881,6 +901,12 @@ export const AdminAuctionsPage: React.FC = () => {
                         </button>
                       )}
                     </div>
+
+                    {uploadError && (
+                      <div style={{ color: 'var(--color-danger)', fontSize: '11px', marginBottom: '6px' }}>
+                        ⚠️ {uploadError}
+                      </div>
+                    )}
 
                     <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
                       {currentLang === 'te'

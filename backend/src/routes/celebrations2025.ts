@@ -11,21 +11,41 @@ import {
   type IDonor,
   type IAuditLog
 } from '../data/celebrations2025.js';
+import { isDbConnected } from '../config/db.js';
+import {
+  YearModel,
+  AlbumModel,
+  AvatarModel,
+  AuctionItemModel,
+  DonorModel,
+  AuditLogModel,
+  SiteContentModel
+} from '../models/CelebrationModels.js';
+import { requireAuth, requirePublisher } from '../middleware/auth.js';
 
 const router = Router();
 
-// In-memory data store initialized with 2025 celebration records
+// In-memory fallback data store initialized with 2025 celebration records
 let albumsStore: IAlbum[] = [...initialAlbums];
 let avatarsStore: IAvatar[] = [...initialAvatars];
 let auctionsStore: IAuctionItem[] = [...initialAuctionItems];
 let donorsStore: IDonor[] = [...initialDonors];
 let auditLogsStore: IAuditLog[] = [...initialAuditLogs];
 
-const addAudit = (action: IAuditLog['action'], resourceType: string, id?: string, title?: string, details?: string) => {
+const addAudit = async (
+  req: Request,
+  action: IAuditLog['action'],
+  resourceType: string,
+  id?: string,
+  title?: string,
+  details?: string
+) => {
+  const actorName = req.user?.name || 'Temple Committee Admin';
+  const actorRole = req.user?.role || 'super-admin';
   const log: IAuditLog = {
     id: `audit-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    actorName: 'Admin Committee',
-    actorRole: 'super-admin',
+    actorName,
+    actorRole,
     action,
     resourceType,
     resourceId: id,
@@ -34,14 +54,34 @@ const addAudit = (action: IAuditLog['action'], resourceType: string, id?: string
     details
   };
   auditLogsStore = [log, ...auditLogsStore];
+
+  if (isDbConnected()) {
+    try {
+      await AuditLogModel.create(log);
+    } catch (err) {
+      console.warn('[AuditLog] Failed to persist log entry to DB:', err);
+    }
+  }
 };
 
 // ============================================================================
-// 1. PUBLIC ENDPOINTS (Read-Only, Published Status Enforced)
+// 1. PUBLIC ENDPOINTS (Read-Only, Strictly Published Status Enforced)
 // ============================================================================
 
 // GET /years
-router.get('/years', (_req: Request, res: Response) => {
+router.get('/years', async (_req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const years = await YearModel.find({ status: 'published' }).sort({ year: -1 }).lean();
+      if (years.length > 0) {
+        res.status(200).json({ success: true, data: years });
+        return;
+      }
+    } catch {
+      // fallback to memory
+    }
+  }
+
   res.status(200).json({
     success: true,
     data: [
@@ -71,20 +111,44 @@ router.get('/years', (_req: Request, res: Response) => {
 });
 
 // GET /albums (Public)
-router.get('/albums', (req: Request, res: Response) => {
+router.get('/albums', async (req: Request, res: Response) => {
   const { year } = req.query;
-  let result = albumsStore.filter((a) => a.status === 'published');
-  if (year) {
-    result = result.filter((a) => a.year === parseInt(year as string, 10));
+  const parsedYear = year ? parseInt(year as string, 10) : undefined;
+
+  if (isDbConnected()) {
+    try {
+      const filter: Record<string, unknown> = { status: 'published' };
+      if (parsedYear) filter.year = parsedYear;
+      const albums = await AlbumModel.find(filter).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: albums });
+      return;
+    } catch {
+      // fallback to memory
+    }
   }
-  res.status(200).json({
-    success: true,
-    data: result
-  });
+
+  let result = albumsStore.filter((a) => a.status === 'published');
+  if (parsedYear) {
+    result = result.filter((a) => a.year === parsedYear);
+  }
+  result.sort((a, b) => a.sortOrder - b.sortOrder);
+  res.status(200).json({ success: true, data: result });
 });
 
 // GET /albums/:slug (Public)
-router.get('/albums/:slug', (req: Request, res: Response) => {
+router.get('/albums/:slug', async (req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const album = await AlbumModel.findOne({ slug: req.params.slug, status: 'published' }).lean();
+      if (album) {
+        res.status(200).json({ success: true, data: album });
+        return;
+      }
+    } catch {
+      // fallback to memory
+    }
+  }
+
   const album = albumsStore.find((a) => a.slug === req.params.slug && a.status === 'published');
   if (!album) {
     res.status(404).json({
@@ -93,31 +157,52 @@ router.get('/albums/:slug', (req: Request, res: Response) => {
     });
     return;
   }
-  res.status(200).json({
-    success: true,
-    data: album
-  });
+  res.status(200).json({ success: true, data: album });
 });
 
 // GET /avatars (Public: 10 daily avatars)
-router.get('/avatars', (req: Request, res: Response) => {
+router.get('/avatars', async (req: Request, res: Response) => {
   const { year, albumSlug } = req.query;
+  const parsedYear = year ? parseInt(year as string, 10) : undefined;
+
+  if (isDbConnected()) {
+    try {
+      const filter: Record<string, unknown> = { status: 'published' };
+      if (parsedYear) filter.year = parsedYear;
+      if (albumSlug) filter.albumSlug = albumSlug;
+      const avatars = await AvatarModel.find(filter).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: avatars });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+
   let result = avatarsStore.filter((av) => av.status === 'published');
-  if (year) {
-    result = result.filter((av) => av.year === parseInt(year as string, 10));
+  if (parsedYear) {
+    result = result.filter((av) => av.year === parsedYear);
   }
   if (albumSlug) {
     result = result.filter((av) => av.albumSlug === albumSlug);
   }
   result.sort((a, b) => a.sortOrder - b.sortOrder);
-  res.status(200).json({
-    success: true,
-    data: result
-  });
+  res.status(200).json({ success: true, data: result });
 });
 
 // GET /avatars/:id
-router.get('/avatars/:id', (req: Request, res: Response) => {
+router.get('/avatars/:id', async (req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const avatar = await AvatarModel.findOne({ id: req.params.id, status: 'published' }).lean();
+      if (avatar) {
+        res.status(200).json({ success: true, data: avatar });
+        return;
+      }
+    } catch {
+      // fallback
+    }
+  }
+
   const avatar = avatarsStore.find((av) => av.id === req.params.id && av.status === 'published');
   if (!avatar) {
     res.status(404).json({
@@ -126,225 +211,467 @@ router.get('/avatars/:id', (req: Request, res: Response) => {
     });
     return;
   }
-  res.status(200).json({
-    success: true,
-    data: avatar
-  });
+  res.status(200).json({ success: true, data: avatar });
 });
 
 // GET /auctions (Public: ONLY confirmed published records returned!)
-router.get('/auctions', (req: Request, res: Response) => {
+router.get('/auctions', async (req: Request, res: Response) => {
   const { year, albumSlug } = req.query;
-  // Enforce rule: Do not display incomplete records as confirmed winners on the public website.
+  const parsedYear = year ? parseInt(year as string, 10) : undefined;
+
+  if (isDbConnected()) {
+    try {
+      const filter: Record<string, unknown> = { status: 'published', isComplete: true };
+      if (parsedYear) filter.year = parsedYear;
+      if (albumSlug) filter.albumSlug = albumSlug;
+      const auctions = await AuctionItemModel.find(filter).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: auctions });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+
   let result = auctionsStore.filter((auc) => auc.status === 'published' && auc.isComplete);
-  if (year) {
-    result = result.filter((auc) => auc.year === parseInt(year as string, 10));
+  if (parsedYear) {
+    result = result.filter((auc) => auc.year === parsedYear);
   }
   if (albumSlug) {
     result = result.filter((auc) => auc.albumSlug === albumSlug);
   }
   result.sort((a, b) => a.sortOrder - b.sortOrder);
-  res.status(200).json({
-    success: true,
-    data: result
-  });
+  res.status(200).json({ success: true, data: result });
 });
 
 // GET /donors (Public)
-router.get('/donors', (req: Request, res: Response) => {
+router.get('/donors', async (req: Request, res: Response) => {
   const { year } = req.query;
+  const parsedYear = year ? parseInt(year as string, 10) : undefined;
+
+  if (isDbConnected()) {
+    try {
+      const filter: Record<string, unknown> = { status: 'published' };
+      if (parsedYear) filter.year = parsedYear;
+      const donors = await DonorModel.find(filter).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: donors });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+
   let result = donorsStore.filter((d) => d.status === 'published');
-  if (year) {
-    result = result.filter((d) => d.year === parseInt(year as string, 10));
+  if (parsedYear) {
+    result = result.filter((d) => d.year === parsedYear);
   }
   result.sort((a, b) => a.sortOrder - b.sortOrder);
-  res.status(200).json({
-    success: true,
-    data: result
-  });
+  res.status(200).json({ success: true, data: result });
 });
 
-// ============================================================================
-// 2. AUTHENTICATION ENDPOINTS
-// ============================================================================
-
-router.post('/auth/login', (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  // Standard development / preview auth validation
-  if (email && (password === 'DurgaBhavani@2025' || password === 'admin123' || !password)) {
-    res.status(200).json({
-      success: true,
-      data: {
-        user: {
-          id: 'usr-admin-01',
-          name: 'Temple Committee Admin',
-          email: email || 'admin@dodlapahad.org',
-          role: 'super-admin'
-        },
-        token: 'mock_jwt_session_token_durga_bhavani_2025'
+// GET /content/:sectionKey (Public site content)
+router.get('/content/:sectionKey', async (req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const content = await SiteContentModel.findOne({ sectionKey: req.params.sectionKey }).lean();
+      if (content) {
+        res.status(200).json({ success: true, data: content.data });
+        return;
       }
-    });
-    return;
+    } catch {
+      // fallback
+    }
   }
-  res.status(401).json({
-    success: false,
-    error: { code: 'INVALID_CREDENTIALS', message: 'Invalid admin credentials.' }
-  });
+  res.status(200).json({ success: true, data: null });
 });
 
 // ============================================================================
-// 3. ADMIN ENDPOINTS (Full CRUD, Draft Visibility, Audit Logging)
+// 2. ADMIN ENDPOINTS (Protected with requireAuth & Role Permissions)
 // ============================================================================
 
-// GET /admin/albums
-router.get('/admin/albums', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: albumsStore
-  });
+// --- ALBUMS ---
+router.get('/admin/albums', requireAuth, async (_req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const albums = await AlbumModel.find({}).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: albums });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+  res.status(200).json({ success: true, data: albumsStore });
 });
 
-// POST /admin/albums
-router.post('/admin/albums', (req: Request, res: Response) => {
+router.post('/admin/albums', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const newAlbum: IAlbum = {
     ...req.body,
-    id: `alb-${Date.now()}`
+    id: req.body.id || `alb-${Date.now()}`
   };
   albumsStore.push(newAlbum);
-  addAudit('create', 'Album', newAlbum.id, newAlbum.title.en, `Created album "${newAlbum.title.en}".`);
+
+  if (isDbConnected()) {
+    try {
+      await AlbumModel.create(newAlbum);
+    } catch (err) {
+      console.error('[DB] Failed to save album:', err);
+    }
+  }
+
+  await addAudit(req, 'create', 'Album', newAlbum.id, newAlbum.title?.en, `Created album "${newAlbum.title?.en}".`);
   res.status(201).json({ success: true, data: newAlbum });
 });
 
-// PATCH /admin/albums/:id
-router.patch('/admin/albums/:id', (req: Request, res: Response) => {
+router.patch('/admin/albums/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const idx = albumsStore.findIndex((a) => a.id === req.params.id);
-  if (idx < 0) {
-    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Album not found' } });
+  if (idx >= 0) {
+    albumsStore[idx] = { ...albumsStore[idx], ...req.body };
+  }
+
+  let updatedRecord: IAlbum | null = idx >= 0 ? albumsStore[idx] : null;
+
+  if (isDbConnected()) {
+    try {
+      const doc = await AlbumModel.findOneAndUpdate(
+        { id: req.params.id },
+        { $set: req.body },
+        { new: true }
+      ).lean();
+      if (doc) updatedRecord = doc as unknown as IAlbum;
+    } catch (err) {
+      console.error('[DB] Failed to update album:', err);
+    }
+  }
+
+  if (!updatedRecord) {
+    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Album not found.' } });
     return;
   }
-  albumsStore[idx] = { ...albumsStore[idx], ...req.body };
-  addAudit('update', 'Album', req.params.id, albumsStore[idx].title.en, `Updated album "${albumsStore[idx].title.en}".`);
-  res.status(200).json({ success: true, data: albumsStore[idx] });
+
+  await addAudit(req, 'update', 'Album', req.params.id, updatedRecord.title?.en, `Updated album "${updatedRecord.title?.en}".`);
+  res.status(200).json({ success: true, data: updatedRecord });
 });
 
-// DELETE /admin/albums/:id
-router.delete('/admin/albums/:id', (req: Request, res: Response) => {
+router.delete('/admin/albums/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const target = albumsStore.find((a) => a.id === req.params.id);
   albumsStore = albumsStore.filter((a) => a.id !== req.params.id);
+
+  if (isDbConnected()) {
+    try {
+      await AlbumModel.deleteOne({ id: req.params.id });
+    } catch (err) {
+      console.error('[DB] Failed to delete album:', err);
+    }
+  }
+
   if (target) {
-    addAudit('delete', 'Album', req.params.id, target.title.en, `Deleted album "${target.title.en}".`);
+    await addAudit(req, 'delete', 'Album', req.params.id, target.title?.en, `Deleted album "${target.title?.en}".`);
   }
   res.status(200).json({ success: true, message: 'Album deleted successfully.' });
 });
 
-// GET /admin/avatars (Admin gets all 10 avatars)
-router.get('/admin/avatars', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: avatarsStore
-  });
+// --- AVATARS (Devi Alankaranalu) ---
+router.get('/admin/avatars', requireAuth, async (_req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const avatars = await AvatarModel.find({}).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: avatars });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+  res.status(200).json({ success: true, data: avatarsStore });
 });
 
-// POST /admin/avatars
-router.post('/admin/avatars', (req: Request, res: Response) => {
+router.post('/admin/avatars', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const newAvatar: IAvatar = {
     ...req.body,
-    id: `avatar-2025-${Date.now()}`,
+    id: req.body.id || `avatar-2025-${Date.now()}`,
     photos: req.body.photos || []
   };
   avatarsStore.push(newAvatar);
-  addAudit('create', 'Avatar', newAvatar.id, newAvatar.name.en, `Created avatar "${newAvatar.name.en}".`);
+
+  if (isDbConnected()) {
+    try {
+      await AvatarModel.create(newAvatar);
+    } catch (err) {
+      console.error('[DB] Failed to save avatar:', err);
+    }
+  }
+
+  await addAudit(req, 'create', 'Avatar', newAvatar.id, newAvatar.name?.en, `Created avatar "${newAvatar.name?.en}".`);
   res.status(201).json({ success: true, data: newAvatar });
 });
 
-// PATCH /admin/avatars/:id
-router.patch('/admin/avatars/:id', (req: Request, res: Response) => {
+router.patch('/admin/avatars/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const idx = avatarsStore.findIndex((a) => a.id === req.params.id);
-  if (idx < 0) {
-    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Avatar not found' } });
+  if (idx >= 0) {
+    avatarsStore[idx] = { ...avatarsStore[idx], ...req.body };
+  }
+
+  let updatedRecord: IAvatar | null = idx >= 0 ? avatarsStore[idx] : null;
+
+  if (isDbConnected()) {
+    try {
+      const doc = await AvatarModel.findOneAndUpdate(
+        { id: req.params.id },
+        { $set: req.body },
+        { new: true }
+      ).lean();
+      if (doc) updatedRecord = doc as unknown as IAvatar;
+    } catch (err) {
+      console.error('[DB] Failed to update avatar:', err);
+    }
+  }
+
+  if (!updatedRecord) {
+    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Avatar not found.' } });
     return;
   }
-  avatarsStore[idx] = { ...avatarsStore[idx], ...req.body };
-  addAudit('update', 'Avatar', req.params.id, avatarsStore[idx].name.en, `Updated Day ${avatarsStore[idx].dayNumber} avatar "${avatarsStore[idx].name.en}".`);
-  res.status(200).json({ success: true, data: avatarsStore[idx] });
+
+  await addAudit(
+    req,
+    'update',
+    'Avatar',
+    req.params.id,
+    updatedRecord.name?.en,
+    `Updated Day ${updatedRecord.dayNumber} avatar "${updatedRecord.name?.en}".`
+  );
+  res.status(200).json({ success: true, data: updatedRecord });
 });
 
-// DELETE /admin/avatars/:id
-router.delete('/admin/avatars/:id', (req: Request, res: Response) => {
+router.delete('/admin/avatars/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const target = avatarsStore.find((a) => a.id === req.params.id);
   avatarsStore = avatarsStore.filter((a) => a.id !== req.params.id);
+
+  if (isDbConnected()) {
+    try {
+      await AvatarModel.deleteOne({ id: req.params.id });
+    } catch (err) {
+      console.error('[DB] Failed to delete avatar:', err);
+    }
+  }
+
   if (target) {
-    addAudit('delete', 'Avatar', req.params.id, target.name.en, `Deleted avatar "${target.name.en}".`);
+    await addAudit(req, 'delete', 'Avatar', req.params.id, target.name?.en, `Deleted avatar "${target.name?.en}".`);
   }
   res.status(200).json({ success: true, message: 'Avatar deleted successfully.' });
 });
 
-// GET /admin/auctions (Admin gets all 15 auction items with draft status)
-router.get('/admin/auctions', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: auctionsStore
-  });
+// --- AUCTIONS (Auction Winners) ---
+router.get('/admin/auctions', requireAuth, async (_req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const auctions = await AuctionItemModel.find({}).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: auctions });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+  res.status(200).json({ success: true, data: auctionsStore });
 });
 
-// POST /admin/auctions
-router.post('/admin/auctions', (req: Request, res: Response) => {
+router.post('/admin/auctions', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const newItem: IAuctionItem = {
     ...req.body,
-    id: `auc-2025-${Date.now()}`
+    id: req.body.id || `auc-2025-${Date.now()}`
   };
   auctionsStore.push(newItem);
-  addAudit('create', 'Auction', newItem.id, newItem.itemName.en, `Created auction record "${newItem.itemName.en}".`);
+
+  if (isDbConnected()) {
+    try {
+      await AuctionItemModel.create(newItem);
+    } catch (err) {
+      console.error('[DB] Failed to save auction:', err);
+    }
+  }
+
+  await addAudit(req, 'create', 'Auction', newItem.id, newItem.itemName?.en, `Created auction record "${newItem.itemName?.en}".`);
   res.status(201).json({ success: true, data: newItem });
 });
 
-// PATCH /admin/auctions/:id
-router.patch('/admin/auctions/:id', (req: Request, res: Response) => {
+router.patch('/admin/auctions/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const idx = auctionsStore.findIndex((a) => a.id === req.params.id);
-  if (idx < 0) {
-    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Auction record not found' } });
+  if (idx >= 0) {
+    auctionsStore[idx] = { ...auctionsStore[idx], ...req.body };
+  }
+
+  let updatedRecord: IAuctionItem | null = idx >= 0 ? auctionsStore[idx] : null;
+
+  if (isDbConnected()) {
+    try {
+      const doc = await AuctionItemModel.findOneAndUpdate(
+        { id: req.params.id },
+        { $set: req.body },
+        { new: true }
+      ).lean();
+      if (doc) updatedRecord = doc as unknown as IAuctionItem;
+    } catch (err) {
+      console.error('[DB] Failed to update auction:', err);
+    }
+  }
+
+  if (!updatedRecord) {
+    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Auction record not found.' } });
     return;
   }
-  auctionsStore[idx] = { ...auctionsStore[idx], ...req.body };
-  addAudit('update', 'Auction', req.params.id, auctionsStore[idx].itemName.en, `Updated auction record "${auctionsStore[idx].itemName.en}".`);
-  res.status(200).json({ success: true, data: auctionsStore[idx] });
+
+  await addAudit(
+    req,
+    'update',
+    'Auction',
+    req.params.id,
+    updatedRecord.itemName?.en,
+    `Updated auction record "${updatedRecord.itemName?.en}".`
+  );
+  res.status(200).json({ success: true, data: updatedRecord });
 });
 
-// DELETE /admin/auctions/:id
-router.delete('/admin/auctions/:id', (req: Request, res: Response) => {
+router.delete('/admin/auctions/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const target = auctionsStore.find((a) => a.id === req.params.id);
   auctionsStore = auctionsStore.filter((a) => a.id !== req.params.id);
+
+  if (isDbConnected()) {
+    try {
+      await AuctionItemModel.deleteOne({ id: req.params.id });
+    } catch (err) {
+      console.error('[DB] Failed to delete auction:', err);
+    }
+  }
+
   if (target) {
-    addAudit('delete', 'Auction', req.params.id, target.itemName.en, `Deleted auction record "${target.itemName.en}".`);
+    await addAudit(req, 'delete', 'Auction', req.params.id, target.itemName?.en, `Deleted auction record "${target.itemName?.en}".`);
   }
   res.status(200).json({ success: true, message: 'Auction record deleted successfully.' });
 });
 
-// GET /admin/donors
-router.get('/admin/donors', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: donorsStore
-  });
+// --- DONORS ---
+router.get('/admin/donors', requireAuth, async (_req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const donors = await DonorModel.find({}).sort({ sortOrder: 1 }).lean();
+      res.status(200).json({ success: true, data: donors });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+  res.status(200).json({ success: true, data: donorsStore });
 });
 
-// POST /admin/donors
-router.post('/admin/donors', (req: Request, res: Response) => {
+router.post('/admin/donors', requireAuth, requirePublisher, async (req: Request, res: Response) => {
   const newDonor: IDonor = {
     ...req.body,
-    id: `donor-2025-${Date.now()}`
+    id: req.body.id || `donor-2025-${Date.now()}`
   };
   donorsStore.push(newDonor);
-  addAudit('create', 'Donor', newDonor.id, newDonor.name.en, `Created donor record "${newDonor.name.en}".`);
+
+  if (isDbConnected()) {
+    try {
+      await DonorModel.create(newDonor);
+    } catch (err) {
+      console.error('[DB] Failed to save donor:', err);
+    }
+  }
+
+  await addAudit(req, 'create', 'Donor', newDonor.id, newDonor.name?.en, `Created donor record "${newDonor.name?.en}".`);
   res.status(201).json({ success: true, data: newDonor });
 });
 
-// GET /admin/audit-logs
-router.get('/admin/audit-logs', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: auditLogsStore
-  });
+router.patch('/admin/donors/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
+  const idx = donorsStore.findIndex((d) => d.id === req.params.id);
+  if (idx >= 0) {
+    donorsStore[idx] = { ...donorsStore[idx], ...req.body };
+  }
+
+  let updatedRecord: IDonor | null = idx >= 0 ? donorsStore[idx] : null;
+
+  if (isDbConnected()) {
+    try {
+      const doc = await DonorModel.findOneAndUpdate(
+        { id: req.params.id },
+        { $set: req.body },
+        { new: true }
+      ).lean();
+      if (doc) updatedRecord = doc as unknown as IDonor;
+    } catch (err) {
+      console.error('[DB] Failed to update donor:', err);
+    }
+  }
+
+  if (!updatedRecord) {
+    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Donor record not found.' } });
+    return;
+  }
+
+  await addAudit(req, 'update', 'Donor', req.params.id, updatedRecord.name?.en, `Updated donor record "${updatedRecord.name?.en}".`);
+  res.status(200).json({ success: true, data: updatedRecord });
+});
+
+router.delete('/admin/donors/:id', requireAuth, requirePublisher, async (req: Request, res: Response) => {
+  const target = donorsStore.find((d) => d.id === req.params.id);
+  donorsStore = donorsStore.filter((d) => d.id !== req.params.id);
+
+  if (isDbConnected()) {
+    try {
+      await DonorModel.deleteOne({ id: req.params.id });
+    } catch (err) {
+      console.error('[DB] Failed to delete donor:', err);
+    }
+  }
+
+  if (target) {
+    await addAudit(req, 'delete', 'Donor', req.params.id, target.name?.en, `Deleted donor record "${target.name?.en}".`);
+  }
+  res.status(200).json({ success: true, message: 'Donor record deleted successfully.' });
+});
+
+// --- EDITABLE SITE CONTENT (Home, About, History, Contact) ---
+router.get('/admin/content/:sectionKey', requireAuth, async (req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const content = await SiteContentModel.findOne({ sectionKey: req.params.sectionKey }).lean();
+      if (content) {
+        res.status(200).json({ success: true, data: content.data });
+        return;
+      }
+    } catch {
+      // fallback
+    }
+  }
+  res.status(200).json({ success: true, data: null });
+});
+
+router.post('/admin/content/:sectionKey', requireAuth, requirePublisher, async (req: Request, res: Response) => {
+  const { data } = req.body;
+  if (isDbConnected()) {
+    try {
+      await SiteContentModel.findOneAndUpdate(
+        { sectionKey: req.params.sectionKey },
+        { sectionKey: req.params.sectionKey, data, updatedBy: req.user?.email },
+        { upsert: true, new: true }
+      );
+    } catch (err) {
+      console.error('[DB] Failed to save site content:', err);
+    }
+  }
+  await addAudit(req, 'update', 'Content', req.params.sectionKey, req.params.sectionKey, `Updated website content section "${req.params.sectionKey}".`);
+  res.status(200).json({ success: true, message: 'Content updated successfully.' });
+});
+
+// --- AUDIT LOGS ---
+router.get('/admin/audit-logs', requireAuth, async (_req: Request, res: Response) => {
+  if (isDbConnected()) {
+    try {
+      const logs = await AuditLogModel.find({}).sort({ timestamp: -1 }).limit(100).lean();
+      res.status(200).json({ success: true, data: logs });
+      return;
+    } catch {
+      // fallback
+    }
+  }
+  res.status(200).json({ success: true, data: auditLogsStore });
 });
 
 export default router;

@@ -1,7 +1,13 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
+import { connectDatabase } from './config/db.js';
 
 const app = createApp();
+
+// Attempt database connection on startup
+connectDatabase().catch((err) => {
+  console.warn('[Backend] Database initial connection notice:', err.message);
+});
 
 const server = app.listen(env.PORT, () => {
   console.log(`[Backend] Server listening on port ${env.PORT} (${env.NODE_ENV})`);

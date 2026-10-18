@@ -9,7 +9,8 @@ import {
   Image as ImageIcon,
   Eye,
   X,
-  Upload
+  Upload,
+  Loader2
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
@@ -17,6 +18,7 @@ import { useAppLanguage } from '../../i18n';
 import { BilingualField } from '../../components/admin/BilingualField';
 import { TranslationStatusBadge } from '../../components/admin/TranslationStatusBadge';
 import type { AvatarRecord, MediaPhoto, LocalizedString } from '../../types';
+import { api } from '../../services/api';
 
 export const AdminAvatarsPage: React.FC = () => {
   const { avatars, saveAvatar, deleteAvatar, reorderAvatars, addAvatarPhoto, deleteAvatarPhoto } = useData();
@@ -28,6 +30,8 @@ export const AdminAvatarsPage: React.FC = () => {
   const [isNew, setIsNew] = useState(false);
   const [photoManagingAvatar, setPhotoManagingAvatar] = useState<AvatarRecord | null>(null);
   const [previewAvatar, setPreviewAvatar] = useState<AvatarRecord | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   // New photo form state
   const [newPhotoFileUrl, setNewPhotoFileUrl] = useState('');
@@ -102,9 +106,20 @@ export const AdminAvatarsPage: React.FC = () => {
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    setUploadError(null);
+
+    try {
+      const res = await api.uploadImage(file, 'durga-bhavani/avatars');
+      setNewPhotoFileUrl(res.url);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Photo upload failed';
+      setUploadError(msg);
+      // Fallback to data URL so preview works
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
@@ -112,6 +127,8 @@ export const AdminAvatarsPage: React.FC = () => {
         }
       };
       reader.readAsDataURL(file);
+    } finally {
+      setUploadingPhoto(false);
     }
   };
 
@@ -171,7 +188,7 @@ export const AdminAvatarsPage: React.FC = () => {
       </div>
 
       {/* Avatars List Table */}
-      <div className="card" style={{ padding: 'var(--space-6)', overflowX: 'auto' }}>
+      <div className="card table-responsive" style={{ padding: 'clamp(10px, 2vw, 24px)', overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
           <thead>
             <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>
@@ -341,11 +358,11 @@ export const AdminAvatarsPage: React.FC = () => {
           <div
             className="card"
             style={{
-              maxWidth: '650px',
+              maxWidth: 'min(650px, 95vw)',
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              padding: 'var(--space-8)'
+              padding: 'clamp(14px, 3vw, 32px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
@@ -469,11 +486,11 @@ export const AdminAvatarsPage: React.FC = () => {
           <div
             className="card"
             style={{
-              maxWidth: '750px',
+              maxWidth: 'min(750px, 95vw)',
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              padding: 'var(--space-8)'
+              padding: 'clamp(14px, 3vw, 32px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
@@ -576,12 +593,27 @@ export const AdminAvatarsPage: React.FC = () => {
                   <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: '6px' }}>
                     Select Image File (JPG, PNG, WebP) *
                   </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    style={{ display: 'block', fontSize: 'var(--font-size-sm)' }}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingPhoto}
+                      onChange={handleFileUpload}
+                      style={{ display: 'block', fontSize: 'var(--font-size-sm)' }}
+                    />
+                    {uploadingPhoto && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--color-maroon-primary)' }}>
+                        <Loader2 size={14} className="animate-spin" /> Uploading to Cloudinary...
+                      </span>
+                    )}
+                  </div>
+
+                  {uploadError && (
+                    <div style={{ color: 'var(--color-danger)', fontSize: '11px', marginTop: '6px' }}>
+                      ⚠️ {uploadError}
+                    </div>
+                  )}
+
                   {newPhotoFileUrl && (
                     <div style={{ marginTop: '8px', maxWidth: '160px' }}>
                       <img

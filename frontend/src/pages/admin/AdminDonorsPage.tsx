@@ -123,7 +123,7 @@ export const AdminDonorsPage: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="card" style={{ padding: 'var(--space-6)', overflowX: 'auto' }}>
+        <div className="card table-responsive" style={{ padding: 'clamp(10px, 2vw, 24px)', overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
             <thead>
               <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>
@@ -210,11 +210,11 @@ export const AdminDonorsPage: React.FC = () => {
           <div
             className="card"
             style={{
-              maxWidth: '650px',
+              maxWidth: 'min(650px, 95vw)',
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              padding: 'var(--space-8)'
+              padding: 'clamp(14px, 3vw, 32px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>

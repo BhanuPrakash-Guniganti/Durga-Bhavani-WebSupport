@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type {
   AlbumRecord,
   AvatarRecord,
@@ -17,6 +17,7 @@ import {
   sampleYears
 } from '../data/sampleData';
 import { useAuth } from './AuthContext';
+import { api } from '../services/api';
 
 interface DataContextType {
   albums: AlbumRecord[];
@@ -25,32 +26,35 @@ interface DataContextType {
   donors: DonorRecord[];
   auditLogs: AuditLogRecord[];
   years: YearRecord[];
-  
+  isLoadingData: boolean;
+  isBackendConnected: boolean;
+
   // Album operations
-  saveAlbum: (album: AlbumRecord) => void;
-  deleteAlbum: (id: string) => boolean;
-  toggleAlbumStatus: (id: string) => void;
+  saveAlbum: (album: AlbumRecord) => Promise<void>;
+  deleteAlbum: (id: string) => Promise<boolean>;
+  toggleAlbumStatus: (id: string) => Promise<void>;
 
   // Avatar operations
-  saveAvatar: (avatar: AvatarRecord) => void;
-  deleteAvatar: (id: string) => void;
-  reorderAvatars: (avatars: AvatarRecord[]) => void;
-  addAvatarPhoto: (avatarId: string, photo: MediaPhoto) => void;
-  deleteAvatarPhoto: (avatarId: string, photoId: string) => void;
+  saveAvatar: (avatar: AvatarRecord) => Promise<void>;
+  deleteAvatar: (id: string) => Promise<void>;
+  reorderAvatars: (avatars: AvatarRecord[]) => Promise<void>;
+  addAvatarPhoto: (avatarId: string, photo: MediaPhoto) => Promise<void>;
+  deleteAvatarPhoto: (avatarId: string, photoId: string) => Promise<void>;
 
   // Auction operations
-  saveAuctionItem: (item: AuctionItemRecord) => void;
-  deleteAuctionItem: (id: string) => void;
-  toggleAuctionStatus: (id: string) => void;
+  saveAuctionItem: (item: AuctionItemRecord) => Promise<void>;
+  deleteAuctionItem: (id: string) => Promise<void>;
+  toggleAuctionStatus: (id: string) => Promise<void>;
 
   // Donor operations
-  saveDonor: (donor: DonorRecord) => void;
-  deleteDonor: (id: string) => void;
-  toggleDonorStatus: (id: string) => void;
+  saveDonor: (donor: DonorRecord) => Promise<void>;
+  deleteDonor: (id: string) => Promise<void>;
+  toggleDonorStatus: (id: string) => Promise<void>;
 
   // Audit operations
   addAuditLog: (entry: Omit<AuditLogRecord, 'id' | 'timestamp'>) => void;
   resetToInitial: () => void;
+  refreshData: () => Promise<void>;
 }
 
 const STORAGE_KEYS = {
@@ -65,17 +69,18 @@ const STORAGE_KEYS = {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
+  const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
 
+  // Initialize from cache or sample data
   const [albums, setAlbums] = useState<AlbumRecord[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(STORAGE_KEYS.ALBUMS);
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch {
-          // fallback
-        }
+        } catch {}
       }
     }
     return sampleAlbums;
@@ -86,16 +91,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEYS.AVATARS);
       if (saved) {
         try {
-          const parsed: AvatarRecord[] = JSON.parse(saved);
-          return parsed.map((av) => {
-            if (av.id === 'avatar-2025-07' && av.name?.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
-              return { ...av, name: { ...av.name, te: 'శ్రీ సరస్వతీ దేవి' } };
-            }
-            return av;
-          });
-        } catch {
-          // fallback
-        }
+          return JSON.parse(saved);
+        } catch {}
       }
     }
     return sampleAvatars;
@@ -106,21 +103,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEYS.AUCTIONS);
       if (saved) {
         try {
-          const parsed: AuctionItemRecord[] = JSON.parse(saved);
-          return parsed.map((auc) => {
-            const initial = sampleAuctionItems.find((s) => s.id === auc.id);
-            let updated = auc;
-            if (auc.id === 'auc-2025-07' && auc.avatarName && auc.avatarName.te === 'శ్రీ సరస్వతీ దేవి - మూలా నక్షత్రం') {
-              updated = { ...updated, avatarName: { en: auc.avatarName.en, te: 'శ్రీ సరస్వతీ దేవి' } };
-            }
-            if (!('photoUrl' in auc) && initial?.photoUrl) {
-              updated = { ...updated, photoUrl: initial.photoUrl };
-            }
-            return updated;
-          });
-        } catch {
-          // fallback
-        }
+          return JSON.parse(saved);
+        } catch {}
       }
     }
     return sampleAuctionItems;
@@ -132,9 +116,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch {
-          // fallback
-        }
+        } catch {}
       }
     }
     return sampleDonors;
@@ -146,9 +128,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch {
-          // fallback
-        }
+        } catch {}
       }
     }
     return sampleAuditLogs;
@@ -160,15 +140,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch {
-          // fallback
-        }
+        } catch {}
       }
     }
     return sampleYears;
   });
 
-  // Sync to localStorage
+  // Sync state to local cache
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.ALBUMS, JSON.stringify(albums));
   }, [albums]);
@@ -193,6 +171,57 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.YEARS, JSON.stringify(years));
   }, [years]);
 
+  // Fetch shared central data from Backend API
+  const refreshData = useCallback(async () => {
+    setIsLoadingData(true);
+    try {
+      if (isAuthenticated) {
+        // Authenticated admin: load full records including drafts
+        const [albData, avData, aucData, donData, logs] = await Promise.all([
+          api.getAdminAlbums().catch(() => null),
+          api.getAdminAvatars().catch(() => null),
+          api.getAdminAuctions().catch(() => null),
+          api.getAdminDonors().catch(() => null),
+          api.getAdminAuditLogs().catch(() => null)
+        ]);
+
+        if (albData && albData.length > 0) setAlbums(albData);
+        if (avData && avData.length > 0) setAvatars(avData);
+        if (aucData && aucData.length > 0) setAuctions(aucData);
+        if (donData && donData.length > 0) setDonors(donData);
+        if (logs && logs.length > 0) setAuditLogs(logs);
+
+        setIsBackendConnected(Boolean(albData || avData || aucData));
+      } else {
+        // Public visitor: load strictly published records
+        const [albData, avData, aucData, donData, yrsData] = await Promise.all([
+          api.getAlbums().catch(() => null),
+          api.getAvatars().catch(() => null),
+          api.getAuctions().catch(() => null),
+          api.getDonors().catch(() => null),
+          api.getYears().catch(() => null)
+        ]);
+
+        if (albData && albData.length > 0) setAlbums(albData);
+        if (avData && avData.length > 0) setAvatars(avData);
+        if (aucData && aucData.length > 0) setAuctions(aucData);
+        if (donData && donData.length > 0) setDonors(donData);
+        if (yrsData && yrsData.length > 0) setYears(yrsData);
+
+        setIsBackendConnected(Boolean(albData || avData || aucData));
+      }
+    } catch (err) {
+      console.warn('[Data] Failed to connect to backend API, using local offline cache:', err);
+      setIsBackendConnected(false);
+    } finally {
+      setIsLoadingData(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    refreshData();
+  }, [refreshData]);
+
   const addAuditLog = (entry: Omit<AuditLogRecord, 'id' | 'timestamp'>) => {
     const newLog: AuditLogRecord = {
       ...entry,
@@ -202,13 +231,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuditLogs((prev) => [newLog, ...prev]);
   };
 
-  // Album operations
-  const saveAlbum = (album: AlbumRecord) => {
+  // --- ALBUM OPERATIONS ---
+  const saveAlbum = async (album: AlbumRecord) => {
     setAlbums((prev) => {
-      const index = prev.findIndex((a) => a.id === album.id);
-      if (index >= 0) {
+      const idx = prev.findIndex((a) => a.id === album.id);
+      if (idx >= 0) {
         const next = [...prev];
-        next[index] = album;
+        next[idx] = album;
         return next;
       }
       return [...prev, album];
@@ -221,11 +250,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceType: 'Album',
       resourceId: album.id,
       resourceTitle: typeof album.title === 'string' ? album.title : album.title.en,
-      details: `Saved album "${typeof album.title === 'string' ? album.title : album.title.en}" with status ${album.status}.`
+      details: `Saved album "${typeof album.title === 'string' ? album.title : album.title.en}" (Status: ${album.status}).`
     });
+
+    // Send to central backend
+    try {
+      await api.saveAdminAlbum(album);
+    } catch (err) {
+      console.warn('[Data] Failed to sync album to backend:', err);
+    }
   };
 
-  const deleteAlbum = (id: string): boolean => {
+  const deleteAlbum = async (id: string): Promise<boolean> => {
     const target = albums.find((a) => a.id === id);
     if (!target) return false;
 
@@ -239,32 +275,41 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceTitle: typeof target.title === 'string' ? target.title : target.title.en,
       details: `Deleted album "${typeof target.title === 'string' ? target.title : target.title.en}".`
     });
+
+    try {
+      await api.deleteAdminAlbum(id);
+    } catch (err) {
+      console.warn('[Data] Failed to delete album on backend:', err);
+    }
     return true;
   };
 
-  const toggleAlbumStatus = (id: string) => {
-    setAlbums((prev) =>
-      prev.map((a) => {
-        if (a.id === id) {
-          const newStatus = a.status === 'published' ? 'draft' : 'published';
-          addAuditLog({
-            actorName: user?.name || 'Administrator',
-            actorRole: user?.role || 'super-admin',
-            action: newStatus === 'published' ? 'publish' : 'unpublish',
-            resourceType: 'Album',
-            resourceId: a.id,
-            resourceTitle: typeof a.title === 'string' ? a.title : a.title.en,
-            details: `Changed album status to ${newStatus}.`
-          });
-          return { ...a, status: newStatus };
-        }
-        return a;
-      })
-    );
+  const toggleAlbumStatus = async (id: string) => {
+    const target = albums.find((a) => a.id === id);
+    if (!target) return;
+    const nextStatus = target.status === 'published' ? 'draft' : 'published';
+    const updated = { ...target, status: nextStatus as 'draft' | 'published' };
+
+    setAlbums((prev) => prev.map((a) => (a.id === id ? updated : a)));
+    addAuditLog({
+      actorName: user?.name || 'Administrator',
+      actorRole: user?.role || 'super-admin',
+      action: nextStatus === 'published' ? 'publish' : 'unpublish',
+      resourceType: 'Album',
+      resourceId: target.id,
+      resourceTitle: typeof target.title === 'string' ? target.title : target.title.en,
+      details: `Changed album status to ${nextStatus}.`
+    });
+
+    try {
+      await api.saveAdminAlbum(updated);
+    } catch (err) {
+      console.warn('[Data] Failed to update album status on backend:', err);
+    }
   };
 
-  // Avatar operations
-  const saveAvatar = (avatar: AvatarRecord) => {
+  // --- AVATAR OPERATIONS ---
+  const saveAvatar = async (avatar: AvatarRecord) => {
     setAvatars((prev) => {
       const idx = prev.findIndex((a) => a.id === avatar.id);
       if (idx >= 0) {
@@ -284,9 +329,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceTitle: avatar.name.en,
       details: `Updated Day ${avatar.dayNumber} avatar: "${avatar.name.en}".`
     });
+
+    try {
+      await api.saveAdminAvatar(avatar);
+    } catch (err) {
+      console.warn('[Data] Failed to sync avatar to backend:', err);
+    }
   };
 
-  const deleteAvatar = (id: string) => {
+  const deleteAvatar = async (id: string) => {
     const target = avatars.find((a) => a.id === id);
     setAvatars((prev) => prev.filter((a) => a.id !== id));
     if (target) {
@@ -300,9 +351,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         details: `Deleted avatar "${target.name.en}".`
       });
     }
+
+    try {
+      await api.deleteAdminAvatar(id);
+    } catch (err) {
+      console.warn('[Data] Failed to delete avatar on backend:', err);
+    }
   };
 
-  const reorderAvatars = (newOrder: AvatarRecord[]) => {
+  const reorderAvatars = async (newOrder: AvatarRecord[]) => {
     setAvatars(newOrder);
     addAuditLog({
       actorName: user?.name || 'Administrator',
@@ -311,16 +368,21 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceType: 'Avatar',
       details: 'Reordered daily avatars sequence.'
     });
+
+    try {
+      await Promise.all(newOrder.map((av, index) => api.saveAdminAvatar({ id: av.id, sortOrder: index })));
+    } catch (err) {
+      console.warn('[Data] Failed to sync reordered avatars to backend:', err);
+    }
   };
 
-  const addAvatarPhoto = (avatarId: string, photo: MediaPhoto) => {
+  const addAvatarPhoto = async (avatarId: string, photo: MediaPhoto) => {
+    let updatedAvatar: AvatarRecord | undefined;
     setAvatars((prev) =>
       prev.map((a) => {
         if (a.id === avatarId) {
-          return {
-            ...a,
-            photos: [...a.photos, photo]
-          };
+          updatedAvatar = { ...a, photos: [...a.photos, photo] };
+          return updatedAvatar;
         }
         return a;
       })
@@ -334,16 +396,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceId: photo.id,
       details: `Uploaded new photo to avatar ${avatarId}.`
     });
+
+    if (updatedAvatar) {
+      try {
+        await api.saveAdminAvatar(updatedAvatar);
+      } catch (err) {
+        console.warn('[Data] Failed to sync avatar photo to backend:', err);
+      }
+    }
   };
 
-  const deleteAvatarPhoto = (avatarId: string, photoId: string) => {
+  const deleteAvatarPhoto = async (avatarId: string, photoId: string) => {
+    let updatedAvatar: AvatarRecord | undefined;
     setAvatars((prev) =>
       prev.map((a) => {
         if (a.id === avatarId) {
-          return {
-            ...a,
-            photos: a.photos.filter((p) => p.id !== photoId)
-          };
+          updatedAvatar = { ...a, photos: a.photos.filter((p) => p.id !== photoId) };
+          return updatedAvatar;
         }
         return a;
       })
@@ -357,10 +426,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceId: photoId,
       details: `Removed photo ${photoId} from avatar ${avatarId}.`
     });
+
+    if (updatedAvatar) {
+      try {
+        await api.saveAdminAvatar(updatedAvatar);
+      } catch (err) {
+        console.warn('[Data] Failed to sync avatar photo removal to backend:', err);
+      }
+    }
   };
 
-  // Auction operations
-  const saveAuctionItem = (item: AuctionItemRecord) => {
+  // --- AUCTION OPERATIONS ---
+  const saveAuctionItem = async (item: AuctionItemRecord) => {
     setAuctions((prev) => {
       const idx = prev.findIndex((a) => a.id === item.id);
       if (idx >= 0) {
@@ -371,6 +448,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return [...prev, item];
     });
 
+    const winnerStr = typeof item.winnerName === 'object' ? item.winnerName.en : (item.winnerName || 'N/A');
     addAuditLog({
       actorName: user?.name || 'Administrator',
       actorRole: user?.role || 'super-admin',
@@ -378,11 +456,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceType: 'Auction',
       resourceId: item.id,
       resourceTitle: item.itemName.en,
-      details: `Saved auction record "${item.itemName.en}" (Winner: ${item.winnerName || 'N/A'}, Amount: ₹${item.winningAmount ?? 'N/A'}).`
+      details: `Saved auction record "${item.itemName.en}" (Winner: ${winnerStr}, Amount: ₹${item.winningAmount ?? 'N/A'}).`
     });
+
+    try {
+      await api.saveAdminAuction(item);
+    } catch (err) {
+      console.warn('[Data] Failed to sync auction item to backend:', err);
+    }
   };
 
-  const deleteAuctionItem = (id: string) => {
+  const deleteAuctionItem = async (id: string) => {
     const target = auctions.find((a) => a.id === id);
     setAuctions((prev) => prev.filter((a) => a.id !== id));
     if (target) {
@@ -396,31 +480,40 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         details: `Deleted auction item "${target.itemName.en}".`
       });
     }
+
+    try {
+      await api.deleteAdminAuction(id);
+    } catch (err) {
+      console.warn('[Data] Failed to delete auction item on backend:', err);
+    }
   };
 
-  const toggleAuctionStatus = (id: string) => {
-    setAuctions((prev) =>
-      prev.map((a) => {
-        if (a.id === id) {
-          const nextStatus = a.status === 'published' ? 'draft' : 'published';
-          addAuditLog({
-            actorName: user?.name || 'Administrator',
-            actorRole: user?.role || 'super-admin',
-            action: nextStatus === 'published' ? 'publish' : 'unpublish',
-            resourceType: 'Auction',
-            resourceId: a.id,
-            resourceTitle: a.itemName.en,
-            details: `Toggled auction item status to ${nextStatus}.`
-          });
-          return { ...a, status: nextStatus };
-        }
-        return a;
-      })
-    );
+  const toggleAuctionStatus = async (id: string) => {
+    const target = auctions.find((a) => a.id === id);
+    if (!target) return;
+    const nextStatus = target.status === 'published' ? 'draft' : 'published';
+    const updated = { ...target, status: nextStatus as 'draft' | 'published' };
+
+    setAuctions((prev) => prev.map((a) => (a.id === id ? updated : a)));
+    addAuditLog({
+      actorName: user?.name || 'Administrator',
+      actorRole: user?.role || 'super-admin',
+      action: nextStatus === 'published' ? 'publish' : 'unpublish',
+      resourceType: 'Auction',
+      resourceId: target.id,
+      resourceTitle: target.itemName.en,
+      details: `Toggled auction item status to ${nextStatus}.`
+    });
+
+    try {
+      await api.saveAdminAuction(updated);
+    } catch (err) {
+      console.warn('[Data] Failed to update auction status on backend:', err);
+    }
   };
 
-  // Donor operations
-  const saveDonor = (donor: DonorRecord) => {
+  // --- DONOR OPERATIONS ---
+  const saveDonor = async (donor: DonorRecord) => {
     setDonors((prev) => {
       const idx = prev.findIndex((d) => d.id === donor.id);
       if (idx >= 0) {
@@ -440,9 +533,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resourceTitle: donor.name.en,
       details: `Saved donor record "${donor.name.en}".`
     });
+
+    try {
+      await api.saveAdminDonor(donor);
+    } catch (err) {
+      console.warn('[Data] Failed to sync donor to backend:', err);
+    }
   };
 
-  const deleteDonor = (id: string) => {
+  const deleteDonor = async (id: string) => {
     const target = donors.find((d) => d.id === id);
     setDonors((prev) => prev.filter((d) => d.id !== id));
     if (target) {
@@ -456,27 +555,36 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         details: `Deleted donor record "${target.name.en}".`
       });
     }
+
+    try {
+      await api.deleteAdminDonor(id);
+    } catch (err) {
+      console.warn('[Data] Failed to delete donor on backend:', err);
+    }
   };
 
-  const toggleDonorStatus = (id: string) => {
-    setDonors((prev) =>
-      prev.map((d) => {
-        if (d.id === id) {
-          const nextStatus = d.status === 'published' ? 'draft' : 'published';
-          addAuditLog({
-            actorName: user?.name || 'Administrator',
-            actorRole: user?.role || 'super-admin',
-            action: nextStatus === 'published' ? 'publish' : 'unpublish',
-            resourceType: 'Donor',
-            resourceId: d.id,
-            resourceTitle: d.name.en,
-            details: `Toggled donor status to ${nextStatus}.`
-          });
-          return { ...d, status: nextStatus };
-        }
-        return d;
-      })
-    );
+  const toggleDonorStatus = async (id: string) => {
+    const target = donors.find((d) => d.id === id);
+    if (!target) return;
+    const nextStatus = target.status === 'published' ? 'draft' : 'published';
+    const updated = { ...target, status: nextStatus as 'draft' | 'published' };
+
+    setDonors((prev) => prev.map((d) => (d.id === id ? updated : d)));
+    addAuditLog({
+      actorName: user?.name || 'Administrator',
+      actorRole: user?.role || 'super-admin',
+      action: nextStatus === 'published' ? 'publish' : 'unpublish',
+      resourceType: 'Donor',
+      resourceId: target.id,
+      resourceTitle: target.name.en,
+      details: `Toggled donor record status to ${nextStatus}.`
+    });
+
+    try {
+      await api.saveAdminDonor(updated);
+    } catch (err) {
+      console.warn('[Data] Failed to update donor status on backend:', err);
+    }
   };
 
   const resetToInitial = () => {
@@ -486,6 +594,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setDonors(sampleDonors);
     setAuditLogs(sampleAuditLogs);
     setYears(sampleYears);
+
     localStorage.removeItem(STORAGE_KEYS.ALBUMS);
     localStorage.removeItem(STORAGE_KEYS.AVATARS);
     localStorage.removeItem(STORAGE_KEYS.AUCTIONS);
@@ -503,6 +612,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         donors,
         auditLogs,
         years,
+        isLoadingData,
+        isBackendConnected,
         saveAlbum,
         deleteAlbum,
         toggleAlbumStatus,
@@ -518,7 +629,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         deleteDonor,
         toggleDonorStatus,
         addAuditLog,
-        resetToInitial
+        resetToInitial,
+        refreshData
       }}
     >
       {children}
