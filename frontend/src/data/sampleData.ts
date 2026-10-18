@@ -714,8 +714,8 @@ export const sampleAnnouncements: AnnouncementRecord[] = [
       te: 'దుర్గాభవాని సేవా సమితి డిజిటల్ ఆర్కైవ్ వేదిక ప్రారంభం'
     },
     content: {
-      en: 'The Organizing Committee of Durga Bhavani Seva Samiti, Dodlapahad, is pleased to present this digital platform. Here, devotees can browse the annual festival archives, celebration milestones, photos, and announcements. Note: The current data displayed is sample demonstration data until verified committee documents are uploaded.',
-      te: 'శ్రీ దుర్గాభవాని సేవా సమితి, దొడ్లపహాడ్ నిర్వాహక కమిటీ ఈ డిజిటల్ వేదికను భక్తులకు సమర్పిస్తోంది. ఇక్కడ భక్తులు వార్షిక ఉత్సవ వివరాలు, మైలురాళ్ళు, ఛాయాచిత్రాలు మరియు కమిటీ ప్రకటనలను వీక్షించవచ్చు. గమనిక: కమిటీ అధికారిక పత్రాలు అప్‌లోడ్ అయ్యేవరకు ప్రస్తుత సమాచారం నమూనా ప్రదర్శనగా ఉంటుంది.'
+      en: 'The Organizing Committee of Durga Bhavani Seva Samiti, Dodlapahad, is pleased to present this digital platform. Here, devotees can browse the annual festival archives, celebration milestones, photos, and announcements.',
+      te: 'శ్రీ దుర్గాభవాని సేవా సమితి, దొడ్లపహాడ్ నిర్వాహక కమిటీ ఈ డిజిటల్ వేదికను భక్తులకు సమర్పిస్తోంది. ఇక్కడ భక్తులు వార్షిక ఉత్సవ వివరాలు, మైలురాళ్ళు, ఛాయాచిత్రాలు మరియు కమిటీ ప్రకటనలను వీక్షించవచ్చు.'
     },
     publishedAt: '2025-01-15',
     imageUrl: createSampleSvgImage('Portal Launch', 'Notice', '#7A0C0C', 'diya'),

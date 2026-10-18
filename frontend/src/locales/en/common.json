@@ -13,7 +13,7 @@
     "menu": "Menu",
     "closeMenu": "Close menu",
     "switchLanguage": "Switch Language",
-    "sampleBadge": "Sample Demonstration Preview: Official temple records, annual albums, and verified committee history will replace this sample data."
+    "sampleBadge": ""
   },
   "home": {
     "heroSub": "Preserving and presenting Dodlapahad's annual Sri Durga Bhavani Utsav celebrations, sacred traditions, photo & video archives, and community devotion.",
@@ -125,7 +125,7 @@
     "sub": "Devotional Calendar",
     "title": "Temple Events & Celebrations",
     "desc": "Stay informed about annual Navaratri festival schedules, special Pournami poojas, community meetings, and cultural processions in Dodlapahad.",
-    "badge": "Sample Event Schedule - For Layout Demonstration",
+    "badge": "Temple Event Schedule",
     "all": "All Events ({{count}})",
     "upcoming": "Upcoming Events",
     "past": "Past Events",
@@ -141,7 +141,7 @@
     "sub": "Official Notices",
     "title": "Committee Announcements",
     "desc": "Official circulars, festival schedules, volunteer registrations, and community notices issued by the Durga Bhavani Seva Samiti organizing committee.",
-    "badge": "Sample Notice Board Entries",
+    "badge": "Notice Board Circulars",
     "all": "All Notices ({{count}})",
     "featured": "Featured Circulars",
     "featuredBadge": "Featured",
@@ -153,7 +153,7 @@
     "sub": "Unified Portal Search",
     "title": "Search Temple Archives",
     "desc": "Search across celebration years, photo albums, upcoming & past events, committee notices, and celebration milestones.",
-    "badge": "Sample Search Index",
+    "badge": "Search Index",
     "placeholder": "Search celebration years, albums, events, notices, milestones...",
     "all": "All",
     "years": "Years",
@@ -170,7 +170,7 @@
     "sub": "Get in Touch",
     "title": "Contact the Organizing Committee",
     "desc": "Reach out to Durga Bhavani Seva Samiti for festival inquiries, pooja participation, volunteer seva, or festival photo submissions.",
-    "badge": "Sample Contact & Location Information",
+    "badge": "Contact Information",
     "formTitle": "Send a Message to the Samiti",
     "nameLabel": "Your Full Name",
     "namePlaceholder": "e.g. Ramesh Kumar",
@@ -199,8 +199,8 @@
     "openMaps": "Open in Google Maps ↗"
   },
   "common": {
-    "badgeDemonstration": "★ SAMPLE RECORD FOR PREVIEW ★",
-    "sampleBadgeDefault": "Sample Demonstration Data - Awaiting Committee Verification",
+    "badgeDemonstration": "",
+    "sampleBadgeDefault": "",
     "english": "English",
     "telugu": "తెలుగు",
     "rightsReserved": "All rights reserved. Content verified and authorized by the Organizing Committee.",

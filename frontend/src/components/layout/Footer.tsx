@@ -25,9 +25,6 @@ export const Footer: React.FC = () => {
                   ? 'దొడ్లపహాడ్, తెలంగాణ. వార్షిక నవరాత్రి ఉత్సవాలను నిర్వహించడానికి, గ్రామీణ సాంస్కృతిక వారసత్వాన్ని కాపాడటానికి మరియు భక్తితో సమాజ సేవ చేయడానికి అంకితమైన సంస్థ.'
                   : "Dodlapahad, Telangana. Dedicated to organizing the annual Navaratri Utsav celebrations, preserving village cultural heritage, and serving the community with devotion."}
               </p>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--color-gold-light)', background: 'rgba(212, 175, 55, 0.1)', padding: '4px 10px', borderRadius: '4px', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
-                <span>{t('common.badgeDemonstration')}</span>
-              </div>
             </div>
 
             {/* Col 2: Quick Links */}

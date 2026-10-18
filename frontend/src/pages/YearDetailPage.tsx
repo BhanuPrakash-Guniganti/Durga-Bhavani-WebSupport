@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { sampleEvents } from '../data/sampleData';
 import { useData } from '../context/DataContext';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAppLanguage, getLocalized, getLocalizedArray } from '../i18n';
 
@@ -20,7 +19,7 @@ export const YearDetailPage: React.FC = () => {
   const yearNumber = parseInt(year || '2024', 10);
   const { t } = useTranslation();
   const { currentLang } = useAppLanguage();
-  const { albums, years } = useData();
+  const { albums, years, avatars } = useData();
 
   const yearRecord = years.find((y) => y.year === yearNumber);
   const yearAlbums = albums.filter((a) => a.year === yearNumber && a.status === 'published');
@@ -65,7 +64,6 @@ export const YearDetailPage: React.FC = () => {
               </span>
               <span className="badge badge-gold">{t('yearDetail.publishedArchive')}</span>
             </div>
-            <SampleBadge />
           </div>
 
           <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', marginBottom: 'var(--space-3)' }}>
@@ -126,6 +124,10 @@ export const YearDetailPage: React.FC = () => {
               {yearAlbums.map((album) => {
                 const albumTitle = getLocalized(album.title, currentLang);
                 const albumDesc = getLocalized(album.description, currentLang);
+                const albumAvatarCount = avatars.filter(
+                  (av) => av.albumSlug === album.slug || (!av.albumSlug && av.year === album.year)
+                ).length || (album.year === 2025 ? 11 : 10);
+
                 return (
                   <article key={album.id} className="card card-gold-top">
                     <div className="card-media">
@@ -135,14 +137,13 @@ export const YearDetailPage: React.FC = () => {
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span className="badge badge-gold">
                           {album.albumType === 'avatars'
-                            ? (currentLang === 'te' ? '10 అమ్మవారి అవతారాలు' : '10 Daily Avatars')
+                            ? (currentLang === 'te' ? `${albumAvatarCount} అమ్మవారి అవతారాలు` : `${albumAvatarCount} Daily Avatars`)
                             : album.albumType === 'auction'
                             ? (currentLang === 'te' ? 'వేలం పాట విజేతలు' : 'Auction Winners')
                             : album.albumType === 'donors'
                             ? (currentLang === 'te' ? 'దాతలు & స్పాన్సర్లు' : 'Donors & Sponsors')
                             : t('years.albumsCount', { count: album.photoCount })}
                         </span>
-                        <SampleBadge size="sm" />
                       </div>
                       <h3>{albumTitle}</h3>
                       <p style={{ fontSize: 'var(--font-size-sm)', flex: 1 }}>
@@ -169,8 +170,8 @@ export const YearDetailPage: React.FC = () => {
             <h2>{currentLang === 'te' ? 'ఉత్సవ వీడియో ప్రదర్శన' : 'Festival Video Presentation'}</h2>
             <p>
               {currentLang === 'te'
-                ? 'అధికారిక ఉత్సవ వీడియో రికార్డింగ్‌ల ప్రదర్శన నమూనా.'
-                : 'Sample video player demonstration for approved public festival recordings.'}
+                ? 'అధికారిక ఉత్సవ వీడియో రికార్డింగ్‌ల ప్రదర్శన.'
+                : 'Official video player showcase for public festival recordings.'}
             </p>
           </div>
 
@@ -179,15 +180,15 @@ export const YearDetailPage: React.FC = () => {
               <Video size={18} color="var(--color-gold-light)" />
               <span style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)', color: 'var(--color-gold-light)' }}>
                 {currentLang === 'te'
-                  ? `దొడ్లపహాడ్ శోభాయాత్ర ${yearRecord.year} నమూనా వీడియో ప్రదర్శన`
-                  : `Sample Video Showcase: Dodlapahad Shobha Yatra ${yearRecord.year}`}
+                  ? `దొడ్లపహాడ్ శోభాయాత్ర ${yearRecord.year} ఉత్సవ వీడియో`
+                  : `Video Showcase: Dodlapahad Shobha Yatra ${yearRecord.year}`}
               </span>
             </div>
             <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#1A0202', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--color-gold-border)' }}>
               <div style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
                 <span style={{ fontSize: '3rem', display: 'block', marginBottom: '8px' }}>▶️</span>
                 <p style={{ margin: 0, fontWeight: 600, color: '#FFE082' }}>
-                  {currentLang === 'te' ? 'యూట్యూబ్ వీడియో ఇంటిగ్రేషన్ ప్రదర్శన' : 'YouTube Video Integration Demonstration'}
+                  {currentLang === 'te' ? 'యూట్యూబ్ వీడియో ప్రసారం' : 'YouTube Video Stream'}
                 </p>
                 <p style={{ fontSize: 'var(--font-size-xs)', color: '#D6C8B8', margin: '4px 0 0 0' }}>
                   {currentLang === 'te'
@@ -215,7 +216,6 @@ export const YearDetailPage: React.FC = () => {
                       <span className="badge badge-maroon">
                         {isUpcoming ? t('events.statusUpcoming') : t('events.statusPast')}
                       </span>
-                      <SampleBadge size="sm" />
                     </div>
                     <h3>{evtTitle}</h3>
                     <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>

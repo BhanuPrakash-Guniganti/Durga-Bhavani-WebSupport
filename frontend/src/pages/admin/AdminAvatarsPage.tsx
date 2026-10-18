@@ -38,7 +38,15 @@ export const AdminAvatarsPage: React.FC = () => {
   const [newPhotoCaption, setNewPhotoCaption] = useState<LocalizedString>({ en: '', te: '' });
   const [newPhotoAlt, setNewPhotoAlt] = useState<LocalizedString>({ en: '', te: '' });
 
-  const sortedAvatars = [...avatars].sort((a, b) => a.sortOrder - b.sortOrder);
+  // Year filter state
+  const [yearFilter, setYearFilter] = useState<'all' | '2024' | '2025' | '2026'>('2025');
+
+  const filteredAvatars = avatars.filter((a) => {
+    if (yearFilter !== 'all' && a.year !== parseInt(yearFilter, 10)) return false;
+    return true;
+  });
+
+  const sortedAvatars = [...filteredAvatars].sort((a, b) => a.sortOrder - b.sortOrder);
 
   const handleMoveUp = (index: number) => {
     if (index === 0) return;
@@ -71,10 +79,11 @@ export const AdminAvatarsPage: React.FC = () => {
 
   const handleOpenAdd = () => {
     setIsNew(true);
+    const targetYear = yearFilter === 'all' ? 2025 : parseInt(yearFilter, 10);
     setEditingAvatar({
-      id: `avatar-2025-${Date.now()}`,
-      albumSlug: 'devi-alankaranalu-2025',
-      year: 2025,
+      id: `avatar-${targetYear}-${Date.now()}`,
+      albumSlug: `devi-alankaranalu-${targetYear}`,
+      year: targetYear,
       dayNumber: sortedAvatars.length + 1,
       name: { en: '', te: '' },
       description: { en: '', te: '' },
@@ -172,12 +181,20 @@ export const AdminAvatarsPage: React.FC = () => {
           </span>
           <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Flower2 color="var(--color-maroon-primary)" />
-            <span>{currentLang === 'te' ? 'అమ్మవారి అలంకరణలు (పది అవతారాలు)' : 'Devi Alankaranalu (Ten Avatars)'}</span>
+            <span>
+              {yearFilter === '2025' || (yearFilter === 'all' && sortedAvatars.length === 11)
+                ? (currentLang === 'te' ? 'అమ్మవారి అలంకరణలు (11 అవతారాలు)' : 'Devi Alankaranalu (11 Avatars)')
+                : (currentLang === 'te' ? `అమ్మవారి అలంకరణలు (${sortedAvatars.length} అవతారాలు)` : `Devi Alankaranalu (${sortedAvatars.length} Avatars)`)}
+            </span>
           </h1>
           <p style={{ margin: '4px 0 0 0', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
-            {currentLang === 'te'
-              ? 'పది రోజుల అమ్మవారి అవతారాల వివరాలు, క్రమం, మరియు బహుళ ఛాయాచిత్రాల నిర్వహణ.'
-              : 'Configure the 10 daily avatars, editable day order, bilingual names, and multi-photo uploads.'}
+            {yearFilter === '2025'
+              ? (currentLang === 'te'
+                  ? '2025 ఉత్సవాల 11 రోజుల అమ్మవారి దివ్య అవతారాల వివరాలు, క్రమం, మరియు బహుళ ఛాయాచిత్రాల నిర్వహణ.'
+                  : 'Configure the 11 daily avatars for 2025, editable day order, bilingual names, and multi-photo uploads.')
+              : (currentLang === 'te'
+                  ? 'అమ్మవారి అవతారాల వివరాలు, క్రమం, మరియు బహుళ ఛాయాచిత్రాల నిర్వహణ.'
+                  : 'Configure daily avatars, editable day order, bilingual names, and multi-photo uploads.')}
           </p>
         </div>
 
@@ -185,6 +202,65 @@ export const AdminAvatarsPage: React.FC = () => {
           <Plus size={16} />
           <span>{currentLang === 'te' ? 'కొత్త అవతారం చేర్చండి' : 'Add New Avatar'}</span>
         </button>
+      </div>
+
+      {/* Year Filter Strip */}
+      <div
+        className="card"
+        style={{
+          padding: 'var(--space-4) var(--space-6)',
+          marginBottom: 'var(--space-6)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          background: 'var(--color-surface)'
+        }}
+      >
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {currentLang === 'te' ? 'సంవత్సరం:' : 'Festival Year:'}
+          </span>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === '2025' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('2025')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              2025 (11)
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === '2024' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('2024')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              2024 (10)
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === '2026' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('2026')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              2026 (10)
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === 'all' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('all')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              {currentLang === 'te' ? 'అన్నీ' : 'All'}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+          <strong>{sortedAvatars.length}</strong> {currentLang === 'te' ? 'అవతారాలు ప్రదర్శించబడుతున్నాయి' : 'avatars displayed'}
+        </div>
       </div>
 
       {/* Avatars List Table */}

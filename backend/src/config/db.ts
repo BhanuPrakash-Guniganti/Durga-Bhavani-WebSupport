@@ -130,25 +130,33 @@ const syncDatabaseSchemas = async () => {
       }
     }
 
-    // 2. Sync Avatars: Update names and sort orders, preserving existing photos
+    // 2. Sync Avatars: Ensure all 31 avatars (11 for 2025, 10 for 2024, 10 for 2026) exist and are published
     for (const initAv of initialAvatars) {
-      const existing = await AvatarModel.findOne({ id: initAv.id });
-      if (existing) {
-        await AvatarModel.updateOne(
-          { id: initAv.id },
-          {
-            $set: {
-              name: initAv.name,
-              sortOrder: initAv.sortOrder,
-              dayNumber: initAv.dayNumber,
-              albumSlug: initAv.albumSlug,
-              year: initAv.year,
-              status: 'published'
+      try {
+        const existing = await AvatarModel.findOne({ id: initAv.id });
+        if (existing) {
+          await AvatarModel.updateOne(
+            { id: initAv.id },
+            {
+              $set: {
+                name: initAv.name,
+                sortOrder: initAv.sortOrder,
+                dayNumber: initAv.dayNumber,
+                albumSlug: initAv.albumSlug,
+                year: initAv.year,
+                description: initAv.description,
+                status: 'published'
+              }
             }
-          }
-        );
-      } else {
-        await AvatarModel.create(initAv);
+          );
+        } else {
+          await AvatarModel.create({
+            ...initAv,
+            status: 'published'
+          });
+        }
+      } catch (avErr) {
+        console.warn(`[Database] Notice syncing avatar ${initAv.id}:`, avErr);
       }
     }
 

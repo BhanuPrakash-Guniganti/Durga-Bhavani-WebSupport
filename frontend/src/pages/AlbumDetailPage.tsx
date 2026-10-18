@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { Lightbox } from '../components/common/Lightbox';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAppLanguage } from '../i18n';
 import { formatRupees, type AvatarRecord, type AuctionItemRecord, type MediaPhoto, type LocalizedString } from '../types';
@@ -174,7 +173,6 @@ export const AlbumDetailPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <SampleBadge />
           </div>
 
           <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginBottom: 'var(--space-3)' }}>
