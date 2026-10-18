@@ -33,6 +33,7 @@ export const AdminAuctionsPage: React.FC = () => {
   const { t } = useTranslation();
 
   const [filterType, setFilterType] = useState<'all' | 'confirmed' | 'drafts' | 'sarees' | 'special'>('all');
+  const [yearFilter, setYearFilter] = useState<'all' | '2024' | '2025' | '2026'>('all');
   const [editingItem, setEditingItem] = useState<AuctionItemRecord | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [mediaSelectorOpen, setMediaSelectorOpen] = useState(false);
@@ -43,6 +44,7 @@ export const AdminAuctionsPage: React.FC = () => {
 
   // Filter logic
   const filteredAuctions = auctions.filter((item) => {
+    if (yearFilter !== 'all' && item.year !== parseInt(yearFilter, 10)) return false;
     if (filterType === 'confirmed') return item.isComplete && item.status === 'published';
     if (filterType === 'drafts') return !item.isComplete || item.status === 'draft';
     if (filterType === 'sarees') return item.itemType === 'saree';
@@ -50,9 +52,12 @@ export const AdminAuctionsPage: React.FC = () => {
     return true;
   });
 
-  const confirmedCount = auctions.filter((a) => a.isComplete && a.status === 'published').length;
-  const draftCount = auctions.filter((a) => !a.isComplete || a.status === 'draft').length;
-  const totalAmount = auctions
+  const yearScopedAuctions = auctions.filter((item) => yearFilter === 'all' || item.year === parseInt(yearFilter, 10));
+  const confirmedCount = yearScopedAuctions.filter((a) => a.isComplete && a.status === 'published').length;
+  const draftCount = yearScopedAuctions.filter((a) => !a.isComplete || a.status === 'draft').length;
+  const sareeCount = yearScopedAuctions.filter((a) => a.itemType === 'saree').length;
+  const specialCount = yearScopedAuctions.filter((a) => a.itemType === 'special_item').length;
+  const totalAmount = yearScopedAuctions
     .filter((a) => a.isComplete && a.status === 'published')
     .reduce((acc, curr) => acc + (curr.winningAmount || 0), 0);
 
@@ -318,43 +323,84 @@ export const AdminAuctionsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilterType('all')}
-          >
-            {currentLang === 'te' ? `అన్నీ (${auctions.length})` : `All (${auctions.length})`}
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${filterType === 'confirmed' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilterType('confirmed')}
-          >
-            {currentLang === 'te' ? `ధృవీకరించబడినవి (${confirmedCount})` : `Confirmed (${confirmedCount})`}
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${filterType === 'drafts' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilterType('drafts')}
-          >
-            {currentLang === 'te' ? `డ్రాఫ్ట్‌లు (${draftCount})` : `Drafts (${draftCount})`}
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${filterType === 'sarees' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilterType('sarees')}
-          >
-            {currentLang === 'te' ? 'చీరలు (11)' : 'Sarees (11)'}
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${filterType === 'special' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilterType('special')}
-          >
-            {currentLang === 'te' ? 'విశేష వస్తువులు (4)' : 'Special Items (4)'}
-          </button>
+        {/* Filter Toolbar */}
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Year Filter Tabs */}
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === 'all' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('all')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              {currentLang === 'te' ? 'అన్ని సం.' : 'All Years'}
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === '2025' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('2025')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              2025
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === '2024' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('2024')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              2024
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${yearFilter === '2026' ? 'btn-gold' : 'btn-secondary'}`}
+              onClick={() => setYearFilter('2026')}
+              style={{ fontSize: '12px', padding: '4px 10px' }}
+            >
+              2026
+            </button>
+          </div>
+
+          <div style={{ width: '1px', height: '24px', background: 'var(--color-border-subtle)' }} />
+
+          {/* Status & Type Filter Tabs */}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className={`btn btn-sm ${filterType === 'all' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setFilterType('all')}
+            >
+              {currentLang === 'te' ? `అన్నీ (${yearScopedAuctions.length})` : `All (${yearScopedAuctions.length})`}
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${filterType === 'confirmed' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setFilterType('confirmed')}
+            >
+              {currentLang === 'te' ? `ధృవీకరించబడినవి (${confirmedCount})` : `Confirmed (${confirmedCount})`}
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${filterType === 'drafts' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setFilterType('drafts')}
+            >
+              {currentLang === 'te' ? `డ్రాఫ్ట్‌లు (${draftCount})` : `Drafts (${draftCount})`}
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${filterType === 'sarees' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setFilterType('sarees')}
+            >
+              {currentLang === 'te' ? `చీరలు (${sareeCount})` : `Sarees (${sareeCount})`}
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${filterType === 'special' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setFilterType('special')}
+            >
+              {currentLang === 'te' ? `విశేష వస్తువులు (${specialCount})` : `Special Items (${specialCount})`}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -926,6 +972,43 @@ export const AdminAuctionsPage: React.FC = () => {
                     onChange={(e) => setEditingItem({ ...editingItem, photoUrl: e.target.value.trim() })}
                     placeholder="https://example.com/photo.jpg or data:image/..."
                     style={{ width: '100%', padding: '6px 10px', fontSize: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border-subtle)', background: '#FFF' }}
+                  />
+                </div>
+              </div>
+
+              {/* Festival Year & Album Selection */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: 'var(--space-4)' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: '6px' }}>
+                    {currentLang === 'te' ? 'ఉత్సవ సంవత్సరం (Festival Year)' : 'Festival Year'}
+                  </label>
+                  <select
+                    value={editingItem.year || 2025}
+                    onChange={(e) => {
+                      const yr = parseInt(e.target.value, 10);
+                      setEditingItem({
+                        ...editingItem,
+                        year: yr,
+                        albumSlug: `auction-winners-${yr}`
+                      });
+                    }}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border-medium)', background: '#FFF' }}
+                  >
+                    <option value={2024}>2024</option>
+                    <option value={2025}>2025</option>
+                    <option value={2026}>2026</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: '6px' }}>
+                    {currentLang === 'te' ? 'సంబంధిత ఆల్బమ్ స్లగ్' : 'Album Slug'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.albumSlug || `auction-winners-${editingItem.year || 2025}`}
+                    disabled
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border-subtle)', background: 'var(--color-cream-alt)', color: 'var(--color-text-secondary)' }}
                   />
                 </div>
               </div>

@@ -12,7 +12,6 @@ import {
   Flower2,
   Trophy,
   HeartHandshake,
-  Sparkles,
   X,
   LayoutGrid,
   List
@@ -91,21 +90,30 @@ export const AlbumDetailPage: React.FC = () => {
     album.slug?.includes('donor') ? 'donors' : 'general'
   );
 
-  // For Devi Alankaranalu
-  const sortedAvatars = [...avatars].sort((a, b) => a.sortOrder - b.sortOrder);
+  // For Devi Alankaranalu (filter strictly by current album / year)
+  const albumAvatars = avatars.filter(
+    (a) => a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year)
+  );
+  const sortedAvatars = (albumAvatars.length > 0 ? albumAvatars : avatars.filter((a) => a.year === album.year))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
-  // For Auction Winners
-  const confirmedAuctions = auctions.filter((a) => a.status === 'published' && a.isComplete);
+  // For Auction Winners (filter strictly by current album / year)
+  const albumAuctions = auctions.filter(
+    (a) => a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year)
+  );
+  const confirmedAuctions = albumAuctions.filter((a) => a.status === 'published' && a.isComplete);
   const filteredConfirmedAuctions = confirmedAuctions.filter((item) => {
-    const isSaree = Boolean(item.avatarId || item.itemType === 'saree' || (item.sortOrder && item.sortOrder <= 10));
+    const isSaree = Boolean(item.itemType === 'saree' || item.avatarId || (item.sortOrder && item.sortOrder <= 11));
     if (auctionFilter === 'sarees') return isSaree;
     if (auctionFilter === 'additional') return !isSaree;
     return true;
   });
-  const totalRaised = confirmedAuctions.reduce((acc, curr) => acc + (curr.winningAmount || 0), 0);
 
-  // For Donors
-  const publishedDonors = donors.filter((d) => d.status === 'published');
+  // For Donors (filter strictly by current album / year)
+  const albumDonors = donors.filter(
+    (d) => d.albumSlug === album.slug || (!d.albumSlug && d.year === album.year)
+  );
+  const publishedDonors = albumDonors.filter((d) => d.status === 'published');
 
   return (
     <div className="section">
@@ -144,7 +152,7 @@ export const AlbumDetailPage: React.FC = () => {
               {effectiveAlbumType === 'avatars' && (
                 <span className="badge badge-gold">
                   <Flower2 size={12} />
-                  <span>10 {currentLang === 'te' ? 'దివ్య అవతారాలు' : 'Daily Avatars'}</span>
+                  <span>{sortedAvatars.length} {currentLang === 'te' ? 'దివ్య అవతారాలు' : 'Daily Avatars'}</span>
                 </span>
               )}
               {effectiveAlbumType === 'auction' && (
@@ -170,7 +178,10 @@ export const AlbumDetailPage: React.FC = () => {
           </div>
 
           <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', marginBottom: 'var(--space-3)' }}>
-            {localizedTitle}
+            {(album.slug === 'auction-winners-2025' || (effectiveAlbumType === 'auction' && album.year === 2025)) ||
+             (album.slug === 'donors-and-sponsors-2025' || (effectiveAlbumType === 'donors' && album.year === 2025))
+              ? (currentLang === 'te' ? '2025 దుర్గ భవాని ఉత్సవం – దొడ్లపహాడ్' : '2025 Durga Bhavani Utsav – Dodlapahad')
+              : localizedTitle}
           </h1>
 
           <p style={{ fontSize: 'var(--font-size-base)', maxWidth: '900px', lineHeight: 1.7, margin: 0 }}>
@@ -186,14 +197,18 @@ export const AlbumDetailPage: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '8px' }}>
               <div>
                 <span className="sub-heading">
-                  {currentLang === 'te' ? 'దశ దిన అలంకారాలు' : 'Ten Daily Avatars'}
+                  {album.year === 2025
+                    ? (currentLang === 'te' ? 'పదకొండు దివ్య అలంకారాలు' : 'Eleven Daily Avatars')
+                    : (currentLang === 'te' ? 'దశ దిన అలంకారాలు' : 'Ten Daily Avatars')}
                 </span>
                 <h2 style={{ margin: 0 }}>
-                  {currentLang === 'te' ? 'అమ్మవారి పది దివ్య అవతారాలు' : 'The Goddess’s Ten Daily Avatars'}
+                  {album.year === 2025
+                    ? (currentLang === 'te' ? 'అమ్మవారి పదకొండు దివ్య అవతారాలు' : 'The Goddess’s Eleven Daily Avatars')
+                    : (currentLang === 'te' ? 'అమ్మవారి పది దివ్య అవతారాలు' : 'The Goddess’s Ten Daily Avatars')}
                 </h2>
               </div>
               <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
-                {currentLang === 'te' ? '1 నుండి 10 రోజుల క్రమం' : 'Days 1 to 10 in Sequence'}
+                {currentLang === 'te' ? `1 నుండి ${sortedAvatars.length} రోజుల క్రమం` : `Days 1 to ${sortedAvatars.length} in Sequence`}
               </span>
             </div>
 
@@ -325,79 +340,113 @@ export const AlbumDetailPage: React.FC = () => {
             ========================================================================= */}
         {effectiveAlbumType === 'auction' && (
           <div style={{ marginBottom: 'var(--space-12)' }}>
-            {/* Total Raised Statistics Showcase */}
-            <div
-              className="card"
-              style={{
-                padding: 'var(--space-6) var(--space-8)',
-                marginBottom: 'var(--space-8)',
-                background: 'linear-gradient(135deg, #5E0909 0%, #2D0303 100%)',
-                color: '#FFF',
-                border: '2px solid var(--color-gold-dark)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                  <span style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '1px', color: '#FFE082' }}>
-                    {t('auctions.totalRaised')}
-                  </span>
-                  <div style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, color: '#FFE082', margin: '4px 0' }}>
-                    {formatRupees(totalRaised)}
-                  </div>
-                  <div style={{ fontSize: 'var(--font-size-sm)', color: '#E0D6C8' }}>
-                    {confirmedAuctions.length} {t('auctions.confirmedItems')} · 2025 {currentLang === 'te' ? 'నవరాత్రి ఉత్సవాలు' : 'Navaratri Celebrations'}
-                  </div>
+            {confirmedAuctions.length === 0 ? (
+              <div
+                className="card"
+                style={{
+                  padding: 'var(--space-12)',
+                  textAlign: 'center',
+                  background: 'var(--color-cream-alt)',
+                  border: '2px dashed var(--color-border-medium)',
+                  marginBottom: 'var(--space-12)'
+                }}
+              >
+                <div
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'var(--color-gold-pale)',
+                    color: 'var(--color-gold-dark)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 'var(--space-4)'
+                  }}
+                >
+                  <Trophy size={32} />
                 </div>
-
-                {/* Filter Pills and View Mode Toggle */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' }}>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <button
-                      type="button"
-                      onClick={() => setAuctionFilter('all')}
-                      className={`btn btn-sm ${auctionFilter === 'all' ? 'btn-gold' : 'btn-secondary'}`}
-                    >
-                      {t('auctions.filterAll', { count: confirmedAuctions.length })}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAuctionFilter('sarees')}
-                      className={`btn btn-sm ${auctionFilter === 'sarees' ? 'btn-gold' : 'btn-secondary'}`}
-                    >
-                      {t('auctions.filterSarees', { count: 10 })}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAuctionFilter('additional')}
-                      className={`btn btn-sm ${auctionFilter === 'additional' ? 'btn-gold' : 'btn-secondary'}`}
-                    >
-                      {currentLang === 'te' ? 'మెడలు మీద చీర (1)' : 'Medalu Meeda Cheera (1)'}
-                    </button>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: 'var(--radius-sm)' }}>
-                    <button
-                      type="button"
-                      onClick={() => setAuctionViewMode('cards')}
-                      className={`btn btn-sm ${auctionViewMode === 'cards' ? 'btn-gold' : 'btn-ghost'}`}
-                      style={{ padding: '4px 10px', fontSize: 'var(--font-size-xs)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                    >
-                      <LayoutGrid size={14} />
-                      <span>{t('auctions.viewCards')}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAuctionViewMode('table')}
-                      className={`btn btn-sm ${auctionViewMode === 'table' ? 'btn-gold' : 'btn-ghost'}`}
-                      style={{ padding: '4px 10px', fontSize: 'var(--font-size-xs)', display: 'inline-flex', alignItems: 'center', gap: '6px', color: auctionViewMode === 'table' ? undefined : '#FFF' }}
-                    >
-                      <List size={14} />
-                      <span>{t('auctions.viewTable')}</span>
-                    </button>
-                  </div>
-                </div>
+                <h2 style={{ fontSize: 'var(--font-size-xl)', margin: '0 0 8px 0', color: 'var(--color-maroon-primary)' }}>
+                  {currentLang === 'te' ? 'వేలం పాట రికార్డులు త్వరలో చేర్చబడతాయి' : 'Auction Records Will Be Added Soon'}
+                </h2>
+                <p style={{ margin: '0 auto', maxWidth: '580px', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-base)', lineHeight: 1.6 }}>
+                  {currentLang === 'te'
+                    ? 'ఈ సంవత్సర ఉత్సవాల వేలం పాట విజేతల వివరాలు కమిటీ ద్వారా నిర్ధారించబడిన తర్వాత ఇక్కడ ప్రచురించబడతాయి.'
+                    : 'The auction records and winners for this festival year will be published once finalized by the committee.'}
+                </p>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* Section Header with exact bilingual section heading and filter controls (No total calculations) */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 'var(--space-6)',
+                    flexWrap: 'wrap',
+                    gap: '16px'
+                  }}
+                >
+                  <div>
+                    <span className="sub-heading" style={{ fontSize: 'var(--font-size-xs)' }}>
+                      {currentLang === 'te' ? 'వేలం పాట వివరాలు' : 'Auction Registry'}
+                    </span>
+                    <h2 style={{ margin: 0, fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'var(--color-maroon-primary)' }}>
+                      {album.year === 2025
+                        ? (currentLang === 'te' ? 'అమ్మవారి చీరల వేలం విజేతల వివరాలు' : 'Matha Avatar Saree Auction List')
+                        : (currentLang === 'te' ? 'వేలం పాట విజేతల వివరాలు' : 'Auction Winners List')}
+                    </h2>
+                  </div>
+
+                  {/* Filter Pills and View Mode Toggle */}
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => setAuctionFilter('all')}
+                        className={`btn btn-sm ${auctionFilter === 'all' ? 'btn-gold' : 'btn-secondary'}`}
+                      >
+                        {t('auctions.filterAll', { count: confirmedAuctions.length })}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuctionFilter('sarees')}
+                        className={`btn btn-sm ${auctionFilter === 'sarees' ? 'btn-gold' : 'btn-secondary'}`}
+                      >
+                        {currentLang === 'te' ? 'చీరలు (11)' : 'Sarees (11)'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuctionFilter('additional')}
+                        className={`btn btn-sm ${auctionFilter === 'additional' ? 'btn-gold' : 'btn-secondary'}`}
+                      >
+                        {currentLang === 'te' ? 'ప్రత్యేక వస్తువులు (3)' : 'Special Items (3)'}
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '4px', background: 'var(--color-cream-alt)', padding: '4px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border-subtle)' }}>
+                      <button
+                        type="button"
+                        onClick={() => setAuctionViewMode('cards')}
+                        className={`btn btn-sm ${auctionViewMode === 'cards' ? 'btn-primary' : 'btn-ghost'}`}
+                        style={{ padding: '4px 10px', fontSize: 'var(--font-size-xs)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <LayoutGrid size={14} />
+                        <span>{t('auctions.viewCards')}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAuctionViewMode('table')}
+                        className={`btn btn-sm ${auctionViewMode === 'table' ? 'btn-primary' : 'btn-ghost'}`}
+                        style={{ padding: '4px 10px', fontSize: 'var(--font-size-xs)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <List size={14} />
+                        <span>{t('auctions.viewTable')}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
             {/* When auctionViewMode === 'cards' */}
             {auctionViewMode === 'cards' ? (
@@ -682,50 +731,27 @@ export const AlbumDetailPage: React.FC = () => {
                 </table>
               </div>
             )}
-
-            {/* Incomplete / Pending Items Informational Notice */}
-            <div
-              className="card"
-              style={{
-                padding: 'var(--space-6)',
-                borderLeft: '4px solid var(--color-gold-dark)',
-                background: 'var(--color-gold-pale)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <Sparkles size={24} color="var(--color-gold-dark)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <div>
-                  <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--font-size-base)', color: 'var(--color-maroon-primary)' }}>
-                    {t('auctions.pendingNoticeTitle')}
-                  </h3>
-                  <p style={{ margin: '0 0 10px 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-                    {t('auctions.pendingNoticeDesc')}
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    <span className="badge badge-gold">
-                      {currentLang === 'te' ? 'లడ్డూ ప్రసాదం' : 'Laddu Prasadam'}
-                    </span>
-                    <span className="badge badge-gold">
-                      {currentLang === 'te' ? 'ముక్కు పుడక' : 'Mukku Pudaka (Nose Ring)'}
-                    </span>
-                    <span className="badge badge-gold">
-                      {currentLang === 'te' ? 'పవిత్ర కలశం' : 'Sacred Kalasham'}
-                    </span>
-                    <span className="badge badge-gold">
-                      {currentLang === 'te' ? 'లక్ష్మీ మాల' : 'Lakshmi Maala'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </>
         )}
+      </div>
+    )}
 
         {/* =========================================================================
             ALBUM 3: DONORS & SPONSORS VIEW
             ========================================================================= */}
         {effectiveAlbumType === 'donors' && (
           <div style={{ marginBottom: 'var(--space-12)' }}>
+            <div style={{ marginBottom: 'var(--space-6)' }}>
+              <span className="sub-heading" style={{ fontSize: 'var(--font-size-xs)' }}>
+                {currentLang === 'te' ? 'దాతల వివరాలు' : 'Donors Registry'}
+              </span>
+              <h2 style={{ margin: 0, fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'var(--color-maroon-primary)' }}>
+                {album.year === 2025
+                  ? 'Sponsors & Donors List | స్పాన్సర్లు మరియు దాతల జాబితా'
+                  : (currentLang === 'te' ? 'స్పాన్సర్లు మరియు దాతల జాబితా' : 'Sponsors & Donors List')}
+              </h2>
+            </div>
+
             {publishedDonors.length === 0 ? (
               <div
                 className="card"
@@ -759,23 +785,68 @@ export const AlbumDetailPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid-3">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-5)' }}>
                 {publishedDonors.map((donor) => {
-                  const donorName = getLocalized(donor.name);
-                  const contrib = getLocalized(donor.contributionType);
+                  const primaryRole = currentLang === 'te' ? donor.contributionType.te : donor.contributionType.en;
+                  const secondaryRole = currentLang === 'te' ? donor.contributionType.en : donor.contributionType.te;
+                  const primaryName = currentLang === 'te' ? donor.name.te : donor.name.en;
+                  const secondaryName = currentLang === 'te' ? donor.name.en : donor.name.te;
+
                   return (
-                    <div key={donor.id} className="card card-cultural-top" style={{ padding: 'var(--space-5)' }}>
-                      <span className="badge badge-gold" style={{ marginBottom: '8px' }}>
-                        {contrib}
-                      </span>
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--font-size-lg)' }}>
-                        {donorName}
-                      </h3>
-                      {donor.amount !== undefined && (
-                        <div style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-maroon-primary)', marginTop: '8px' }}>
+                    <div
+                      key={donor.id}
+                      className="card card-gold-top card-hover"
+                      style={{
+                        padding: 'var(--space-6)',
+                        background: 'var(--color-surface)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        borderRadius: 'var(--radius-md)'
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+                          <span
+                            className="badge badge-gold"
+                            style={{
+                              fontSize: '13px',
+                              padding: '4px 10px',
+                              fontWeight: 600
+                            }}
+                          >
+                            ⭐ {primaryRole}
+                          </span>
+                          {secondaryRole && secondaryRole !== primaryRole && (
+                            <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
+                              ({secondaryRole})
+                            </span>
+                          )}
+                        </div>
+
+                        <h3
+                          style={{
+                            margin: '0 0 6px 0',
+                            fontSize: '1.2rem',
+                            color: 'var(--color-maroon-primary)',
+                            lineHeight: 1.4
+                          }}
+                        >
+                          {primaryName}
+                        </h3>
+
+                        {secondaryName && secondaryName !== primaryName && (
+                          <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+                            {secondaryName}
+                          </div>
+                        )}
+                      </div>
+
+                      {donor.amount && donor.amount > 0 ? (
+                        <div style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-maroon-primary)', marginTop: 'var(--space-4)' }}>
                           {formatRupees(donor.amount)}
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   );
                 })}

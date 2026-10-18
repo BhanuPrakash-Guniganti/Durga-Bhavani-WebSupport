@@ -89,7 +89,7 @@ router.get('/years', async (_req: Request, res: Response) => {
         year: 2026,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2026', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2026 (మూడవ సంవత్సరం)' },
         slug: '2026',
-        albumCount: 1,
+        albumCount: albumsStore.filter((a) => a.year === 2026 && a.status === 'published').length,
         status: 'published'
       },
       {
@@ -103,7 +103,7 @@ router.get('/years', async (_req: Request, res: Response) => {
         year: 2024,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2024', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2024 (మొదటి సంవత్సరం)' },
         slug: '2024',
-        albumCount: 2,
+        albumCount: albumsStore.filter((a) => a.year === 2024 && a.status === 'published').length,
         status: 'published'
       }
     ]

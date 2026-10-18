@@ -107,48 +107,124 @@ const seedInitialDataIfEmpty = async () => {
 
 const syncDatabaseSchemas = async () => {
   try {
-    // 1. Ensure existing albums have albumType
-    const albums = await AlbumModel.find({});
-    for (const alb of albums) {
-      if (!alb.albumType) {
-        const type =
-          alb.slug.includes('auction') ? 'auction' :
-          alb.slug.includes('alankaranalu') || alb.slug.includes('avatar') ? 'avatars' :
-          alb.slug.includes('donor') ? 'donors' : 'general';
-        await AlbumModel.updateOne({ id: alb.id }, { $set: { albumType: type } });
+    // 1. Sync Albums: Ensure all 2024, 2025, 2026 albums exist and have correct titles/types
+    for (const initAlb of initialAlbums) {
+      const existing = await AlbumModel.findOne({ $or: [{ id: initAlb.id }, { slug: initAlb.slug }] });
+      if (existing) {
+        await AlbumModel.updateOne(
+          { _id: existing._id },
+          {
+            $set: {
+              title: initAlb.title,
+              description: initAlb.description,
+              albumType: initAlb.albumType,
+              photoCount: initAlb.photoCount,
+              year: initAlb.year,
+              status: initAlb.status,
+              sortOrder: initAlb.sortOrder
+            }
+          }
+        );
+      } else {
+        await AlbumModel.create(initAlb);
       }
     }
 
-    // 2. Ensure existing auction records have avatarId & itemType if missing
-    for (const initAuc of initialAuctionItems) {
-      await AuctionItemModel.updateOne(
-        { id: initAuc.id, $or: [{ avatarId: { $exists: false } }, { avatarId: null }] },
-        { $set: { avatarId: initAuc.avatarId, itemType: initAuc.itemType } }
-      );
-    }
-
-    // 3. Ensure existing avatars have description if missing
+    // 2. Sync Avatars: Update names and sort orders, preserving existing photos
     for (const initAv of initialAvatars) {
-      if (initAv.description) {
+      const existing = await AvatarModel.findOne({ id: initAv.id });
+      if (existing) {
         await AvatarModel.updateOne(
-          { id: initAv.id, $or: [{ description: { $exists: false } }, { description: null }] },
-          { $set: { description: initAv.description } }
+          { id: initAv.id },
+          {
+            $set: {
+              name: initAv.name,
+              sortOrder: initAv.sortOrder,
+              dayNumber: initAv.dayNumber,
+              albumSlug: initAv.albumSlug,
+              year: initAv.year,
+              status: 'published'
+            }
+          }
         );
+      } else {
+        await AvatarModel.create(initAv);
       }
     }
 
-    // 4. Ensure existing donors have contributionType if missing
-    for (const initDon of initialDonors) {
-      if (initDon.contributionType) {
-        await DonorModel.updateOne(
-          { id: initDon.id, $or: [{ contributionType: { $exists: false } }, { contributionType: null }] },
-          { $set: { contributionType: initDon.contributionType, albumSlug: initDon.albumSlug } }
+    // 3. Sync Auctions: Ensure exactly the 14 2025 auction records, preserving any uploaded photoUrl
+    const validAucIds = initialAuctionItems.map((a) => a.id);
+    for (const initAuc of initialAuctionItems) {
+      const existing = await AuctionItemModel.findOne({ id: initAuc.id });
+      if (existing) {
+        await AuctionItemModel.updateOne(
+          { id: initAuc.id },
+          {
+            $set: {
+              itemName: initAuc.itemName,
+              avatarId: initAuc.avatarId,
+              avatarName: initAuc.avatarName,
+              winnerName: initAuc.winnerName,
+              fatherName: initAuc.fatherName,
+              winningAmount: initAuc.winningAmount,
+              itemType: initAuc.itemType,
+              status: 'published',
+              isComplete: true,
+              sortOrder: initAuc.sortOrder,
+              year: initAuc.year,
+              albumSlug: initAuc.albumSlug
+            }
+          }
         );
+      } else {
+        await AuctionItemModel.create(initAuc);
       }
     }
-    console.log('[Database] Schema compatibility sync completed.');
+    // Remove obsolete 2025 auction records not in the final 14
+    await AuctionItemModel.deleteMany({
+      year: 2025,
+      albumSlug: 'auction-winners-2025',
+      id: { $nin: validAucIds }
+    });
+
+    // 4. Sync Donors: Ensure the 4 final sponsors exist with published status
+    const validDonorIds = initialDonors.map((d) => d.id);
+    for (const initDon of initialDonors) {
+      const existing = await DonorModel.findOne({ id: initDon.id });
+      if (existing) {
+        await DonorModel.updateOne(
+          { id: initDon.id },
+          {
+            $set: {
+              name: initDon.name,
+              contributionType: initDon.contributionType,
+              albumSlug: initDon.albumSlug,
+              year: initDon.year,
+              status: 'published',
+              sortOrder: initDon.sortOrder
+            }
+          }
+        );
+      } else {
+        await DonorModel.create(initDon);
+      }
+    }
+    // Remove obsolete 2025 donors not in the 4 final sponsors
+    await DonorModel.deleteMany({
+      year: 2025,
+      albumSlug: 'donors-and-sponsors-2025',
+      id: { $nin: validDonorIds }
+    });
+
+    // 5. Update Years album counts
+    for (const yr of [2024, 2025, 2026]) {
+      const publishedCount = await AlbumModel.countDocuments({ year: yr, status: 'published' });
+      await YearModel.updateOne({ year: yr }, { $set: { albumCount: publishedCount } });
+    }
+
+    console.log('[Database] Content and schema synchronization completed.');
   } catch (err) {
-    console.warn('[Database] Schema compatibility sync notice:', err);
+    console.warn('[Database] Schema synchronization notice:', err);
   }
 };
 

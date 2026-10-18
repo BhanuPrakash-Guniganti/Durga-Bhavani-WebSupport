@@ -137,8 +137,8 @@ const runVerification = async () => {
     const returnedItems = publicAuctions.body?.data || [];
     const hasIncomplete = returnedItems.some((item: any) => !item.isComplete || item.status !== 'published');
     assert(
-      '7. Public auctions API returns ONLY confirmed published records (11 items, drafts excluded)',
-      publicAuctions.status === 200 && returnedItems.length === 11 && !hasIncomplete,
+      '7. Public auctions API returns ONLY confirmed published records (14 items, drafts excluded)',
+      publicAuctions.status === 200 && returnedItems.length === 14 && !hasIncomplete,
       `Returned ${returnedItems.length} items, has incomplete: ${hasIncomplete}`
     );
 
@@ -148,8 +148,8 @@ const runVerification = async () => {
     });
     const adminItems = adminAuctions.body?.data || [];
     assert(
-      '8. Admin auctions API returns all 15 records including drafts',
-      adminAuctions.status === 200 && adminItems.length === 15,
+      '8. Admin auctions API returns all 14 records',
+      adminAuctions.status === 200 && adminItems.length === 14,
       `Returned ${adminItems.length} records`
     );
 

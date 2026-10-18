@@ -119,7 +119,7 @@ export const sampleYears: YearRecord[] = [
     startDate: '2026-10-10',
     endDate: '2026-10-19',
     status: 'published',
-    albumCount: 1,
+    albumCount: 3,
     highlights: {
       en: [
         'Third Year of Sri Durga Bhavani Utsav celebrations at Dodlapahad',
@@ -183,7 +183,7 @@ export const sampleYears: YearRecord[] = [
     startDate: '2024-10-03',
     endDate: '2024-10-12',
     status: 'published',
-    albumCount: 2,
+    albumCount: 3,
     highlights: {
       en: [
         'First Year — The beginning of Sri Durga Bhavani Utsav celebrations at Dodlapahad',
@@ -203,6 +203,44 @@ export const sampleYears: YearRecord[] = [
 ];
 
 export const sampleAlbums: AlbumRecord[] = [
+  {
+    id: 'alb-2026-devi-alankaranalu',
+    slug: 'devi-alankaranalu-2026',
+    title: {
+      en: 'Devi Alankaranalu',
+      te: 'అమ్మవారి అలంకరణలు'
+    },
+    description: {
+      en: "Photographs and details of the goddess's daily avatars and sacred alankarams for the 2026 celebrations.",
+      te: '2026 ఉత్సవాలలో శ్రీ దుర్గాభవాని అమ్మవారి దివ్య అవతారాలు మరియు విశేష అలంకారాల వివరాలు.'
+    },
+    year: 2026,
+    coverImage: createSampleSvgImage('Devi Alankaranalu 2026', 'Album', '#7A0C0C', 'mandir'),
+    photoCount: 10,
+    status: 'published',
+    albumType: 'avatars',
+    isSample: true,
+    photos: []
+  },
+  {
+    id: 'alb-2026-auction-winners',
+    slug: 'auction-winners-2026',
+    title: {
+      en: 'Auction Winners',
+      te: 'వేలం పాట విజేతలు'
+    },
+    description: {
+      en: 'Auction records and winners for sacred sarees and festival items for the 2026 celebrations.',
+      te: '2026 ఉత్సవాలలో పవిత్ర చీరలు మరియు ప్రత్యేక వస్తువుల వేలం పాట వివరాలు.'
+    },
+    year: 2026,
+    coverImage: createSampleSvgImage('Auction Winners 2026', 'Album', '#7A0C0C', 'kalash'),
+    photoCount: 0,
+    status: 'published',
+    albumType: 'auction',
+    isSample: true,
+    photos: []
+  },
   {
     id: 'alb-2026-01',
     slug: 'utsav-celebrations-2026',
@@ -269,12 +307,12 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'అమ్మవారి అలంకరణలు'
     },
     description: {
-      en: "Photographs and details of the goddess's ten daily avatars and sacred alankarams during the 2025 celebrations.",
-      te: 'శ్రీ దుర్గాభవాని అమ్మవారి పది రోజుల దివ్య అవతారాలు మరియు విశేష అలంకారాల ఛాయాచిత్రాలు.'
+      en: "Photographs and details of the goddess's eleven daily avatars and sacred alankarams during the 2025 celebrations.",
+      te: 'శ్రీ దుర్గాభవాని అమ్మవారి పదకొండు దివ్య అవతారాలు మరియు విశేష అలంకారాల ఛాయాచిత్రాలు.'
     },
     year: 2025,
     coverImage: createSampleSvgImage('Devi Alankaranalu', 'Album', '#7A0C0C', 'mandir'),
-    photoCount: 10,
+    photoCount: 11,
     status: 'published',
     albumType: 'avatars',
     isSample: true,
@@ -284,16 +322,16 @@ export const sampleAlbums: AlbumRecord[] = [
     id: 'alb-2025-auction-winners',
     slug: 'auction-winners-2025',
     title: {
-      en: 'Auction Winners',
-      te: 'వేలం పాట విజేతలు'
+      en: '2025 Durga Bhavani Utsav – Dodlapahad',
+      te: '2025 దుర్గ భవాని ఉత్సవం – దొడ్లపహాడ్'
     },
     description: {
-      en: 'Auction records and winners for the ten sacred sarees and auspicious festival items for the 2025 celebrations.',
-      te: '2025 ఉత్సవాలలో పది చీరలు మరియు ప్రత్యేక వస్తువుల వేలం పాట విజేతల వివరాలు.'
+      en: 'Matha Avatar Saree Auction List — Auction records and winners for sacred sarees and auspicious festival items.',
+      te: 'అమ్మవారి చీరల వేలం విజేతల వివరాలు — 2025 ఉత్సవాలలో పవిత్ర చీరలు మరియు విశేష వస్తువుల వేలం పాట విజేతల వివరాలు.'
     },
     year: 2025,
     coverImage: createSampleSvgImage('Auction Winners', 'Album', '#7A0C0C', 'kalash'),
-    photoCount: 0,
+    photoCount: 14,
     status: 'published',
     albumType: 'auction',
     isSample: true,
@@ -303,16 +341,16 @@ export const sampleAlbums: AlbumRecord[] = [
     id: 'alb-2025-donors-and-sponsors',
     slug: 'donors-and-sponsors-2025',
     title: {
-      en: 'Donors & Sponsors',
-      te: 'దాతలు మరియు స్పాన్సర్లు'
+      en: '2025 Durga Bhavani Utsav – Dodlapahad',
+      te: '2025 దుర్గ భవాని ఉత్సవం – దొడ్లపహాడ్'
     },
     description: {
-      en: 'Records of generous donors, patrons, and sponsors supporting the 2025 Sri Durga Bhavani Utsav celebrations.',
-      te: '2025 ఉత్సవాల నిర్వహణకు సహకరించిన దాతలు మరియు స్పాన్సర్ల వివరాలు.'
+      en: 'Sponsors & Donors List | స్పాన్సర్లు మరియు దాతల జాబితా',
+      te: 'స్పాన్సర్లు మరియు దాతల జాబితా | Sponsors & Donors List'
     },
     year: 2025,
     coverImage: createSampleSvgImage('Donors & Sponsors', 'Album', '#7A0C0C', 'diya'),
-    photoCount: 0,
+    photoCount: 4,
     status: 'published',
     albumType: 'donors',
     isSample: true,
@@ -375,6 +413,44 @@ export const sampleAlbums: AlbumRecord[] = [
         isSample: true
       }
     ]
+  },
+  {
+    id: 'alb-2024-devi-alankaranalu',
+    slug: 'devi-alankaranalu-2024',
+    title: {
+      en: 'Devi Alankaranalu',
+      te: 'అమ్మవారి అలంకరణలు'
+    },
+    description: {
+      en: "Photographs and details of the goddess's daily avatars and sacred alankarams during the 2024 celebrations.",
+      te: '2024 ఉత్సవాలలో శ్రీ దుర్గాభవాని అమ్మవారి దివ్య అవతారాలు మరియు విశేష అలంకారాల వివరాలు.'
+    },
+    year: 2024,
+    coverImage: createSampleSvgImage('Devi Alankaranalu 2024', 'Album', '#7A0C0C', 'mandir'),
+    photoCount: 10,
+    status: 'published',
+    albumType: 'avatars',
+    isSample: true,
+    photos: []
+  },
+  {
+    id: 'alb-2024-auction-winners',
+    slug: 'auction-winners-2024',
+    title: {
+      en: 'Auction Winners',
+      te: 'వేలం పాట విజేతలు'
+    },
+    description: {
+      en: 'Auction records and winners for sacred sarees and festival items for the 2024 celebrations.',
+      te: '2024 ఉత్సవాలలో పవిత్ర చీరలు మరియు ప్రత్యేక వస్తువుల వేలం పాట వివరాలు.'
+    },
+    year: 2024,
+    coverImage: createSampleSvgImage('Auction Winners 2024', 'Album', '#7A0C0C', 'kalash'),
+    photoCount: 0,
+    status: 'published',
+    albumType: 'auction',
+    isSample: true,
+    photos: []
   },
   {
     id: 'alb-2024-01',
@@ -739,7 +815,7 @@ export const sampleHistoryMilestones: HistoricalMilestoneRecord[] = [
   }
 ];
 
-export const sampleAvatars: AvatarRecord[] = [
+export const sampleAvatars2025: AvatarRecord[] = [
   {
     id: 'avatar-2025-01',
     albumSlug: 'devi-alankaranalu-2025',
@@ -777,17 +853,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-03',
+    id: 'avatar-2025-04',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 3,
     name: {
-      en: 'Sri Lalitha Tripura Sundari Devi',
-      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి'
+      en: 'Sri Annapurna Devi',
+      te: 'శ్రీ అన్నపూర్ణ దేవి'
     },
     description: {
-      en: 'The sovereign supreme empress seated upon Sri Chakra, bestowing supreme bliss and protection on Day 3.',
-      te: 'మూడవ రోజు శ్రీ లలితా త్రిపుర సుందరీ దేవి అలంకారం — శ్రీచక్ర నివాసిని, సమస్త లోక రక్షకి, పరమానంద స్వరూపిణి.'
+      en: 'The compassionate universal mother who nurtures and sustains all creation with endless nourishment on Day 3.',
+      te: 'మూడవ రోజు శ్రీ అన్నపూర్ణ దేవి అలంకారం — సకల ప్రాణికోటికి నిరంతర అన్నప్రసాదాన్ని అనుగ్రహించే అమృతమయి.'
     },
     photos: [],
     sortOrder: 3,
@@ -795,17 +871,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-04',
+    id: 'avatar-2025-katyayani',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 4,
     name: {
-      en: 'Sri Annapurna Devi',
-      te: 'శ్రీ అన్నపూర్ణా దేవి'
+      en: 'Sri Katyayani Devi',
+      te: 'శ్రీ కాత్యాయనీ దేవి'
     },
     description: {
-      en: 'The compassionate universal mother who nurtures and sustains all creation with endless nourishment on Day 4.',
-      te: 'నాల్గవ రోజు శ్రీ అన్నపూర్ణా దేవి అలంకారం — సకల ప్రాణికోటికి నిరంతర అన్నప్రసాదాన్ని అనుగ్రహించే అమృతమయి.'
+      en: 'The fierce and compassionate warrior goddess blessing devotees with courage, protection, and fulfillment on Day 4.',
+      te: 'నాల్గవ రోజు శ్రీ కాత్యాయనీ దేవి అలంకారం — భక్తుల అభీష్టాలను నెరవేర్చే జగన్మాత, ధర్మ రక్షకి దివ్య రూపం.'
     },
     photos: [],
     sortOrder: 4,
@@ -813,17 +889,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-05',
+    id: 'avatar-2025-06',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 5,
     name: {
-      en: 'Maha Chandi Devi',
-      te: 'మహచండి దేవి'
+      en: 'Sri Mahalakshmi Devi',
+      te: 'శ్రీ మహాలక్ష్మీ దేవి'
     },
     description: {
-      en: 'The fierce, all-powerful protectress dispelling all negativity, fears, and obstacles on Day 5.',
-      te: 'ఐదవ రోజు మహచండి దేవి అలంకారం — దురిత నివారిణి, భయ వినాశిని, శత్రు సంహారిణి అయిన మహోగ్ర శక్తి స్వరూపం.'
+      en: 'The supreme goddess of auspiciousness, abundance, spiritual wealth, and fortune on Day 5.',
+      te: 'ఐదవ రోజు శ్రీ మహాలక్ష్మీ దేవి అలంకారం — అష్టైశ్వర్య ప్రదాయిని, సకల శుభదాయకి, దివ్య మంగళ స్వరూపిణి.'
     },
     photos: [],
     sortOrder: 5,
@@ -831,17 +907,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-06',
+    id: 'avatar-2025-03',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 6,
     name: {
-      en: 'Sri Maha Lakshmi Devi',
-      te: 'శ్రీ మహాలక్ష్మీ దేవి'
+      en: 'Sri Lalitha Tripura Sundari Devi',
+      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి'
     },
     description: {
-      en: 'The supreme goddess of auspiciousness, abundance, spiritual wealth, and fortune on Day 6.',
-      te: 'ఆరవ రోజు శ్రీ మహాలక్ష్మీ దేవి అలంకారం — అష్టైశ్వర్య ప్రదాయిని, సకల శుభదాయకి, దివ్య మంగళ స్వరూపిణి.'
+      en: 'The sovereign supreme empress seated upon Sri Chakra, bestowing supreme bliss and protection on Day 6.',
+      te: 'ఆరవ రోజు శ్రీ లలితా త్రిపుర సుందరీ దేవి అలంకారం — శ్రీచక్ర నివాసిని, సమస్త లోక రక్షకి, పరమానంద స్వరూపిణి.'
     },
     photos: [],
     sortOrder: 6,
@@ -849,17 +925,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-07',
+    id: 'avatar-2025-05',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 7,
     name: {
-      en: 'Sri Saraswati Devi - Moola Nakshatram',
-      te: 'శ్రీ సరస్వతీ దేవి'
+      en: 'Sri Maha Chandi Devi',
+      te: 'శ్రీ మహాచండీ దేవి'
     },
     description: {
-      en: 'The sacred form of Sri Saraswati Devi adorned on Moola Nakshatram, blessing devotees with learning, arts, and speech on Day 7.',
-      te: 'ఏడవ రోజు మూలా నక్షత్రం సందర్భంగా శ్రీ సరస్వతీ దేవి విశేష అలంకారం — విద్యా ప్రదాయిని, వీణాపాణి దివ్య రూపం.'
+      en: 'The fierce, all-powerful protectress dispelling all negativity, fears, and obstacles on Day 7.',
+      te: 'ఏడవ రోజు శ్రీ మహాచండీ దేవి అలంకారం — దురిత నివారిణి, భయ వినాశిని, శత్రు సంహారిణి అయిన మహోగ్ర శక్తి స్వరూపం.'
     },
     photos: [],
     sortOrder: 7,
@@ -867,17 +943,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-08',
+    id: 'avatar-2025-07',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 8,
     name: {
-      en: 'Sri Durga Devi',
-      te: 'శ్రీ దుర్గా దేవి'
+      en: 'Sri Saraswati Devi',
+      te: 'శ్రీ సరస్వతీ దేవి'
     },
     description: {
-      en: 'The supreme mother seated upon the lion with divine weapons, conferring valor and triumph on Day 8.',
-      te: 'ఎనిమిదవ రోజు శ్రీ దుర్గా దేవి అలంకారం — సింహవాహినిగా భక్తులను ఆపదల నుండి కాపాడి విజయాన్ని ప్రసాదించే ఆదిశక్తి.'
+      en: 'The sacred form of Sri Saraswati Devi adorned on Moola Nakshatram, blessing devotees with learning, arts, and speech on Day 8.',
+      te: 'ఎనిమిదవ రోజు శ్రీ సరస్వతీ దేవి విశేష అలంకారం — విద్యా ప్రదాయిని, వీణాపాణి దివ్య రూపం.'
     },
     photos: [],
     sortOrder: 8,
@@ -885,17 +961,17 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-09',
+    id: 'avatar-2025-08',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 9,
     name: {
-      en: 'Sri Mahishasura Mardhini Devi',
-      te: 'శ్రీ మహిషాసురమర్దినీ దేవి'
+      en: 'Sri Durga Devi',
+      te: 'శ్రీ దుర్గా దేవి'
     },
     description: {
-      en: 'The heroic slayer of Mahishasura on Mahanavami, restoring cosmic harmony and righteousness on Day 9.',
-      te: 'తొమ్మిదవ రోజు శ్రీ మహిషాసురమర్దినీ దేవి అలంకారం — మహిషాసుర మర్దనం గావించి ధర్మ విజయానికి బాటలు వేసిన దివ్య రూపం.'
+      en: 'The supreme mother seated upon the lion with divine weapons, conferring valor and triumph on Day 9.',
+      te: 'తొమ్మిదవ రోజు శ్రీ దుర్గా దేవి అలంకారం — సింహవాహినిగా భక్తులను ఆపదల నుండి కాపాడి విజయాన్ని ప్రసాదించే ఆదిశక్తి.'
     },
     photos: [],
     sortOrder: 9,
@@ -903,23 +979,78 @@ export const sampleAvatars: AvatarRecord[] = [
     isSample: true
   },
   {
-    id: 'avatar-2025-10',
+    id: 'avatar-2025-09',
     albumSlug: 'devi-alankaranalu-2025',
     year: 2025,
     dayNumber: 10,
     name: {
-      en: 'Sri Raja Rajeswari Devi',
-      te: 'శ్రీ రాజరాజేశ్వరీ దేవి'
+      en: 'Sri Mahishasura Mardini Devi',
+      te: 'శ్రీ మహిషాసుర మర్దినీ దేవి'
     },
     description: {
-      en: 'The majestic empress adorned on Vijaya Dashami, blessing Dodlapahad with eternal peace, harmony, and welfare on Day 10.',
-      te: 'పదవ రోజు విజయదశమి సందర్భంగా శ్రీ రాజరాజేశ్వరీ దేవి మహా అలంకారం — సమస్త లోక కళ్యాణకారిణి, సర్వోన్నత దివ్య తేజస్సు.'
+      en: 'The heroic slayer of Mahishasura on Mahanavami, restoring cosmic harmony and righteousness on Day 10.',
+      te: 'పదవ రోజు శ్రీ మహిషాసుర మర్దినీ దేవి అలంకారం — మహిషాసుర మర్దనం గావించి ధర్మ విజయానికి బాటలు వేసిన దివ్య రూపం.'
     },
     photos: [],
     sortOrder: 10,
     status: 'published',
     isSample: true
+  },
+  {
+    id: 'avatar-2025-10',
+    albumSlug: 'devi-alankaranalu-2025',
+    year: 2025,
+    dayNumber: 11,
+    name: {
+      en: 'Sri Raja Rajeshwari Devi',
+      te: 'శ్రీ రాజరాజేశ్వరీ దేవి'
+    },
+    description: {
+      en: 'The majestic empress adorned on Vijaya Dashami, blessing Dodlapahad with eternal peace, harmony, and welfare on Day 11.',
+      te: 'పదకొండవ రోజు శ్రీ రాజరాజేశ్వరీ దేవి మహా అలంకారం — సమస్త లోక కళ్యాణకారిణి, సర్వోన్నత దివ్య తేజస్సు.'
+    },
+    photos: [],
+    sortOrder: 11,
+    status: 'published',
+    isSample: true
   }
+];
+
+const createSampleTenAvatars = (year: number, albumSlug: string): AvatarRecord[] => {
+  const names: Array<{ te: string; en: string }> = [
+    { te: 'శ్రీ బాలా త్రిపుర సుందరీ దేవి', en: 'Sri Bala Tripura Sundari Devi' },
+    { te: 'శ్రీ గాయత్రీ దేవి', en: 'Sri Gayatri Devi' },
+    { te: 'శ్రీ అన్నపూర్ణ దేవి', en: 'Sri Annapurna Devi' },
+    { te: 'శ్రీ మహాలక్ష్మీ దేవి', en: 'Sri Mahalakshmi Devi' },
+    { te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి', en: 'Sri Lalitha Tripura Sundari Devi' },
+    { te: 'శ్రీ మహాచండీ దేవి', en: 'Sri Maha Chandi Devi' },
+    { te: 'శ్రీ సరస్వతీ దేవి', en: 'Sri Saraswati Devi' },
+    { te: 'శ్రీ దుర్గా దేవి', en: 'Sri Durga Devi' },
+    { te: 'శ్రీ మహిషాసుర మర్దినీ దేవి', en: 'Sri Mahishasura Mardini Devi' },
+    { te: 'శ్రీ రాజరాజేశ్వరీ దేవి', en: 'Sri Raja Rajeshwari Devi' }
+  ];
+
+  return names.map((name, idx) => ({
+    id: `avatar-${year}-${String(idx + 1).padStart(2, '0')}`,
+    albumSlug,
+    year,
+    dayNumber: idx + 1,
+    name: { en: name.en, te: name.te },
+    description: {
+      en: `Devi Alankaram on Day ${idx + 1} during the ${year} Sri Durga Bhavani Utsav celebrations.`,
+      te: `${year} శ్రీ దుర్గాభవాని ఉత్సవాలలో ${idx + 1}వ రోజు అమ్మవారి దివ్యాలంకారం.`
+    },
+    photos: [],
+    sortOrder: idx + 1,
+    status: 'published',
+    isSample: true
+  }));
+};
+
+export const sampleAvatars: AvatarRecord[] = [
+  ...sampleAvatars2025,
+  ...createSampleTenAvatars(2024, 'devi-alankaranalu-2024'),
+  ...createSampleTenAvatars(2026, 'devi-alankaranalu-2026')
 ];
 
 export const sampleAuctionItems: AuctionItemRecord[] = [
@@ -928,18 +1059,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Bala Tripura Sundari Devi Saree',
-      te: 'శ్రీ బాలా త్రిపుర సుందరీ దేవి చీర'
+      en: 'Bala Tripura Sundari Devi',
+      te: 'శ్రీ బాలా త్రిపుర సుందరి దేవి'
     },
     avatarId: 'avatar-2025-01',
     avatarName: {
       en: 'Sri Bala Tripura Sundari Devi',
       te: 'శ్రీ బాలా త్రిపుర సుందరీ దేవి'
     },
-    winnerName: 'ఓర్సు జగదీశ్',
-    fatherName: 'రాంచంద్రయ్య',
+    winnerName: {
+      en: 'Orsu Padmamma - Ramachandri',
+      te: 'ఓర్సు పద్మమ్మ - రామచంద్రి'
+    },
+    fatherName: '',
     winningAmount: 25000,
-    photoUrl: createSampleSvgImage('Sri Bala Tripura Sundari Devi Saree', 'Auction', '#7A0C0C', 'kalash'),
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -951,18 +1085,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Gayatri Devi Saree',
-      te: 'శ్రీ గాయత్రీ దేవి చీర'
+      en: 'Gayatri Devi',
+      te: 'శ్రీ గాయత్రీ దేవి'
     },
     avatarId: 'avatar-2025-02',
     avatarName: {
       en: 'Sri Gayatri Devi',
       te: 'శ్రీ గాయత్రీ దేవి'
     },
-    winnerName: 'ముద్దం యాదయ్య',
-    fatherName: 'సాయిలు',
+    winnerName: {
+      en: 'Muddam Jangamma - Sailu Goud',
+      te: 'ముద్దం జంగమ్మ - సాయిలు గౌడ్'
+    },
+    fatherName: '',
     winningAmount: 35000,
-    photoUrl: createSampleSvgImage('Sri Gayatri Devi Saree', 'Auction', '#7A0C0C', 'diya'),
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -974,18 +1111,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Lalitha Tripura Sundari Devi Saree',
-      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి చీర'
+      en: 'Annapurna Devi',
+      te: 'శ్రీ అన్నపూర్ణ దేవి'
     },
-    avatarId: 'avatar-2025-03',
+    avatarId: 'avatar-2025-04',
     avatarName: {
-      en: 'Sri Lalitha Tripura Sundari Devi',
-      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి'
+      en: 'Sri Annapurna Devi',
+      te: 'శ్రీ అన్నపూర్ణ దేవి'
     },
-    winnerName: 'Uduthala Mahesh',
-    fatherName: 'Chinna Yadaiah',
+    winnerName: {
+      en: 'Vallapudasu Venkatamma - Gopal Goud',
+      te: 'వల్లపుదాసు వెంకటమ్మ - గోపాల్ గౌడ్'
+    },
+    fatherName: '',
     winningAmount: 33000,
-    photoUrl: createSampleSvgImage('Sri Lalitha Tripura Sundari Devi Saree', 'Auction', '#7A0C0C', 'mandir'),
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -997,18 +1137,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Annapurna Devi Saree',
-      te: 'శ్రీ అన్నపూర్ణా దేవి చీర'
+      en: 'Kathayayani Devi',
+      te: 'శ్రీ కాత్యాయని దేవి'
     },
-    avatarId: 'avatar-2025-04',
+    avatarId: 'avatar-2025-katyayani',
     avatarName: {
-      en: 'Sri Annapurna Devi',
-      te: 'శ్రీ అన్నపూర్ణా దేవి'
+      en: 'Sri Katyayani Devi',
+      te: 'శ్రీ కాత్యాయనీ దేవి'
     },
-    winnerName: 'వల్లపూదాసు మల్లేష్',
-    fatherName: 'గోపాల్',
-    winningAmount: 33000,
-    photoUrl: createSampleSvgImage('Sri Annapurna Devi Saree', 'Auction', '#7A0C0C', 'kalash'),
+    winnerName: {
+      en: 'Guniganti Mangamma - Anjaiah Goud',
+      te: 'గునిగంటి మంగమ్మ - అంజయ్య గౌడ్'
+    },
+    fatherName: '',
+    winningAmount: 38000,
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1020,18 +1163,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Maha Chandi Devi Saree',
-      te: 'మహచండి దేవి చీర'
+      en: 'Lalita Tripura Sundari Devi',
+      te: 'శ్రీ లలితా త్రిపుర సుందరి దేవి'
     },
-    avatarId: 'avatar-2025-05',
+    avatarId: 'avatar-2025-03',
     avatarName: {
-      en: 'Maha Chandi Devi',
-      te: 'మహచండి దేవి'
+      en: 'Sri Lalitha Tripura Sundari Devi',
+      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి'
     },
-    winnerName: 'Komiri Vasu',
-    fatherName: '', // Not supplied; leave blank
-    winningAmount: 35000,
-    photoUrl: createSampleSvgImage('Maha Chandi Devi Saree', 'Auction', '#7A0C0C', 'diya'),
+    winnerName: {
+      en: 'Uduthala Laxmamma - Chinna Yadaiah Goud',
+      te: 'ఉడుతల లక్ష్మమ్మ - చిన్న యాదయ్యగౌడ్'
+    },
+    fatherName: '',
+    winningAmount: 33000,
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1043,18 +1189,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Maha Lakshmi Devi Saree',
-      te: 'శ్రీ మహాలక్ష్మీ దేవి చీర'
+      en: 'Mahachandi Devi',
+      te: 'శ్రీ మహాచండీ దేవి'
     },
-    avatarId: 'avatar-2025-06',
+    avatarId: 'avatar-2025-05',
     avatarName: {
-      en: 'Sri Maha Lakshmi Devi',
-      te: 'శ్రీ మహాలక్ష్మీ దేవి'
+      en: 'Sri Maha Chandi Devi',
+      te: 'శ్రీ మహాచండీ దేవి'
     },
-    winnerName: 'Matta Nagesh',
-    fatherName: 'Laxmaiah',
-    winningAmount: 39000,
-    photoUrl: createSampleSvgImage('Sri Maha Lakshmi Devi Saree', 'Auction', '#7A0C0C', 'mandir'),
+    winnerName: {
+      en: 'Komiri Vasu',
+      te: 'కొమిరి వాసు'
+    },
+    fatherName: '',
+    winningAmount: 35000,
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1066,18 +1215,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Saraswati Devi Saree - Moola Nakshatram',
-      te: 'శ్రీ సరస్వతీ దేవి చీర - మూలా నక్షత్రం'
+      en: 'Saraswati Devi',
+      te: 'శ్రీ సరస్వతీ దేవి'
     },
     avatarId: 'avatar-2025-07',
     avatarName: {
-      en: 'Sri Saraswati Devi - Moola Nakshatram',
+      en: 'Sri Saraswati Devi',
       te: 'శ్రీ సరస్వతీ దేవి'
     },
-    winnerName: 'కారింగు తిరుపతయ్య',
-    fatherName: 'జంగయ్య',
+    winnerName: {
+      en: 'Karing Jyoti - Tirupataiah Goud',
+      te: 'కారింగు జ్యోతి - తిరుపతయ్య గౌడ్'
+    },
+    fatherName: '',
     winningAmount: 40000,
-    photoUrl: createSampleSvgImage('Sri Saraswati Devi Saree', 'Auction', '#7A0C0C', 'kalash'),
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1089,18 +1241,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Durga Devi Saree',
-      te: 'శ్రీ దుర్గా దేవి చీర'
+      en: 'Durga Devi',
+      te: 'శ్రీ దుర్గాదేవి'
     },
     avatarId: 'avatar-2025-08',
     avatarName: {
       en: 'Sri Durga Devi',
       te: 'శ్రీ దుర్గా దేవి'
     },
-    winnerName: 'ముద్దం యాదయ్య',
-    fatherName: 'సాయిలు',
+    winnerName: {
+      en: 'Muddam Jangamma - Sailu Goud',
+      te: 'ముద్దం జంగమ్మ - సాయిలు గౌడ్'
+    },
+    fatherName: '',
     winningAmount: 55000,
-    photoUrl: createSampleSvgImage('Sri Durga Devi Saree', 'Auction', '#7A0C0C', 'diya'),
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1112,18 +1267,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Mahishasura Mardhini Devi Saree',
-      te: 'శ్రీ మహిషాసురమర్దినీ దేవి చీర'
+      en: 'Mahishasura Mardini Devi',
+      te: 'శ్రీ మహిషాసురమర్దిని దేవి'
     },
     avatarId: 'avatar-2025-09',
     avatarName: {
-      en: 'Sri Mahishasura Mardhini Devi',
-      te: 'శ్రీ మహిషాసురమర్దినీ దేవి'
+      en: 'Sri Mahishasura Mardini Devi',
+      te: 'శ్రీ మహిషాసుర మర్దినీ దేవి'
     },
-    winnerName: 'ఉడుతల మల్లేష్',
-    fatherName: 'వెంకటయ్య',
-    winningAmount: 46000,
-    photoUrl: createSampleSvgImage('Sri Mahishasura Mardhini Devi Saree', 'Auction', '#7A0C0C', 'mandir'),
+    winnerName: {
+      en: 'Uduthala Anjamma - Venkataiah Goud',
+      te: 'ఉడుతల అంజమ్మ - వెంకటయ్య గౌడ్'
+    },
+    fatherName: '',
+    winningAmount: 45000,
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1135,18 +1293,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sri Raja Rajeswari Devi Saree',
-      te: 'శ్రీ రాజరాజేశ్వరీ దేవి చీర'
+      en: 'Sri Rajarajeshwari Devi',
+      te: 'శ్రీ రాజరాజేశ్వరి దేవి'
     },
     avatarId: 'avatar-2025-10',
     avatarName: {
-      en: 'Sri Raja Rajeswari Devi',
+      en: 'Sri Raja Rajeshwari Devi',
       te: 'శ్రీ రాజరాజేశ్వరీ దేవి'
     },
-    winnerName: 'ఉడుతల పెద్దయ్య',
-    fatherName: 'గోపాల్',
+    winnerName: {
+      en: 'Uduthala Alivelu - Peddaiah Goud',
+      te: 'ఉడుతల అలివేలు - పెద్దయ్య గౌడ్'
+    },
+    fatherName: '',
     winningAmount: 62000,
-    photoUrl: createSampleSvgImage('Sri Raja Rajeswari Devi Saree', 'Auction', '#7A0C0C', 'kalash'),
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1158,15 +1319,21 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Garland-Adorned Saree (Medalu Meeda Cheera)',
-      te: 'మెడలు మీద చీర'
+      en: 'Mahalaxmi Devi',
+      te: 'శ్రీ మహాలక్ష్మీ దేవి'
     },
-    avatarId: undefined, // Unassigned unless confirmed
-    avatarName: undefined,
-    winnerName: 'ఉడుతల నవీన్',
-    fatherName: 'వెంకటయ్య',
-    winningAmount: 5116,
-    photoUrl: createSampleSvgImage('Medalu Meeda Cheera', 'Auction', '#7A0C0C', 'diya'),
+    avatarId: 'avatar-2025-06',
+    avatarName: {
+      en: 'Sri Mahalakshmi Devi',
+      te: 'శ్రీ మహాలక్ష్మీ దేవి'
+    },
+    winnerName: {
+      en: 'Matta Shivani - Nagesh Goud',
+      te: 'మట్ట శివాని - నాగేష్ గౌడ్'
+    },
+    fatherName: '',
+    winningAmount: 39000,
+    photoUrl: undefined,
     itemType: 'saree',
     status: 'published',
     isComplete: true,
@@ -1178,16 +1345,18 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Laddu Prasadam',
-      te: 'లడ్డూ'
+      en: 'Mukku Pudaka',
+      te: 'ముక్కుపుడక'
     },
-    avatarId: undefined,
-    winnerName: '',
+    winnerName: {
+      en: 'Matta Shivani - Nagesh Goud',
+      te: 'మట్ట శివాని - నాగేష్ గౌడ్'
+    },
     fatherName: '',
-    winningAmount: undefined,
+    winningAmount: 47000,
     itemType: 'special_item',
-    status: 'draft',
-    isComplete: false,
+    status: 'published',
+    isComplete: true,
     sortOrder: 12,
     isSample: true
   },
@@ -1196,16 +1365,18 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Mukku Pudaka (Nose Ring)',
-      te: 'ముక్కు పుడక'
+      en: 'Kalasham Winner',
+      te: 'కలశం విజేత'
     },
-    avatarId: undefined,
-    winnerName: '',
+    winnerName: {
+      en: 'Orsu Saritha - Shankar',
+      te: 'ఓర్సు సరిత - శంకర్'
+    },
     fatherName: '',
-    winningAmount: undefined,
+    winningAmount: 35000,
     itemType: 'special_item',
-    status: 'draft',
-    isComplete: false,
+    status: 'published',
+    isComplete: true,
     sortOrder: 13,
     isSample: true
   },
@@ -1214,40 +1385,89 @@ export const sampleAuctionItems: AuctionItemRecord[] = [
     albumSlug: 'auction-winners-2025',
     year: 2025,
     itemName: {
-      en: 'Sacred Kalasham',
-      te: 'కలశం'
+      en: 'Laddu Winner',
+      te: 'లడ్డు విజేత'
     },
-    avatarId: undefined,
-    winnerName: '',
+    winnerName: {
+      en: 'Matta Saraswati - Katamaiah Goud',
+      te: 'మట్ట సరస్వతి - కటమయ్య గౌడ్'
+    },
     fatherName: '',
-    winningAmount: undefined,
+    winningAmount: 16100,
     itemType: 'special_item',
-    status: 'draft',
-    isComplete: false,
+    status: 'published',
+    isComplete: true,
     sortOrder: 14,
-    isSample: true
-  },
-  {
-    id: 'auc-2025-15',
-    albumSlug: 'auction-winners-2025',
-    year: 2025,
-    itemName: {
-      en: 'Lakshmi Maala (Sacred Garland)',
-      te: 'లక్ష్మీ మాల'
-    },
-    avatarId: undefined,
-    winnerName: '',
-    fatherName: '',
-    winningAmount: undefined,
-    itemType: 'special_item',
-    status: 'draft',
-    isComplete: false,
-    sortOrder: 15,
     isSample: true
   }
 ];
 
-export const sampleDonors: DonorRecord[] = [];
+export const sampleDonors: DonorRecord[] = [
+  {
+    id: 'donor-2025-01',
+    albumSlug: 'donors-and-sponsors-2025',
+    year: 2025,
+    contributionType: {
+      en: 'Laddu Sponsor',
+      te: 'లడ్డూ దాత'
+    },
+    name: {
+      en: 'Palakurla Lalitha - Jangaiah Goud',
+      te: 'పాలకూర్ల లలిత - జంగయ్య గౌడ్'
+    },
+    status: 'published',
+    sortOrder: 1,
+    isSample: true
+  },
+  {
+    id: 'donor-2025-02',
+    albumSlug: 'donors-and-sponsors-2025',
+    year: 2025,
+    contributionType: {
+      en: 'Vigraha Daatha',
+      te: 'విగ్రహ దాత'
+    },
+    name: {
+      en: 'Samala Kavita - Nagesh Goud',
+      te: 'సామల కవిత - నాగేష్ గౌడ్'
+    },
+    status: 'published',
+    sortOrder: 2,
+    isSample: true
+  },
+  {
+    id: 'donor-2025-03',
+    albumSlug: 'donors-and-sponsors-2025',
+    year: 2025,
+    contributionType: {
+      en: 'Nimmakayala Daatha',
+      te: 'నిమ్మకాయల దాత'
+    },
+    name: {
+      en: 'Palakurla Roja - Jangaiah Goud',
+      te: 'పాలకూర్ల రోజా - జంగయ్య గౌడ్'
+    },
+    status: 'published',
+    sortOrder: 3,
+    isSample: true
+  },
+  {
+    id: 'donor-2025-04',
+    albumSlug: 'donors-and-sponsors-2025',
+    year: 2025,
+    contributionType: {
+      en: 'Kobbarikayalu Sponsor',
+      te: 'కొబ్బరికాయల స్పాన్సర్'
+    },
+    name: {
+      en: 'Matta Ramulu s/o Laxmaiah Goud',
+      te: 'మట్ట రాములు s/o లక్ష్మయ్య గౌడ్'
+    },
+    status: 'published',
+    sortOrder: 4,
+    isSample: true
+  }
+];
 
 export const sampleAuditLogs: AuditLogRecord[] = [
   {

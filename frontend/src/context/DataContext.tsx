@@ -58,12 +58,12 @@ interface DataContextType {
 }
 
 const STORAGE_KEYS = {
-  ALBUMS: 'durga_bhavani_albums',
-  AVATARS: 'durga_bhavani_avatars',
-  AUCTIONS: 'durga_bhavani_auctions',
-  DONORS: 'durga_bhavani_donors',
-  AUDIT: 'durga_bhavani_audit_logs',
-  YEARS: 'durga_bhavani_years'
+  ALBUMS: 'durga_bhavani_albums_v3',
+  AVATARS: 'durga_bhavani_avatars_v3',
+  AUCTIONS: 'durga_bhavani_auctions_v3',
+  DONORS: 'durga_bhavani_donors_v3',
+  AUDIT: 'durga_bhavani_audit_logs_v3',
+  YEARS: 'durga_bhavani_years_v3'
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
