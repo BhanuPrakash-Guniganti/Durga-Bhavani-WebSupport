@@ -6,6 +6,13 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().default('5000').transform((val) => parseInt(val, 10)),
+  TRUST_PROXY: z
+    .string()
+    .default('1')
+    .transform((val) => {
+      const num = parseInt(val, 10);
+      return Number.isNaN(num) ? val : num;
+    }),
   MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/durga_bhavani_dodlapahad'),
   FRONTEND_ORIGIN: z.string().default('http://localhost:5173'),
   JWT_SECRET: z.string().default('development_insecure_jwt_secret_min_32_chars_long'),

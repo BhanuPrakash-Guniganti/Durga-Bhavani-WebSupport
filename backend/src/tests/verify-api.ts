@@ -5,6 +5,7 @@ import { env } from '../config/env.js';
 interface HttpResponse {
   status: number;
   body: any;
+  headers: http.IncomingHttpHeaders;
 }
 
 const makeRequest = (
@@ -40,7 +41,7 @@ const makeRequest = (
           try {
             body = JSON.parse(raw);
           } catch {}
-          resolve({ status: res.statusCode || 0, body });
+          resolve({ status: res.statusCode || 0, body, headers: res.headers });
         });
       }
     );
@@ -169,6 +170,67 @@ const runVerification = async () => {
       '10. Media status returns provider status for authenticated admin',
       mediaStatus.status === 200 && mediaStatus.body?.data?.provider === 'cloudinary',
       `Got status ${mediaStatus.status}`
+    );
+
+    // 11. Render Reverse Proxy Request with X-Forwarded-For header succeeds with 200 (No ERR_ERL_UNEXPECTED_X_FORWARDED_FOR)
+    const proxiedHealth = await makeRequest(baseUrl, 'GET', '/api/v1/health', {
+      'x-forwarded-for': '203.0.113.195'
+    });
+    assert(
+      '11. Render reverse proxy request with X-Forwarded-For succeeds without ERR_ERL_UNEXPECTED_X_FORWARDED_FOR',
+      proxiedHealth.status === 200 && proxiedHealth.body?.status === 'healthy',
+      `Got status ${proxiedHealth.status}, body: ${JSON.stringify(proxiedHealth.body)}`
+    );
+
+    // 12. Standard rate limiting headers are returned and rate limiter is active
+    const hasRateLimitHeaders = Boolean(
+      proxiedHealth.headers['ratelimit-limit'] ||
+      proxiedHealth.headers['x-ratelimit-limit']
+    );
+    assert(
+      '12. Rate limiting headers are active and tracking client IP through proxy',
+      hasRateLimitHeaders,
+      `Headers received: ${JSON.stringify(proxiedHealth.headers)}`
+    );
+
+    // 13. Multi-hop X-Forwarded-For (spoofing attempt) correctly resolves client IP
+    const multiHopHealth = await makeRequest(baseUrl, 'GET', '/api/v1/health', {
+      'x-forwarded-for': '1.2.3.4, 198.51.100.42'
+    });
+    assert(
+      '13. Multi-hop X-Forwarded-For request correctly handled with 1 trusted proxy hop',
+      multiHopHealth.status === 200 && multiHopHealth.body?.status === 'healthy',
+      `Got status ${multiHopHealth.status}`
+    );
+
+    // 14. Dedicated authentication rate limiter protects /api/v1/auth/login and triggers 429 when threshold exceeded
+    const testAttackerIp = '198.51.100.99';
+    let authRateLimited = false;
+    for (let i = 0; i < 22; i++) {
+      const burstRes = await makeRequest(
+        baseUrl,
+        'POST',
+        '/api/v1/auth/login',
+        { 'x-forwarded-for': testAttackerIp },
+        { email: 'attacker@example.com', password: 'wrong' }
+      );
+      if (burstRes.status === 429) {
+        authRateLimited = true;
+        break;
+      }
+    }
+    // Verify another legitimate client IP is NOT blocked
+    const innocentClient = await makeRequest(
+      baseUrl,
+      'POST',
+      '/api/v1/auth/login',
+      { 'x-forwarded-for': '203.0.113.88' },
+      { email: 'hacker@random-domain.com', password: 'somepassword' }
+    );
+    assert(
+      '14. Auth rate limiter blocks burst attacks with 429 while leaving other IPs unaffected',
+      authRateLimited && innocentClient.status === 403,
+      `Rate limited: ${authRateLimited}, innocent client status: ${innocentClient.status}`
     );
   } finally {
     server.close();

@@ -11,6 +11,12 @@ import { errorHandler } from './middleware/errorHandler.js';
 export const createApp = (): Express => {
   const app = express();
 
+  // 1. Configure Express to trust the reverse proxy (Render deploys behind 1 reverse proxy hop).
+  // Setting trust proxy to 1 tells Express that the immediate proxy in front of it is trusted.
+  // This allows Express to correctly resolve req.ip from the client IP appended by Render's proxy,
+  // preventing client IP spoofing from forged X-Forwarded-For headers and resolving ERR_ERL_UNEXPECTED_X_FORWARDED_FOR.
+  app.set('trust proxy', env.TRUST_PROXY);
+
   // Security HTTP headers
   app.use(helmet());
 
@@ -49,6 +55,7 @@ export const createApp = (): Express => {
     max: 300, // Limit each IP to 300 requests per window
     standardHeaders: true,
     legacyHeaders: false,
+    keyGenerator: (req) => req.ip || req.socket.remoteAddress || '127.0.0.1',
     message: {
       success: false,
       error: {
@@ -58,6 +65,23 @@ export const createApp = (): Express => {
     }
   });
 
+  // Dedicated rate limiting for authentication/login requests to prevent brute force attacks
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20, // Limit each IP to 20 login attempts per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => req.ip || req.socket.remoteAddress || '127.0.0.1',
+    message: {
+      success: false,
+      error: {
+        code: 'AUTH_RATE_LIMIT_EXCEEDED',
+        message: 'Too many authentication attempts from this IP. Please try again after 15 minutes.'
+      }
+    }
+  });
+
+  app.use('/api/v1/auth/login', authLimiter);
   app.use('/api', apiLimiter);
 
   // Body and cookie parsing
