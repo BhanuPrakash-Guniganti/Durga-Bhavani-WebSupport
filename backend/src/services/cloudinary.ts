@@ -1,3 +1,4 @@
+import { Readable } from 'stream';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { env } from '../config/env.js';
 
@@ -66,7 +67,11 @@ export const uploadImageBuffer = (
       }
     );
 
-    uploadStream.end(buffer);
+    uploadStream.on('error', (streamErr: unknown) => {
+      reject(streamErr instanceof Error ? streamErr : new Error('Cloudinary stream error'));
+    });
+
+    Readable.from(buffer).pipe(uploadStream);
   });
 };
 

@@ -14,10 +14,31 @@ export const createApp = (): Express => {
   // Security HTTP headers
   app.use(helmet());
 
-  // CORS configuration
+  // CORS configuration with support for trailing-slash normalization and multi-origins
+  const configuredOrigins = (env.FRONTEND_ORIGIN || '')
+    .split(',')
+    .map((o) => o.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
+
   app.use(
     cors({
-      origin: env.FRONTEND_ORIGIN,
+      origin: (origin, callback) => {
+        // Allow requests with no origin (e.g. mobile apps, curl, server-to-server, verify-api tests)
+        if (!origin) {
+          return callback(null, true);
+        }
+        const normalizedOrigin = origin.trim().replace(/\/+$/, '');
+        const isAllowed =
+          configuredOrigins.includes('*') ||
+          configuredOrigins.includes(normalizedOrigin) ||
+          configuredOrigins.includes(origin) ||
+          (env.NODE_ENV !== 'production' && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalizedOrigin));
+
+        if (isAllowed) {
+          return callback(null, true);
+        }
+        return callback(null, false);
+      },
       credentials: true
     })
   );

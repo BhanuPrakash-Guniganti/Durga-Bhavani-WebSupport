@@ -32,9 +32,9 @@ const makeRequest = (
         method,
         headers: reqHeaders
       },
-      (res) => {
+      (res: http.IncomingMessage) => {
         let raw = '';
-        res.on('data', (chunk) => (raw += chunk));
+        res.on('data', (chunk: Buffer | string) => (raw += chunk));
         res.on('end', () => {
           let body = raw;
           try {
@@ -180,7 +180,7 @@ const runVerification = async () => {
   }
 };
 
-runVerification().catch((err) => {
+runVerification().catch((err: unknown) => {
   console.error('Test execution error:', err);
   process.exit(1);
 });

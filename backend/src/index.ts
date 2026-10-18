@@ -9,7 +9,7 @@ connectDatabase().catch((err) => {
   console.warn('[Backend] Database initial connection notice:', err.message);
 });
 
-const server = app.listen(env.PORT, () => {
+const server = app.listen(env.PORT, '0.0.0.0', () => {
   console.log(`[Backend] Server listening on port ${env.PORT} (${env.NODE_ENV})`);
   console.log(`[Backend] Health check available at http://localhost:${env.PORT}/api/v1/health`);
 });

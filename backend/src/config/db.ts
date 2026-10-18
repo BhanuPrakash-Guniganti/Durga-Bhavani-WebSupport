@@ -114,9 +114,10 @@ export const connectDatabase = async (): Promise<boolean> => {
 
   try {
     mongoose.set('strictQuery', true);
-    await mongoose.connect(env.MONGODB_URI, {
+    const connectOptions: mongoose.ConnectOptions = {
       serverSelectionTimeoutMS: 5000 // Timeout fast if offline
-    });
+    };
+    await mongoose.connect(env.MONGODB_URI, connectOptions);
     dbConnected = true;
     console.log(`[Database] Successfully connected to MongoDB database.`);
     await seedInitialDataIfEmpty();

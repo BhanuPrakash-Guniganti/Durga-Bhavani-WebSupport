@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import multer from 'multer';
+import multer, { FileFilterCallback } from 'multer';
 import { requireAuth } from '../middleware/auth.js';
 import {
   isCloudinaryConfigured,
@@ -16,7 +16,7 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024 // 5 MB max limit
   },
-  fileFilter: (_req, file, cb) => {
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
