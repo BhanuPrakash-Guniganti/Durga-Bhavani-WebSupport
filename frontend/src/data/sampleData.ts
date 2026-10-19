@@ -753,38 +753,6 @@ export const sampleAnnouncements: AnnouncementRecord[] = [
     isSample: false
   },
   {
-    id: 'ann-1',
-    slug: 'welcome-to-new-portal-announcement',
-    title: {
-      en: 'Official Launch of Durga Bhavani Seva Samiti Digital Archive',
-      te: 'దుర్గాభవాని సేవా సమితి డిజిటల్ ఆర్కైవ్ వేదిక ప్రారంభం'
-    },
-    content: {
-      en: 'The Organizing Committee of Durga Bhavani Seva Samiti, Dodlapahad, is pleased to present this digital platform. Here, devotees can browse the annual festival archives, celebration milestones, photos, and announcements.',
-      te: 'శ్రీ దుర్గాభవాని సేవా సమితి, దొడ్లపహాడ్ నిర్వాహక కమిటీ ఈ డిజిటల్ వేదికను భక్తులకు సమర్పిస్తోంది. ఇక్కడ భక్తులు వార్షిక ఉత్సవ వివరాలు, మైలురాళ్ళు, ఛాయాచిత్రాలు మరియు కమిటీ ప్రకటనలను వీక్షించవచ్చు.'
-    },
-    publishedAt: '2025-01-15',
-    imageUrl: createSampleSvgImage('Portal Launch', 'Notice', '#7A0C0C', 'diya'),
-    featured: true,
-    isSample: true
-  },
-  {
-    id: 'ann-2',
-    slug: 'photo-submission-invitation',
-    title: {
-      en: 'Invitation to Devotees to Submit Festival Photographs',
-      te: 'ఉత్సవ ఫోటోలను సమర్పించవలసిందిగా భక్తులకు ఆహ్వానం'
-    },
-    content: {
-      en: 'Devotees who possess photographs or video recordings from Sri Durga Bhavani Utsav celebrations (from 2024 onwards) are invited to submit them to the committee for digital preservation.',
-      te: '2024 ప్రారంభ సంవత్సరం నుండి జరిగిన శ్రీ దుర్గాభవాని ఉత్సవాల ఫోటోలు లేదా వీడియోలు భక్తుల వద్ద ఉంటే, వాటిని డిజిటల్ ఆర్కైవ్‌లో భద్రపరచుటకు కమిటీకి అందజేయవలసిందిగా కోరుచున్నాము.'
-    },
-    publishedAt: '2025-02-01',
-    imageUrl: createSampleSvgImage('Photo Submission', 'Notice', '#7A0C0C', 'kalash'),
-    featured: false,
-    isSample: true
-  },
-  {
     id: 'ann-3',
     slug: 'volunteer-registration-drive',
     title: {

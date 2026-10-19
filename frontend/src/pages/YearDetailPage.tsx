@@ -40,9 +40,26 @@ export const YearDetailPage: React.FC = () => {
     );
   }
 
-  const localizedTitle = getLocalized(yearRecord.title, currentLang);
-  const localizedDesc = getLocalized(yearRecord.description, currentLang);
   const highlights = getLocalizedArray(yearRecord.highlights, currentLang);
+
+  // Dedicated Content Hierarchy for 2024, 2025, 2026 Archive Banners
+  let bannerLabel = t('yearDetail.bannerDefaultLabel');
+  let bannerTitle = t('yearDetail.bannerDefaultTitle', { year: yearRecord.year });
+  let bannerDesc = t('yearDetail.bannerDefaultDesc');
+
+  if (yearRecord.year === 2025) {
+    bannerLabel = t('yearDetail.banner2025Label');
+    bannerTitle = t('yearDetail.banner2025Title');
+    bannerDesc = t('yearDetail.banner2025Desc');
+  } else if (yearRecord.year === 2024) {
+    bannerLabel = t('yearDetail.banner2024Label');
+    bannerTitle = t('yearDetail.banner2024Title');
+    bannerDesc = t('yearDetail.banner2024Desc');
+  } else if (yearRecord.year === 2026) {
+    bannerLabel = t('yearDetail.banner2026Label');
+    bannerTitle = t('yearDetail.banner2026Title');
+    bannerDesc = t('yearDetail.banner2026Desc');
+  }
 
   return (
     <div className="section">
@@ -55,32 +72,75 @@ export const YearDetailPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Year Banner Card */}
-        <div className="card card-cultural-top" style={{ padding: 'var(--space-8)', marginBottom: 'var(--space-10)' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: 'var(--space-3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="badge badge-maroon" style={{ fontSize: 'var(--font-size-base)', padding: '4px 12px' }}>
-                {t('yearDetail.festivalYear', { year: yearRecord.year })}
+        {/* Minimal Visual Archive Banner */}
+        <div className="year-archive-banner" role="region" aria-label={bannerTitle}>
+          {/* Subtle Devotional Decorative Motif Ornament */}
+          <svg
+            className="year-archive-banner-ornament"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <circle cx="50" cy="50" r="46" stroke="#B38F24" strokeWidth="1.5" strokeDasharray="3 3" />
+            <path
+              d="M50 18 C42 32 25 45 25 62 C25 76 40 84 50 84 C60 84 75 76 75 62 C75 45 58 32 50 18 Z"
+              fill="#D4AF37"
+              opacity="0.3"
+            />
+            <path
+              d="M50 30 C45 40 34 49 34 59 C34 69 42 75 50 75 C58 75 66 69 66 59 C66 49 55 40 50 30 Z"
+              fill="#7A0C0C"
+              opacity="0.22"
+            />
+            <circle cx="50" cy="59" r="8" fill="#D4AF37" opacity="0.6" />
+          </svg>
+
+          {/* Small introductory label */}
+          <div className="year-archive-banner-header">
+            <span className="year-archive-intro-badge">
+              <span aria-hidden="true">🪔</span>
+              <span>{bannerLabel}</span>
+            </span>
+            {yearRecord.year === 2025 && (
+              <span className="badge badge-maroon" style={{ fontSize: 'var(--font-size-xs)', padding: '3px 10px' }}>
+                {currentLang === 'te' ? 'రెండవ సంవత్సరం' : 'Second Year'}
               </span>
-              <span className="badge badge-gold">{t('yearDetail.publishedArchive')}</span>
-            </div>
+            )}
+            {yearRecord.year === 2024 && (
+              <span className="badge badge-maroon" style={{ fontSize: 'var(--font-size-xs)', padding: '3px 10px' }}>
+                {currentLang === 'te' ? 'మొదటి సంవత్సరం' : 'First Year'}
+              </span>
+            )}
+            {yearRecord.year === 2026 && (
+              <span className="badge badge-maroon" style={{ fontSize: 'var(--font-size-xs)', padding: '3px 10px' }}>
+                {currentLang === 'te' ? 'మూడవ సంవత్సరం' : 'Third Year'}
+              </span>
+            )}
           </div>
 
-          <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', marginBottom: 'var(--space-3)' }}>
-            {localizedTitle}
+          {/* Main heading */}
+          <h1 className="year-archive-banner-title">
+            {bannerTitle}
           </h1>
 
-          <p style={{ fontSize: 'var(--font-size-base)', maxWidth: '900px', lineHeight: 1.7, marginBottom: 'var(--space-4)' }}>
-            {localizedDesc}
+          {/* Supporting text */}
+          <p className="year-archive-banner-desc">
+            {bannerDesc}
           </p>
 
+          {/* Celebration Dates */}
           {yearRecord.startDate && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: 'var(--color-cream-alt)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)', fontSize: 'var(--font-size-sm)' }}>
-              <Calendar size={16} color="var(--color-maroon-primary)" />
-              <span>
-                <strong>{currentLang === 'te' ? 'ఉత్సవ తేదీలు:' : 'Celebration Dates:'}</strong>{' '}
-                {yearRecord.dateRangeFormatted ? getLocalized(yearRecord.dateRangeFormatted) : `${yearRecord.startDate} ${currentLang === 'te' ? 'నుండి' : 'to'} ${yearRecord.endDate}`}
-              </span>
+            <div className="year-archive-meta-strip">
+              <div className="year-archive-meta-pill">
+                <Calendar size={15} color="var(--color-maroon-primary)" />
+                <span>
+                  <strong>{currentLang === 'te' ? 'ఉత్సవ తేదీలు:' : 'Celebration Dates:'}</strong>{' '}
+                  {yearRecord.dateRangeFormatted
+                    ? getLocalized(yearRecord.dateRangeFormatted, currentLang)
+                    : `${yearRecord.startDate} ${currentLang === 'te' ? 'నుండి' : 'to'} ${yearRecord.endDate}`}
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -110,7 +170,7 @@ export const YearDetailPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
             <div>
               <span className="sub-heading" style={{ fontSize: 'var(--font-size-xs)' }}>
-                {currentLang === 'te' ? 'ఛాయాచిత్రాలు' : 'Galleries'}
+                {t('yearDetail.galleriesLabel')}
               </span>
               <h2 style={{ margin: 0 }}>{t('yearDetail.albumsHeading', { count: yearAlbums.length })}</h2>
             </div>

@@ -230,6 +230,21 @@ const syncDatabaseSchemas = async () => {
       await YearModel.updateOne({ year: yr }, { $set: { albumCount: publishedCount } });
     }
 
+    // 6. Purge outdated 2025 announcements if collection exists in MongoDB
+    if (mongoose.connection.db) {
+      const collections = await mongoose.connection.db.listCollections({ name: 'announcements' }).toArray();
+      if (collections.length > 0) {
+        await mongoose.connection.db.collection('announcements').deleteMany({
+          $or: [
+            { id: { $in: ['ann-1', 'ann-2'] } },
+            { slug: { $in: ['welcome-to-new-portal-announcement', 'photo-submission-invitation'] } },
+            { 'title.en': { $in: ['Official Launch of Durga Bhavani Seva Samiti Digital Archive', 'Invitation to Devotees to Submit Festival Photographs'] } }
+          ]
+        });
+        console.log('[Database] Cleaned up outdated announcement records from MongoDB.');
+      }
+    }
+
     console.log('[Database] Content and schema synchronization completed.');
   } catch (err) {
     console.warn('[Database] Schema synchronization notice:', err);

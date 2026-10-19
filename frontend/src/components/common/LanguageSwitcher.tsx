@@ -21,15 +21,10 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
     >
       {showIcon && (
         <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            paddingLeft: '6px',
-            color: 'var(--color-gold-primary)'
-          }}
+          className="lang-globe-icon"
           aria-hidden="true"
         >
-          <Globe size={14} />
+          <Globe size={13} />
         </span>
       )}
       <button

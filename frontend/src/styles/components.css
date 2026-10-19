@@ -11,6 +11,10 @@
   border-bottom: 2px solid var(--color-gold-primary);
   box-shadow: 0 4px 16px rgba(74, 7, 7, 0.25);
   transition: all var(--transition-normal);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  overflow-x: clip;
 }
 
 .navbar-inner {
@@ -18,24 +22,27 @@
   align-items: center;
   justify-content: space-between;
   height: var(--navbar-height);
-  padding: 0 clamp(12px, 2.5vw, 24px);
+  padding: 0 clamp(8px, 2vw, 24px);
   max-width: var(--max-content-width);
   margin: 0 auto;
-  gap: var(--space-4);
+  gap: clamp(6px, 1.2vw, 16px);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: clamp(6px, 1.2vw, 12px);
   text-decoration: none;
-  flex-shrink: 0;
+  flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
 }
 
 .brand-icon-wrapper {
-  width: 44px;
-  height: 44px;
+  width: clamp(30px, 3.8vw, 44px);
+  height: clamp(30px, 3.8vw, 44px);
   border-radius: var(--radius-full);
   background: radial-gradient(circle, #B38F24 0%, #7A0C0C 100%);
   border: 1.5px solid var(--color-gold-primary);
@@ -48,7 +55,7 @@
 }
 
 .brand-diya-icon {
-  font-size: 1.35rem;
+  font-size: clamp(0.95rem, 1.8vw, 1.35rem);
   line-height: 1;
   display: inline-block;
 }
@@ -58,27 +65,41 @@
   flex-direction: column;
   justify-content: center;
   min-width: 0;
+  line-height: 1.2;
 }
 
 .brand-title {
   font-family: var(--font-heading);
-  font-size: clamp(0.92rem, 1.35vw, 1.18rem);
+  font-size: clamp(0.70rem, 2.3vw, 1.15rem);
   font-weight: 700;
   color: #FFFFFF;
-  line-height: 1.25;
-  letter-spacing: 0.02em;
+  line-height: 1.2;
+  letter-spacing: 0.015em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
+html[lang="te"] .brand-title {
+  font-family: var(--font-telugu), var(--font-heading);
+  line-height: 1.3;
+}
+
 .brand-subtitle {
-  font-size: clamp(0.66rem, 0.85vw, 0.72rem);
+  font-size: clamp(0.54rem, 1.3vw, 0.72rem);
   color: var(--color-gold-primary);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[lang="te"] .brand-subtitle {
+  font-family: var(--font-telugu), var(--font-body);
 }
 
 /* Desktop Navigation Menu */
@@ -120,7 +141,7 @@
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(4px, 1vw, 10px);
   flex-shrink: 0;
 }
 
@@ -128,12 +149,22 @@
 .lang-switcher {
   display: inline-flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--color-gold-border);
   border-radius: var(--radius-full);
-  padding: 3px;
-  gap: 3px;
+  padding: 2.5px;
+  gap: 2px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.lang-globe-icon {
+  display: inline-flex;
+  align-items: center;
+  padding-left: 6px;
+  padding-right: 2px;
+  color: var(--color-gold-primary);
+  flex-shrink: 0;
 }
 
 .lang-btn {
@@ -141,25 +172,29 @@
   border: none;
   color: #E8DFD5;
   font-family: inherit;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 3.5px 8px;
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
   line-height: 1.2;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lang-btn:hover {
   color: var(--color-gold-light);
-  background: rgba(212, 175, 55, 0.12);
+  background: rgba(212, 175, 55, 0.15);
 }
 
 .lang-btn.active {
   background: linear-gradient(135deg, var(--color-gold-primary), var(--color-gold-dark));
   color: #2D0303;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
   font-weight: 700;
 }
 
@@ -168,13 +203,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-md);
   color: #FFFFFF;
   background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(212, 175, 55, 0.3);
   transition: background-color var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 0;
 }
 
 .nav-toggle-btn:hover {
@@ -191,17 +229,17 @@
 /* Responsive Navbar Adjustments */
 @media (max-width: 767px) {
   .navbar-inner {
-    padding: 0 var(--space-3);
-    gap: 10px;
+    padding: 0 clamp(8px, 2.5vw, 16px);
+    gap: 8px;
   }
 
   .navbar-brand {
-    gap: 10px;
+    gap: 8px;
   }
 
   .brand-icon-wrapper {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
   }
 
   .brand-diya-icon {
@@ -209,42 +247,41 @@
   }
 
   .brand-title {
-    font-size: clamp(0.85rem, 3.2vw, 1.05rem);
+    font-size: clamp(0.78rem, 2.8vw, 0.98rem);
   }
 
   .brand-subtitle {
-    font-size: clamp(0.62rem, 2.2vw, 0.68rem);
-    letter-spacing: 0.06em;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
   }
 
   .navbar-actions {
     gap: 6px;
   }
 
+  .lang-btn {
+    font-size: 0.70rem;
+    padding: 3px 7px;
+  }
+
   .nav-toggle-btn {
     width: 38px;
     height: 38px;
   }
-
-  .lang-switcher {
-    padding: 2px;
-    gap: 2px;
-  }
-
-  .lang-btn {
-    font-size: 0.72rem;
-    padding: 3px 8px;
-  }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
+  .lang-globe-icon {
+    display: none !important;
+  }
+
   .navbar-inner {
     padding: 0 10px;
     gap: 6px;
   }
 
   .navbar-brand {
-    gap: 8px;
+    gap: 7px;
   }
 
   .brand-icon-wrapper {
@@ -257,23 +294,175 @@
   }
 
   .brand-title {
-    font-size: 0.82rem;
+    font-size: clamp(0.74rem, 2.5vw, 0.86rem);
   }
 
   .brand-subtitle {
-    font-size: 0.6rem;
-    letter-spacing: 0.04em;
+    font-size: 0.58rem;
+    letter-spacing: 0.03em;
+  }
+
+  .navbar-actions {
+    gap: 5px;
+  }
+
+  .lang-switcher {
+    padding: 2px;
+    gap: 1.5px;
+  }
+
+  .lang-btn {
+    font-size: 0.67rem;
+    padding: 3px 6px;
+    min-height: 27px;
   }
 
   .nav-toggle-btn {
     width: 36px;
     height: 36px;
   }
+}
+
+@media (max-width: 360px) {
+  .navbar-inner {
+    padding: 0 6px;
+    gap: 4px;
+  }
+
+  .navbar-brand {
+    gap: 5px;
+  }
+
+  .brand-icon-wrapper {
+    width: 30px;
+    height: 30px;
+  }
+
+  .brand-diya-icon {
+    font-size: 0.95rem;
+  }
+
+  .brand-title {
+    font-size: 0.68rem;
+    letter-spacing: 0;
+  }
+
+  .brand-subtitle {
+    font-size: 0.52rem;
+    letter-spacing: 0.02em;
+  }
+
+  .navbar-actions {
+    gap: 3px;
+  }
+
+  .lang-switcher {
+    padding: 1.5px;
+    gap: 1px;
+  }
 
   .lang-btn {
-    font-size: 0.68rem;
-    padding: 3px 6px;
+    font-size: 0.62rem;
+    padding: 2.5px 5px;
+    min-height: 26px;
   }
+
+  .nav-toggle-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ==========================================================================
+   YEAR ARCHIVE VISUAL BANNER SYSTEM
+   Traditional, devotional, elegant, uncluttered warm cream aesthetic
+   ========================================================================== */
+.year-archive-banner {
+  position: relative;
+  background: linear-gradient(135deg, #FAF7F2 0%, #F5ECE0 100%);
+  border: 1px solid var(--color-gold-border);
+  border-top: 4px solid var(--color-maroon-primary);
+  border-radius: var(--radius-lg);
+  padding: clamp(18px, 3.5vw, 34px) clamp(14px, 3vw, 30px);
+  margin-bottom: var(--space-8);
+  box-shadow: 0 4px 20px rgba(74, 7, 7, 0.06);
+  overflow: hidden;
+}
+
+.year-archive-banner-ornament {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  opacity: 0.12;
+  pointer-events: none;
+  width: clamp(55px, 10vw, 100px);
+  height: clamp(55px, 10vw, 100px);
+}
+
+.year-archive-banner-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--space-3);
+}
+
+.year-archive-intro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(212, 175, 55, 0.16);
+  border: 1px solid var(--color-gold-border);
+  border-radius: var(--radius-full);
+  color: var(--color-maroon-primary);
+  font-size: clamp(0.70rem, 1.7vw, 0.80rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.year-archive-banner-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 3.6vw, 2.2rem);
+  font-weight: 700;
+  color: var(--color-maroon-dark);
+  line-height: 1.25;
+  margin: 0 0 var(--space-3) 0;
+}
+
+html[lang="te"] .year-archive-banner-title {
+  font-family: var(--font-telugu), var(--font-heading);
+  line-height: 1.35;
+}
+
+.year-archive-banner-desc {
+  font-size: clamp(0.88rem, 1.5vw, 1.02rem);
+  color: var(--color-text-secondary);
+  line-height: 1.68;
+  max-width: 860px;
+  margin: 0 0 var(--space-4) 0;
+}
+
+.year-archive-meta-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: var(--space-2);
+}
+
+.year-archive-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 /* 3. Mobile Navigation Drawer */
