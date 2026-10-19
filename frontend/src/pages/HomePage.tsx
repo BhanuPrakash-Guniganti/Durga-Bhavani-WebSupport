@@ -92,6 +92,12 @@ export const HomePage: React.FC = () => {
                   src={latestYear.coverImage}
                   alt={getLocalized(latestYear.title)}
                   loading="lazy"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.src.includes('cover-devi-alankaranalu')) {
+                      target.src = '/images/covers/cover-devi-alankaranalu.webp';
+                    }
+                  }}
                 />
               </div>
               <div className="card-body">
@@ -137,6 +143,12 @@ export const HomePage: React.FC = () => {
                       src={album.coverImage}
                       alt={albumTitle}
                       loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement;
+                        if (!target.src.includes('cover-devi-alankaranalu')) {
+                          target.src = '/images/covers/cover-devi-alankaranalu.webp';
+                        }
+                      }}
                     />
                   </div>
                   <div className="card-body">

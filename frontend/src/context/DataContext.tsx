@@ -58,12 +58,59 @@ interface DataContextType {
 }
 
 const STORAGE_KEYS = {
-  ALBUMS: 'durga_bhavani_albums_v4',
+  ALBUMS: 'durga_bhavani_albums_v5',
   AVATARS: 'durga_bhavani_avatars_v4',
   AUCTIONS: 'durga_bhavani_auctions_v4',
   DONORS: 'durga_bhavani_donors_v4',
   AUDIT: 'durga_bhavani_audit_logs_v4',
-  YEARS: 'durga_bhavani_years_v4'
+  YEARS: 'durga_bhavani_years_v5'
+};
+
+const resolveCoverImage = (a: Partial<AlbumRecord>): string => {
+  if (a.coverImage && !a.coverImage.startsWith('data:image') && a.coverImage.trim() !== '') {
+    return a.coverImage;
+  }
+  const slug = a.slug || '';
+  const type = a.albumType;
+  if (slug.includes('alankaranalu') || type === 'avatars') {
+    return '/images/covers/cover-devi-alankaranalu.webp';
+  }
+  if (slug.includes('auction') || type === 'auction') {
+    return '/images/covers/cover-auction-winners.webp';
+  }
+  if (slug.includes('donor') || type === 'donors') {
+    return '/images/covers/cover-donors-sponsors.webp';
+  }
+  if (slug.includes('annadanam')) {
+    return '/images/covers/cover-annadanam-seva.webp';
+  }
+  if (slug.includes('shobha-yatra')) {
+    return '/images/covers/cover-shobha-yatra.webp';
+  }
+  if (slug.includes('chandi-homam')) {
+    return '/images/covers/cover-chandi-homam.webp';
+  }
+  if (slug.includes('utsav-celebrations') || slug.includes('utsav-2026')) {
+    return '/images/covers/cover-utsav-highlights.webp';
+  }
+  return '/images/covers/cover-devi-alankaranalu.webp';
+};
+
+const resolveYearCover = (y: Partial<YearRecord>): string => {
+  if (y.coverImage && !y.coverImage.startsWith('data:image') && y.coverImage.trim() !== '') {
+    return y.coverImage;
+  }
+  if (y.year === 2026) return '/images/covers/cover-utsav-highlights.webp';
+  if (y.year === 2025) return '/images/covers/cover-devi-alankaranalu.webp';
+  if (y.year === 2024) return '/images/covers/cover-shobha-yatra.webp';
+  return '/images/covers/cover-devi-alankaranalu.webp';
+};
+
+const sanitizeYears = (list: YearRecord[]): YearRecord[] => {
+  return list.map((y) => ({
+    ...y,
+    coverImage: resolveYearCover(y)
+  }));
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -74,9 +121,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
 
 const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
-  return list.map((a) => ({
-    ...a,
-    albumType:
+  return list.map((a) => {
+    const albumType =
       a.albumType ||
       (a.slug?.includes('auction')
         ? 'auction'
@@ -84,9 +130,14 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
         ? 'avatars'
         : a.slug?.includes('donor')
         ? 'donors'
-        : 'general'),
-    photos: a.photos || []
-  }));
+        : 'general');
+    return {
+      ...a,
+      albumType,
+      coverImage: resolveCoverImage({ ...a, albumType }),
+      photos: a.photos || []
+    };
+  });
 };
 
   // Initialize from cache or sample data
@@ -155,11 +206,11 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
       const saved = localStorage.getItem(STORAGE_KEYS.YEARS);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          return sanitizeYears(JSON.parse(saved));
         } catch {}
       }
     }
-    return sampleYears;
+    return sanitizeYears(sampleYears);
   });
 
   // Sync state to local cache
@@ -222,7 +273,7 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
         if (avData && avData.length > 0) setAvatars(avData);
         if (aucData && aucData.length > 0) setAuctions(aucData);
         if (donData && donData.length > 0) setDonors(donData);
-        if (yrsData && yrsData.length > 0) setYears(yrsData);
+        if (yrsData && yrsData.length > 0) setYears(sanitizeYears(yrsData));
 
         setIsBackendConnected(Boolean(albData || avData || aucData));
       }

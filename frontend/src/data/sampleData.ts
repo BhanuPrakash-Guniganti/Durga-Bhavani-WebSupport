@@ -117,7 +117,7 @@ export const sampleYears: YearRecord[] = [
       en: 'The 2026 annual celebrations mark our third year of Sri Durga Bhavani Utsav at Dodlapahad, continuing the sacred tradition of devotion, community worship, and Annadanam.',
       te: '2026 వార్షిక వేడుకలు దొడ్లపహాడ్‌లో మన మూడవ సంవత్సర శ్రీ దుర్గాభవాని ఉత్సవాలను సూచిస్తాయి. భక్తి ప్రపత్తులు, విశేష పూజలు మరియు అన్నదాన సాంప్రదాయం నిర్విఘ్నంగా కొనసాగుతున్నాయి.'
     },
-    coverImage: createSampleSvgImage('Navaratri 2026', 'Year', '#7A0C0C', 'mandir'),
+    coverImage: '/images/covers/cover-utsav-highlights.webp',
     startDate: '2026-10-11',
     endDate: '2026-10-20',
     dateRangeFormatted: {
@@ -153,7 +153,7 @@ export const sampleYears: YearRecord[] = [
       en: 'The 2025 annual celebrations marked the second year of Sri Durga Bhavani Utsav at Dodlapahad, featuring vibrant festivities, sacred rituals, and community participation.',
       te: '2025 వార్షిక వేడుకలు దొడ్లపహాడ్‌లో రెండవ సంవత్సర శ్రీ దుర్గాభవాని ఉత్సవాలుగా నిలిచాయి. భక్తుల విశేష భాగస్వామ్యంతో పూజాదికాలు వైభవంగా జరిగాయి.'
     },
-    coverImage: createSampleSvgImage('Navaratri 2025', 'Year', '#7A0C0C', 'kalash'),
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     startDate: '2025-09-22',
     endDate: '2025-10-01',
     dateRangeFormatted: {
@@ -189,7 +189,7 @@ export const sampleYears: YearRecord[] = [
       en: 'The 2024 annual celebrations marked the inaugural first year of Sri Durga Bhavani Utsav at Dodlapahad, initiating the annual tradition of nine sacred days of worship and community unity.',
       te: '2024 వార్షిక వేడుకలు దొడ్లపహాడ్‌లో శ్రీ దుర్గాభవాని ఉత్సవాల ప్రారంభ మొదటి సంవత్సరంగా నిలిచాయి. తొమ్మిది రోజుల పాటు గ్రామస్తుల సమైక్య భక్తితో ఉత్సవాల సాంప్రదాయం ప్రారంభమైంది.'
     },
-    coverImage: createSampleSvgImage('Navaratri 2024', 'Year', '#7A0C0C', 'diya'),
+    coverImage: '/images/covers/cover-shobha-yatra.webp',
     startDate: '2024-10-03',
     endDate: '2024-10-12',
     dateRangeFormatted: {
@@ -229,7 +229,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: '2026 ఉత్సవాలలో శ్రీ దుర్గాభవాని అమ్మవారి దివ్య అవతారాలు మరియు విశేష అలంకారాల వివరాలు.'
     },
     year: 2026,
-    coverImage: createSampleSvgImage('Devi Alankaranalu 2026', 'Album', '#7A0C0C', 'mandir'),
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     photoCount: 10,
     status: 'published',
     albumType: 'avatars',
@@ -248,7 +248,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: '2026 ఉత్సవాలలో పవిత్ర చీరలు మరియు ప్రత్యేక వస్తువుల వేలం పాట వివరాలు.'
     },
     year: 2026,
-    coverImage: createSampleSvgImage('Auction Winners 2026', 'Album', '#7A0C0C', 'kalash'),
+    coverImage: '/images/covers/cover-auction-winners.webp',
     photoCount: 0,
     status: 'published',
     albumType: 'auction',
@@ -267,7 +267,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'మూడవ సంవత్సర ఉత్సవాలలో విశేష పూజలు, సమాజ సేవ మరియు ఉత్సవ సంబరాల దృశ్యాలు.'
     },
     year: 2026,
-    coverImage: createSampleSvgImage('Utsav 2026', 'Album', '#7A0C0C', 'mandir'),
+    coverImage: '/images/covers/cover-utsav-highlights.webp',
     photoCount: 2,
     status: 'published',
     albumType: 'general',
@@ -325,7 +325,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'శ్రీ దుర్గాభవాని అమ్మవారి పదకొండు దివ్య అవతారాలు మరియు విశేష అలంకారాల ఛాయాచిత్రాలు.'
     },
     year: 2025,
-    coverImage: createSampleSvgImage('Devi Alankaranalu', 'Album', '#7A0C0C', 'mandir'),
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     photoCount: 11,
     status: 'published',
     albumType: 'avatars',
@@ -344,7 +344,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'అమ్మవారి చీరల వేలం విజేతల వివరాలు — 2025 ఉత్సవాలలో పవిత్ర చీరలు మరియు విశేష వస్తువుల వేలం పాట విజేతల వివరాలు.'
     },
     year: 2025,
-    coverImage: createSampleSvgImage('Auction Winners', 'Album', '#7A0C0C', 'kalash'),
+    coverImage: '/images/covers/cover-auction-winners.webp',
     photoCount: 14,
     status: 'published',
     albumType: 'auction',
@@ -363,7 +363,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'స్పాన్సర్లు మరియు దాతల జాబితా | Sponsors & Donors List'
     },
     year: 2025,
-    coverImage: createSampleSvgImage('Donors & Sponsors', 'Album', '#7A0C0C', 'diya'),
+    coverImage: '/images/covers/cover-donors-sponsors.webp',
     photoCount: 4,
     status: 'published',
     albumType: 'donors',
@@ -382,7 +382,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'రెండవ సంవత్సర శ్రీ దుర్గాభవాని ఉత్సవాల మహా అన్నదాన సేవ మరియు భక్తజన సమర్పణ.'
     },
     year: 2025,
-    coverImage: createSampleSvgImage('Maha Annadanam 2025', 'Album', '#7A0C0C', 'kalash'),
+    coverImage: '/images/covers/cover-annadanam-seva.webp',
     photoCount: 2,
     status: 'published',
     albumType: 'general',
@@ -440,7 +440,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: '2024 ఉత్సవాలలో శ్రీ దుర్గాభవాని అమ్మవారి దివ్య అవతారాలు మరియు విశేష అలంకారాల వివరాలు.'
     },
     year: 2024,
-    coverImage: createSampleSvgImage('Devi Alankaranalu 2024', 'Album', '#7A0C0C', 'mandir'),
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     photoCount: 10,
     status: 'published',
     albumType: 'avatars',
@@ -459,7 +459,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: '2024 ఉత్సవాలలో పవిత్ర చీరలు మరియు ప్రత్యేక వస్తువుల వేలం పాట వివరాలు.'
     },
     year: 2024,
-    coverImage: createSampleSvgImage('Auction Winners 2024', 'Album', '#7A0C0C', 'kalash'),
+    coverImage: '/images/covers/cover-auction-winners.webp',
     photoCount: 0,
     status: 'published',
     albumType: 'auction',
@@ -478,7 +478,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'ప్రారంభ సంవత్సర ఉత్సవ ముగింపు సందర్భంగా దొడ్లపహాడ్ పురవీధుల్లో సాగిన శ్రీ దుర్గాభవాని అమ్మవారి దివ్య రథోత్సవం.'
     },
     year: 2024,
-    coverImage: createSampleSvgImage('Shobha Yatra 2024', 'Album', '#7A0C0C', 'mandir'),
+    coverImage: '/images/covers/cover-shobha-yatra.webp',
     photoCount: 4,
     status: 'published',
     isSample: true,
@@ -573,7 +573,7 @@ export const sampleAlbums: AlbumRecord[] = [
       te: 'దొడ్లపహాడ్ గ్రామ క్షేమం మరియు ఆయురారోగ్యాల కొరకు వేద పండితులచే నిర్వహించబడిన పవిత్ర చండీ హోమం.'
     },
     year: 2024,
-    coverImage: createSampleSvgImage('Chandi Homam 2024', 'Album', '#7A0C0C', 'diya'),
+    coverImage: '/images/covers/cover-chandi-homam.webp',
     photoCount: 3,
     status: 'published',
     isSample: true,

@@ -89,6 +89,7 @@ router.get('/years', async (_req: Request, res: Response) => {
         year: 2026,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2026', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2026 (మూడవ సంవత్సరం)' },
         slug: '2026',
+        coverImage: '/images/covers/cover-utsav-highlights.webp',
         albumCount: albumsStore.filter((a) => a.year === 2026 && a.status === 'published').length,
         status: 'published',
         startDate: '2026-10-11',
@@ -102,6 +103,7 @@ router.get('/years', async (_req: Request, res: Response) => {
         year: 2025,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2025', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2025 (రెండవ సంవత్సరం)' },
         slug: '2025',
+        coverImage: '/images/covers/cover-devi-alankaranalu.webp',
         albumCount: albumsStore.filter((a) => a.year === 2025 && a.status === 'published').length,
         status: 'published',
         startDate: '2025-09-22',
@@ -115,6 +117,7 @@ router.get('/years', async (_req: Request, res: Response) => {
         year: 2024,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2024', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2024 (మొదటి సంవత్సరం)' },
         slug: '2024',
+        coverImage: '/images/covers/cover-shobha-yatra.webp',
         albumCount: albumsStore.filter((a) => a.year === 2024 && a.status === 'published').length,
         status: 'published',
         startDate: '2024-10-03',
@@ -128,12 +131,32 @@ router.get('/years', async (_req: Request, res: Response) => {
   });
 });
 
-const ensureAlbumType = <T extends { slug?: string; albumType?: string }>(alb: T): T => {
+const ensureAlbumType = <T extends { slug?: string; albumType?: string; coverImage?: string }>(alb: T): T => {
   if (!alb.albumType && alb.slug) {
     alb.albumType =
       alb.slug.includes('auction') ? 'auction' :
       alb.slug.includes('alankaranalu') || alb.slug.includes('avatar') ? 'avatars' :
       alb.slug.includes('donor') ? 'donors' : 'general';
+  }
+  if (!alb.coverImage || alb.coverImage.startsWith('data:image') || alb.coverImage === '') {
+    const slug = alb.slug || '';
+    if (slug.includes('alankaranalu') || alb.albumType === 'avatars') {
+      alb.coverImage = '/images/covers/cover-devi-alankaranalu.webp';
+    } else if (slug.includes('auction') || alb.albumType === 'auction') {
+      alb.coverImage = '/images/covers/cover-auction-winners.webp';
+    } else if (slug.includes('donor') || alb.albumType === 'donors') {
+      alb.coverImage = '/images/covers/cover-donors-sponsors.webp';
+    } else if (slug.includes('annadanam')) {
+      alb.coverImage = '/images/covers/cover-annadanam-seva.webp';
+    } else if (slug.includes('shobha-yatra')) {
+      alb.coverImage = '/images/covers/cover-shobha-yatra.webp';
+    } else if (slug.includes('chandi-homam')) {
+      alb.coverImage = '/images/covers/cover-chandi-homam.webp';
+    } else if (slug.includes('utsav-celebrations') || slug.includes('utsav-2026')) {
+      alb.coverImage = '/images/covers/cover-utsav-highlights.webp';
+    } else {
+      alb.coverImage = '/images/covers/cover-devi-alankaranalu.webp';
+    }
   }
   return alb;
 };

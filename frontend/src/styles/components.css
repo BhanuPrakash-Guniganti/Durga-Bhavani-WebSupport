@@ -655,20 +655,22 @@ html[lang="te"] .year-archive-banner-title {
 .card-media {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  background-color: var(--color-cream-alt);
+  background-color: var(--color-cream-bg);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform var(--transition-slow);
 }
 
 .card:hover .card-media img {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 .card-footer {

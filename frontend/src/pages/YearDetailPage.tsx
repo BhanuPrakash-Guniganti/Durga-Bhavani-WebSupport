@@ -192,7 +192,17 @@ export const YearDetailPage: React.FC = () => {
                 return (
                   <article key={album.id} className="card card-gold-top">
                     <div className="card-media">
-                      <img src={album.coverImage} alt={albumTitle} loading="lazy" />
+                      <img
+                        src={album.coverImage}
+                        alt={albumTitle}
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (!target.src.includes('cover-devi-alankaranalu')) {
+                            target.src = '/images/covers/cover-devi-alankaranalu.webp';
+                          }
+                        }}
+                      />
                     </div>
                     <div className="card-body">
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>

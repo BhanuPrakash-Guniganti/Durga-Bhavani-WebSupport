@@ -77,6 +77,12 @@ export const YearsPage: React.FC = () => {
                       src={yearItem.coverImage}
                       alt={yearTitle}
                       loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement;
+                        if (!target.src.includes('cover-devi-alankaranalu')) {
+                          target.src = '/images/covers/cover-devi-alankaranalu.webp';
+                        }
+                      }}
                     />
                   </div>
                   <div className="card-body">

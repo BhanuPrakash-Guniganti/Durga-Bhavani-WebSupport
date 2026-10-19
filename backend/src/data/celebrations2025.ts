@@ -91,6 +91,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2026,
     albumType: 'avatars',
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     photoCount: 10,
     status: 'published',
     sortOrder: 1
@@ -108,6 +109,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2026,
     albumType: 'auction',
+    coverImage: '/images/covers/cover-auction-winners.webp',
     photoCount: 0,
     status: 'published',
     sortOrder: 2
@@ -125,6 +127,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2026,
     albumType: 'general',
+    coverImage: '/images/covers/cover-utsav-highlights.webp',
     photoCount: 2,
     status: 'published',
     sortOrder: 3
@@ -144,6 +147,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2025,
     albumType: 'avatars',
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     photoCount: 11,
     status: 'published',
     sortOrder: 1
@@ -161,6 +165,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2025,
     albumType: 'auction',
+    coverImage: '/images/covers/cover-auction-winners.webp',
     photoCount: 14,
     status: 'published',
     sortOrder: 2
@@ -178,6 +183,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2025,
     albumType: 'donors',
+    coverImage: '/images/covers/cover-donors-sponsors.webp',
     photoCount: 4,
     status: 'published',
     sortOrder: 3
@@ -195,6 +201,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2025,
     albumType: 'general',
+    coverImage: '/images/covers/cover-annadanam-seva.webp',
     photoCount: 2,
     status: 'published',
     sortOrder: 4
@@ -214,6 +221,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2024,
     albumType: 'avatars',
+    coverImage: '/images/covers/cover-devi-alankaranalu.webp',
     photoCount: 10,
     status: 'published',
     sortOrder: 1
@@ -231,6 +239,7 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2024,
     albumType: 'auction',
+    coverImage: '/images/covers/cover-auction-winners.webp',
     photoCount: 0,
     status: 'published',
     sortOrder: 2
@@ -248,9 +257,28 @@ export const initialAlbums: IAlbum[] = [
     },
     year: 2024,
     albumType: 'general',
-    photoCount: 3,
+    coverImage: '/images/covers/cover-shobha-yatra.webp',
+    photoCount: 4,
     status: 'published',
     sortOrder: 3
+  },
+  {
+    id: 'alb-2024-02',
+    slug: 'chandi-homam-rituals-2024',
+    title: {
+      en: 'Sri Chandi Homam & Vedic Rituals 2024',
+      te: 'శ్రీ చండీ హోమం & వేద క్రతువులు 2024'
+    },
+    description: {
+      en: 'Sacred fire rituals, Chandi Parayanam, and Poornahuti performed for the prosperity and welfare of Dodlapahad village.',
+      te: 'దొడ్లపహాడ్ గ్రామ క్షేమం మరియు ఆయురారోగ్యాల కొరకు వేద పండితులచే నిర్వహించబడిన పవిత్ర చండీ హోమం.'
+    },
+    year: 2024,
+    albumType: 'general',
+    coverImage: '/images/covers/cover-chandi-homam.webp',
+    photoCount: 3,
+    status: 'published',
+    sortOrder: 4
   }
 ];
 

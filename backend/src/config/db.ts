@@ -118,6 +118,7 @@ const syncDatabaseSchemas = async () => {
               title: initAlb.title,
               description: initAlb.description,
               albumType: initAlb.albumType,
+              coverImage: initAlb.coverImage,
               photoCount: initAlb.photoCount,
               year: initAlb.year,
               status: initAlb.status,
