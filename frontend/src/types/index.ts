@@ -136,6 +136,7 @@ export interface YearRecord {
   coverImage: string;
   startDate?: string;
   endDate?: string;
+  dateRangeFormatted?: LocalizedString;
   status: PublicationStatus;
   albumCount: number;
   highlights: LocalizedArray | string[];
@@ -188,6 +189,8 @@ export interface SiteSettingsRecord {
   vision: LocalizedString | string;
   contactEmail: string;
   contactPhone: string;
+  contactPhoneSecondary?: string;
+  contactPhones?: string[];
   locationAddress: LocalizedString | string;
   googleMapsEmbedUrl: string;
   socialLinks: {

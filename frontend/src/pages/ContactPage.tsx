@@ -79,7 +79,12 @@ export const ContactPage: React.FC = () => {
                   <Mail size={20} color="var(--color-maroon-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>{t('contact.emailTitle')}:</strong>
-                    <span>{sampleSiteSettings.contactEmail}</span>
+                    <a
+                      href={`mailto:${sampleSiteSettings.contactEmail}`}
+                      style={{ color: 'var(--color-maroon-primary)', textDecoration: 'underline', wordBreak: 'break-all' }}
+                    >
+                      {sampleSiteSettings.contactEmail}
+                    </a>
                   </div>
                 </div>
 
@@ -87,7 +92,30 @@ export const ContactPage: React.FC = () => {
                   <Phone size={20} color="var(--color-maroon-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     <strong style={{ display: 'block', color: 'var(--color-maroon-dark)' }}>{t('contact.phoneTitle')}:</strong>
-                    <span>{sampleSiteSettings.contactPhone}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+                          {currentLang === 'te' ? 'ప్రధాన మొబైల్:' : 'Primary:'}
+                        </span>
+                        <a
+                          href="tel:9491377750"
+                          style={{ color: 'var(--color-maroon-primary)', fontWeight: 600, textDecoration: 'underline' }}
+                        >
+                          9491377750
+                        </a>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+                          {currentLang === 'te' ? 'మరో మొబైల్:' : 'Secondary:'}
+                        </span>
+                        <a
+                          href="tel:9440790378"
+                          style={{ color: 'var(--color-maroon-primary)', fontWeight: 600, textDecoration: 'underline' }}
+                        >
+                          94407 90378
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

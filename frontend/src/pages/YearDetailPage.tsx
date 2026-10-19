@@ -78,7 +78,8 @@ export const YearDetailPage: React.FC = () => {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: 'var(--color-cream-alt)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)', fontSize: 'var(--font-size-sm)' }}>
               <Calendar size={16} color="var(--color-maroon-primary)" />
               <span>
-                <strong>{currentLang === 'te' ? 'ఉత్సవ తేదీలు:' : 'Celebration Dates:'}</strong> {yearRecord.startDate} {currentLang === 'te' ? 'నుండి' : 'to'} {yearRecord.endDate}
+                <strong>{currentLang === 'te' ? 'ఉత్సవ తేదీలు:' : 'Celebration Dates:'}</strong>{' '}
+                {yearRecord.dateRangeFormatted ? getLocalized(yearRecord.dateRangeFormatted) : `${yearRecord.startDate} ${currentLang === 'te' ? 'నుండి' : 'to'} ${yearRecord.endDate}`}
               </span>
             </div>
           )}

@@ -207,7 +207,7 @@ export const AdminLoginPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@durgabhavani-dodlapahad.org"
+                placeholder="contactdurgabhavani.dodlapahad@gmail.com"
                 style={{
                   width: '100%',
                   background: 'rgba(0, 0, 0, 0.4)',

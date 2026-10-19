@@ -81,11 +81,13 @@ export const sampleSiteSettings: SiteSettingsRecord = {
     en: 'To preserve the sacred legacy of Sri Durga Bhavani Temple, Dodlapahad, while fostering youth participation in cultural preservation, digital archiving, and charitable service.',
     te: 'దొడ్లపహాడ్ శ్రీ దుర్గాభవాని ఆలయ పవిత్ర వారసత్వాన్ని కాపాడుతూ, సాంస్కృతిక పరిరక్షణ, డిజిటల్ ఆర్కైవ్ మరియు ధార్మిక సేవా కార్యక్రమాలలో యువతను భాగస్వామ్యం చేయడం.'
   },
-  contactEmail: 'contact@durgabhavani-dodlapahad.org (Sample Notice)',
-  contactPhone: '+91 98765 43210 (Sample Notice)',
+  contactEmail: 'contactdurgabhavani.dodlapahad@gmail.com',
+  contactPhone: '9491377750',
+  contactPhoneSecondary: '94407 90378',
+  contactPhones: ['9491377750', '94407 90378'],
   locationAddress: {
-    en: 'Sri Durga Bhavani Temple Premises, Dodlapahad, Telangana, India',
-    te: 'శ్రీ దుర్గాభవాని ఆలయ ప్రాంగణం, దొడ్లపహాడ్ గ్రామం, తెలంగాణ, భారతదేశం'
+    en: 'Sri Durga Bhavani Mandapam, Beside Dodlapahad Grama Panchayat, Dodlapahad, Telangana, India',
+    te: 'శ్రీ దుర్గాభవాని మండపం, దొడ్లపహాడ్ గ్రామ పంచాయతీ పక్కన, దొడ్లపహాడ్, తెలంగాణ, భారతదేశం'
   },
   googleMapsEmbedUrl: 'https://maps.google.com/maps?q=Dodlapahad&t=&z=13&ie=UTF8&iwloc=&output=embed',
   socialLinks: {
@@ -116,8 +118,12 @@ export const sampleYears: YearRecord[] = [
       te: '2026 వార్షిక వేడుకలు దొడ్లపహాడ్‌లో మన మూడవ సంవత్సర శ్రీ దుర్గాభవాని ఉత్సవాలను సూచిస్తాయి. భక్తి ప్రపత్తులు, విశేష పూజలు మరియు అన్నదాన సాంప్రదాయం నిర్విఘ్నంగా కొనసాగుతున్నాయి.'
     },
     coverImage: createSampleSvgImage('Navaratri 2026', 'Year', '#7A0C0C', 'mandir'),
-    startDate: '2026-10-10',
-    endDate: '2026-10-19',
+    startDate: '2026-10-11',
+    endDate: '2026-10-20',
+    dateRangeFormatted: {
+      en: 'Sunday, October 11, 2026 – Tuesday, October 20, 2026',
+      te: 'ఆదివారం, అక్టోబర్ 11, 2026 – మంగళవారం, అక్టోబర్ 20, 2026'
+    },
     status: 'published',
     albumCount: 3,
     highlights: {
@@ -150,6 +156,10 @@ export const sampleYears: YearRecord[] = [
     coverImage: createSampleSvgImage('Navaratri 2025', 'Year', '#7A0C0C', 'kalash'),
     startDate: '2025-09-22',
     endDate: '2025-10-01',
+    dateRangeFormatted: {
+      en: 'Monday, September 22, 2025 – Wednesday, October 1, 2025',
+      te: 'సోమవారం, సెప్టెంబర్ 22, 2025 – బుధవారం, అక్టోబర్ 1, 2025'
+    },
     status: 'published',
     albumCount: 4,
     highlights: {
@@ -182,6 +192,10 @@ export const sampleYears: YearRecord[] = [
     coverImage: createSampleSvgImage('Navaratri 2024', 'Year', '#7A0C0C', 'diya'),
     startDate: '2024-10-03',
     endDate: '2024-10-12',
+    dateRangeFormatted: {
+      en: 'Thursday, October 3, 2024 – Saturday, October 12, 2024',
+      te: 'గురువారం, అక్టోబర్ 3, 2024 – శనివారం, అక్టోబర్ 12, 2024'
+    },
     status: 'published',
     albumCount: 3,
     highlights: {
@@ -637,8 +651,8 @@ export const sampleEvents: EventRecord[] = [
       en: 'The third year of celebrations featuring nine days of divine worship, sacred Chandi Homams, cultural presentations, and the concluding Vijayadashami Shobha Yatra.',
       te: 'తొమ్మిది రోజుల పాటు విశేష అలంకార పూజలు, హోమాలు, నిరన్నదానం మరియు విజయదశమి శోభాయాత్రతో జరిగే మూడవ సంవత్సర ఉత్సవాలు.'
     },
-    startDate: '2026-10-10',
-    endDate: '2026-10-19',
+    startDate: '2026-10-11',
+    endDate: '2026-10-20',
     time: {
       en: '6:00 AM - 9:30 PM Daily',
       te: 'ప్రతిరోజూ ఉదయం 6:00 నుండి రాత్రి 9:30 వరకు'
@@ -706,6 +720,38 @@ export const sampleEvents: EventRecord[] = [
 ];
 
 export const sampleAnnouncements: AnnouncementRecord[] = [
+  {
+    id: 'ann-devi-shobha-yatra-2026',
+    slug: 'devi-shobha-yatra-nimajjanam-2026',
+    title: {
+      en: 'Devi Shobha Yatra for Nimajjanam',
+      te: 'నిమజ్జన మహోత్సవ దేవీ శోభాయాత్ర'
+    },
+    content: {
+      en: "Sri Durga Bhavani Matha's Devi Shobha Yatra for Nimajjanam is scheduled for 21 October 2026.",
+      te: 'శ్రీ దుర్గాభవాని అమ్మవారి నిమజ్జన మహోత్సవ దేవీ శోభాయాత్ర 21 అక్టోబర్ 2026న నిర్వహించబడుతుంది.'
+    },
+    publishedAt: '21-10-2026',
+    imageUrl: createSampleSvgImage('Shobha Yatra', 'Notice', '#7A0C0C', 'mandir'),
+    featured: true,
+    isSample: false
+  },
+  {
+    id: 'ann-website-launch-2026',
+    slug: 'website-launch-2026',
+    title: {
+      en: 'Website Launch',
+      te: 'అధికారిక వెబ్‌సైట్ ప్రారంభం'
+    },
+    content: {
+      en: 'The official website of Sri Durga Bhavani Seva Samiti, Dodlapahad, was launched on 16 October 2026 to share our traditions, festival celebrations, photographs, and community information.',
+      te: 'శ్రీ దుర్గాభవాని సేవా సమితి, దొడ్లపహాడ్ పవిత్ర సాంప్రదాయాలు, ఉత్సవ వేడుకలు, ఛాయాచిత్రాలు మరియు సమాజ సమాచారాన్ని భక్తులకు అందించేందుకు 16 అక్టోబర్ 2026న ఈ అధికారిక వెబ్‌సైట్ ప్రారంభించబడింది.'
+    },
+    publishedAt: '16-10-2026',
+    imageUrl: createSampleSvgImage('Website Launch', 'Notice', '#7A0C0C', 'diya'),
+    featured: true,
+    isSample: false
+  },
   {
     id: 'ann-1',
     slug: 'welcome-to-new-portal-announcement',

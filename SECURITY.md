@@ -47,6 +47,6 @@ Frontend route guards provide visual UX convenience, but **all security checks a
 ## 3. Reporting a Vulnerability
 
 If you discover a security vulnerability in this project, please notify the technical committee:
-- **Email**: `security@durgabhavani-dodlapahad.org` (or contact project maintainer directly)
+- **Email**: `contactdurgabhavani.dodlapahad@gmail.com` (or contact project maintainer directly)
 - Please allow 48 hours for an initial response before public disclosure.
 - Include reproduction steps and environment details.

@@ -921,6 +921,14 @@
   background-color: #380505;
 }
 
+.footer-developer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  background-color: #240202;
+  color: #A89B8C;
+  font-size: var(--font-size-xs);
+}
+
 /* Keyframe Animations */
 @keyframes fadeIn {
   from { opacity: 0; }

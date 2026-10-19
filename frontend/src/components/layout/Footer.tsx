@@ -4,6 +4,8 @@ import { MapPin, Mail, Phone, Heart } from 'lucide-react';
 import { sampleSiteSettings } from '../../data/sampleData';
 import { useAppLanguage } from '../../i18n';
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 export const Footer: React.FC = () => {
   const { t, getLocalized, isTelugu } = useAppLanguage();
 
@@ -58,11 +60,30 @@ export const Footer: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <Mail size={16} color="var(--color-gold-primary)" style={{ flexShrink: 0 }} />
-                  <span>{sampleSiteSettings.contactEmail}</span>
+                  <a
+                    href={`mailto:${sampleSiteSettings.contactEmail}`}
+                    style={{ color: '#E8DFD5', textDecoration: 'underline', textUnderlineOffset: '2px', wordBreak: 'break-all' }}
+                  >
+                    {sampleSiteSettings.contactEmail}
+                  </a>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <Phone size={16} color="var(--color-gold-primary)" style={{ flexShrink: 0 }} />
-                  <span>{sampleSiteSettings.contactPhone}</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 10px' }}>
+                    <a
+                      href="tel:9491377750"
+                      style={{ color: '#E8DFD5', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+                    >
+                      9491377750
+                    </a>
+                    <span style={{ color: 'rgba(212, 175, 55, 0.4)' }}>|</span>
+                    <a
+                      href="tel:9440790378"
+                      style={{ color: '#E8DFD5', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+                    >
+                      94407 90378
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -73,7 +94,7 @@ export const Footer: React.FC = () => {
       <div className="footer-bottom">
         <div className="container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
           <span>
-            © {new Date().getFullYear()} {getLocalized(sampleSiteSettings.organizationName)}. {t('common.rightsReserved')}
+            © {CURRENT_YEAR} {getLocalized(sampleSiteSettings.organizationName)}. {t('common.rightsReserved')}
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             {isTelugu
@@ -81,6 +102,48 @@ export const Footer: React.FC = () => {
               : 'Preserving cultural memory with'}{' '}
             <Heart size={12} color="#FFA726" fill="#FFA726" />
           </span>
+        </div>
+      </div>
+
+      {/* Developer Credit */}
+      <div className="footer-developer">
+        <div
+          className="container"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px 16px',
+            textAlign: 'center'
+          }}
+        >
+          <span style={{ color: '#C0B4A6' }}>
+            {t('common.meetDeveloper')}:
+          </span>
+          <a
+            href="https://bhanuprakash-dev.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'var(--color-gold-light)',
+              textDecoration: 'underline',
+              textUnderlineOffset: '3px',
+              fontWeight: 500
+            }}
+          >
+            {isTelugu ? 'భాను ప్రకాష్ గుణిగంటి' : 'Bhanu Prakash Guniganti'}
+          </a>
+          <span style={{ color: 'rgba(212, 175, 55, 0.4)' }}>•</span>
+          <a
+            href="mailto:connectwithguniganti@gmail.com"
+            style={{
+              color: '#E8DFD5',
+              textDecoration: 'none'
+            }}
+          >
+            connectwithguniganti@gmail.com
+          </a>
         </div>
       </div>
     </footer>

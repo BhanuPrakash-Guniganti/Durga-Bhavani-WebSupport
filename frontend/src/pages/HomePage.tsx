@@ -23,7 +23,7 @@ export const HomePage: React.FC = () => {
   const { t, getLocalized } = useAppLanguage();
   const latestYear = sampleYears[0];
   const featuredAlbums = sampleAlbums.slice(0, 3);
-  const featuredAnnouncements = sampleAnnouncements.slice(0, 2);
+  const featuredAnnouncements = sampleAnnouncements.slice(0, 4);
   const upcomingEvents = sampleEvents.slice(0, 2);
 
   return (
@@ -200,8 +200,8 @@ export const HomePage: React.FC = () => {
                       <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
                         {annTitle}
                       </h3>
-                      <p style={{ fontSize: 'var(--font-size-sm)', margin: 0 }}>
-                        {annContent.slice(0, 140)}...
+                      <p style={{ fontSize: 'var(--font-size-sm)', margin: 0, lineHeight: 1.6 }}>
+                        {annContent}
                       </p>
                     </div>
                   );

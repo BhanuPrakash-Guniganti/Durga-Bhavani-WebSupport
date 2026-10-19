@@ -7,7 +7,7 @@ import { useAppLanguage } from '../i18n';
 
 export const YearsPage: React.FC = () => {
   const [selectedYearFilter, setSelectedYearFilter] = useState<string>('all');
-  const { t, getLocalized } = useAppLanguage();
+  const { t, getLocalized, isTelugu } = useAppLanguage();
 
   const filteredYears = sampleYears.filter((yr) => {
     if (selectedYearFilter === 'all') return true;
@@ -101,7 +101,11 @@ export const YearsPage: React.FC = () => {
                     {yearItem.startDate && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: 'var(--space-3)' }}>
                         <Calendar size={13} color="var(--color-maroon-primary)" />
-                        <span>{t('years.festivalDates', { start: yearItem.startDate, end: yearItem.endDate })}</span>
+                        <span>
+                          {yearItem.dateRangeFormatted
+                            ? `${isTelugu ? 'ఉత్సవ తేదీలు:' : 'Festival Dates:'} ${getLocalized(yearItem.dateRangeFormatted)}`
+                            : t('years.festivalDates', { start: yearItem.startDate, end: yearItem.endDate })}
+                        </span>
                       </div>
                     )}
                   </div>

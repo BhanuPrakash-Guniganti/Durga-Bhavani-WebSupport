@@ -90,21 +90,39 @@ router.get('/years', async (_req: Request, res: Response) => {
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2026', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2026 (మూడవ సంవత్సరం)' },
         slug: '2026',
         albumCount: albumsStore.filter((a) => a.year === 2026 && a.status === 'published').length,
-        status: 'published'
+        status: 'published',
+        startDate: '2026-10-11',
+        endDate: '2026-10-20',
+        dateRangeFormatted: {
+          en: 'Sunday, October 11, 2026 – Tuesday, October 20, 2026',
+          te: 'ఆదివారం, అక్టోబర్ 11, 2026 – మంగళవారం, అక్టోబర్ 20, 2026'
+        }
       },
       {
         year: 2025,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2025', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2025 (రెండవ సంవత్సరం)' },
         slug: '2025',
         albumCount: albumsStore.filter((a) => a.year === 2025 && a.status === 'published').length,
-        status: 'published'
+        status: 'published',
+        startDate: '2025-09-22',
+        endDate: '2025-10-01',
+        dateRangeFormatted: {
+          en: 'Monday, September 22, 2025 – Wednesday, October 1, 2025',
+          te: 'సోమవారం, సెప్టెంబర్ 22, 2025 – బుధవారం, అక్టోబర్ 1, 2025'
+        }
       },
       {
         year: 2024,
         title: { en: 'Sri Durga Bhavani Utsav Celebrations 2024', te: 'శ్రీ దుర్గాభవాని ఉత్సవాలు 2024 (మొదటి సంవత్సరం)' },
         slug: '2024',
         albumCount: albumsStore.filter((a) => a.year === 2024 && a.status === 'published').length,
-        status: 'published'
+        status: 'published',
+        startDate: '2024-10-03',
+        endDate: '2024-10-12',
+        dateRangeFormatted: {
+          en: 'Thursday, October 3, 2024 – Saturday, October 12, 2024',
+          te: 'గురువారం, అక్టోబర్ 3, 2024 – శనివారం, అక్టోబర్ 12, 2024'
+        }
       }
     ]
   });
