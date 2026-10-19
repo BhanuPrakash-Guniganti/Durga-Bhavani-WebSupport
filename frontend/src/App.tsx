@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import { PublicLayout } from './components/layout/PublicLayout';
@@ -13,8 +13,6 @@ import { HistoryPage } from './pages/HistoryPage';
 import { YearsPage } from './pages/YearsPage';
 import { YearDetailPage } from './pages/YearDetailPage';
 import { AlbumDetailPage } from './pages/AlbumDetailPage';
-import { EventsPage } from './pages/EventsPage';
-import { AnnouncementsPage } from './pages/AnnouncementsPage';
 import { SearchPage } from './pages/SearchPage';
 import { ContactPage } from './pages/ContactPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -42,8 +40,8 @@ export const App: React.FC = () => {
               <Route path="years" element={<YearsPage />} />
               <Route path="years/:year" element={<YearDetailPage />} />
               <Route path="albums/:slug" element={<AlbumDetailPage />} />
-              <Route path="events" element={<EventsPage />} />
-              <Route path="announcements" element={<AnnouncementsPage />} />
+              <Route path="events" element={<Navigate to="/years" replace />} />
+              <Route path="announcements" element={<Navigate to="/" replace />} />
               <Route path="search" element={<SearchPage />} />
               <Route path="contact" element={<ContactPage />} />
               <Route path="*" element={<NotFoundPage />} />

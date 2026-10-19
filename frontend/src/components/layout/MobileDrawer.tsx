@@ -6,13 +6,11 @@ import {
   Info,
   Clock,
   Calendar,
-  Bell,
   Search,
   MapPin,
   ShieldCheck
 } from 'lucide-react';
 import { useAppLanguage } from '../../i18n';
-import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -45,8 +43,6 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
     { to: '/about', label: t('nav.about'), icon: <Info size={18} /> },
     { to: '/history', label: t('nav.history'), icon: <Clock size={18} /> },
     { to: '/years', label: t('nav.years'), icon: <Calendar size={18} /> },
-    { to: '/events', label: t('nav.events'), icon: <Calendar size={18} /> },
-    { to: '/announcements', label: t('nav.announcements'), icon: <Bell size={18} /> },
     { to: '/search', label: t('nav.search'), icon: <Search size={18} /> },
     { to: '/contact', label: t('nav.contact'), icon: <MapPin size={18} /> },
     { to: '/admin', label: isTelugu ? 'అడ్మిన్ పోర్టల్' : 'Admin Portal', icon: <ShieldCheck size={18} /> }
@@ -82,11 +78,6 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
           >
             <X size={20} />
           </button>
-        </div>
-
-        {/* In-drawer Language Switcher */}
-        <div style={{ padding: 'var(--space-3) var(--space-4) 0 var(--space-4)' }}>
-          <LanguageSwitcher className="lang-switcher-drawer" />
         </div>
 
         <nav className="drawer-nav">

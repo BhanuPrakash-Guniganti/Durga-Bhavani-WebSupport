@@ -12,8 +12,7 @@
     "portalSubtitle": "Dodlapahad, Telangana",
     "menu": "Menu",
     "closeMenu": "Close menu",
-    "switchLanguage": "Switch Language",
-    "sampleBadge": ""
+    "switchLanguage": "Switch Language"
   },
   "home": {
     "heroSub": "Preserving and presenting Dodlapahad's annual Sri Durga Bhavani Utsav celebrations, sacred traditions, photo & video archives, and community devotion.",
@@ -199,8 +198,6 @@
     "openMaps": "Open in Google Maps ↗"
   },
   "common": {
-    "badgeDemonstration": "",
-    "sampleBadgeDefault": "",
     "english": "English",
     "telugu": "తెలుగు",
     "rightsReserved": "All rights reserved. Content verified and authorized by the Organizing Committee.",
@@ -208,8 +205,6 @@
     "organization": "Organization",
     "templeLocation": "Temple Location",
     "backToTop": "Back to Top ↑",
-    "sampleNotice": "Sample Notice",
-    "samplePhoto": "Sample Photo",
     "pageNotFound": "Page Not Found",
     "pageNotFoundDesc": "The page you are looking for does not exist or has been moved.",
     "returnHome": "Return to Home Page",

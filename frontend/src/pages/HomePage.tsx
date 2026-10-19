@@ -17,7 +17,6 @@ import {
   sampleEvents,
   sampleAnnouncements
 } from '../data/sampleData';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { useAppLanguage } from '../i18n';
 
 export const HomePage: React.FC = () => {
@@ -98,7 +97,6 @@ export const HomePage: React.FC = () => {
               <div className="card-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
                   <span className="badge badge-saffron">{t('home.latestPublishedYear')}</span>
-                  <SampleBadge size="sm" />
                 </div>
                 <h3>{getLocalized(latestYear.title)}</h3>
                 <p style={{ fontSize: 'var(--font-size-sm)' }}>
@@ -151,8 +149,7 @@ export const HomePage: React.FC = () => {
                       {albumDesc}
                     </p>
                   </div>
-                  <div className="card-footer">
-                    <SampleBadge size="sm" />
+                  <div className="card-footer" style={{ justifyContent: 'flex-end' }}>
                     <Link to={`/albums/${album.slug}`} className="btn btn-primary btn-sm">
                       <Image size={14} />
                       <span>{t('home.viewAlbum')}</span>
@@ -185,10 +182,6 @@ export const HomePage: React.FC = () => {
                     {t('home.recentAnnouncements')}
                   </h2>
                 </div>
-                <Link to="/announcements" className="btn btn-secondary btn-sm">
-                  <span>{t('home.allNotices')}</span>
-                  <ArrowRight size={14} />
-                </Link>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
@@ -225,8 +218,8 @@ export const HomePage: React.FC = () => {
                     {t('home.upcomingEvents')}
                   </h2>
                 </div>
-                <Link to="/events" className="btn btn-secondary btn-sm">
-                  <span>{t('home.viewCalendar')}</span>
+                <Link to="/years" className="btn btn-secondary btn-sm">
+                  <span>{t('home.exploreYears')}</span>
                   <ArrowRight size={14} />
                 </Link>
               </div>
@@ -243,7 +236,6 @@ export const HomePage: React.FC = () => {
                         <span className="badge badge-gold">
                           {evt.status === 'upcoming' ? t('events.statusUpcoming') : t('events.statusPast')}
                         </span>
-                        <SampleBadge size="sm" />
                       </div>
                       <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
                         {evtTitle}

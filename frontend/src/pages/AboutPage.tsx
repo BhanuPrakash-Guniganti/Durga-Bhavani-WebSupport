@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Target, Compass, Users, ShieldCheck, Heart, Award, ArrowRight } from 'lucide-react';
 import { sampleSiteSettings } from '../data/sampleData';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { useAppLanguage } from '../i18n';
 
 export const AboutPage: React.FC = () => {
@@ -16,9 +15,6 @@ export const AboutPage: React.FC = () => {
           <span className="sub-heading">{t('about.sub')}</span>
           <h1>{t('about.title')}</h1>
           <p>{t('about.intro')}</p>
-          <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label={t('about.sub')} />
-          </div>
         </div>
 
         {/* Purpose & Overview */}

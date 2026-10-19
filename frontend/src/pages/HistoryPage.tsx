@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { sampleHistoryMilestones } from '../data/sampleData';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { Lightbox } from '../components/common/Lightbox';
 import { useAppLanguage } from '../i18n';
 import type { MediaPhoto } from '../types';
@@ -26,7 +25,7 @@ export const HistoryPage: React.FC = () => {
         url: m.imageUrl!,
         caption: displayCaption,
         altText: localizedTitle,
-        photographerCredit: t('albums.photoCredit', { name: 'Utsav Committee Archives (Sample)' }),
+        photographerCredit: t('albums.photoCredit', { name: 'Utsav Committee Archives' }),
         isSample: true
       };
     });
@@ -47,9 +46,6 @@ export const HistoryPage: React.FC = () => {
           <span className="sub-heading">{t('history.sub')}</span>
           <h1>{t('history.title')}</h1>
           <p>{t('history.desc')}</p>
-          <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label={t('history.badge')} />
-          </div>
         </div>
 
         {/* Historical Introduction Banner */}
@@ -82,7 +78,6 @@ export const HistoryPage: React.FC = () => {
                       <Calendar size={12} />
                       <span>{itemYear}</span>
                     </span>
-                    <SampleBadge size="sm" />
                   </div>
 
                   <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>

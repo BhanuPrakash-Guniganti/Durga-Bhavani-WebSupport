@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Image as ImageIcon, ArrowRight } from 'lucide-react';
 import { sampleYears } from '../data/sampleData';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAppLanguage } from '../i18n';
 
@@ -23,9 +22,6 @@ export const YearsPage: React.FC = () => {
           <span className="sub-heading">{t('years.sub')}</span>
           <h1>{t('years.title')}</h1>
           <p>{t('years.desc')}</p>
-          <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label={t('years.badge')} />
-          </div>
         </div>
 
         {/* Filter Pills */}
@@ -110,8 +106,7 @@ export const YearsPage: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="card-footer">
-                    <SampleBadge size="sm" />
+                  <div className="card-footer" style={{ justifyContent: 'flex-end' }}>
                     <Link to={`/years/${yearItem.year}`} className="btn btn-primary btn-sm">
                       <span>{t('years.viewYearArchive')}</span>
                       <ArrowRight size={14} />

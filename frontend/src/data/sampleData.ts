@@ -51,7 +51,7 @@ export const createSampleSvgImage = (
     <!-- Text Labels -->
     <rect x="20" y="195" width="360" height="48" rx="6" fill="#1A0202" opacity="0.85" stroke="#D4AF37" stroke-width="1"/>
     <text x="200" y="215" font-family="Georgia, serif" font-size="13" font-weight="bold" fill="#FFE082" text-anchor="middle">${title}</text>
-    <text x="200" y="233" font-family="sans-serif" font-size="10" fill="#E0D6C8" text-anchor="middle">★ SAMPLE RECORD FOR PREVIEW ★</text>
+    <text x="200" y="233" font-family="sans-serif" font-size="10" fill="#E0D6C8" text-anchor="middle">DODLAPAHAD UTSAV ARCHIVES</text>
     
     <!-- Border Accents -->
     <rect x="8" y="8" width="384" height="244" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.6"/>
@@ -271,8 +271,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'స్వర్ణాభరణాలు మరియు తాజా పూలమాలలతో శ్రీ దుర్గాభవాని అమ్మవారి దివ్యాలంకారం'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2026,
         albumSlug: 'utsav-celebrations-2026',
@@ -290,8 +290,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'సాయంత్రం మహా హారతిలో పాల్గొంటున్న అర్చకులు మరియు భక్తులు'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2026,
         albumSlug: 'utsav-celebrations-2026',
@@ -386,8 +386,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'అన్నదానం కోసం పెద్ద పాత్రలలో ప్రసాదం సిద్ధం చేస్తున్న స్వచ్ఛంద సేవకులు'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2025,
         albumSlug: 'annadanam-and-utsav-2025',
@@ -405,8 +405,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'అన్నదాన భవనంలో భక్తులకు పంపిణీ జరుగుతున్న దృశ్యం'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2025,
         albumSlug: 'annadanam-and-utsav-2025',
@@ -481,8 +481,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'కిరీటం మరియు పూలమాలలతో శ్రీ దుర్గాభవాని అమ్మవారి దివ్య దర్శనం'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
         albumSlug: 'vijaya-dashami-shobha-yatra-2024',
@@ -500,8 +500,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'దొడ్లపహాడ్ పురవీధులలో అలంకరించిన పల్లకీని మోస్తున్న గ్రామ యువత'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
         albumSlug: 'vijaya-dashami-shobha-yatra-2024',
@@ -519,8 +519,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'ఇత్తడి దీపాలతో మహా హారతి సమర్పిస్తున్న వేద పండితులు'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
         albumSlug: 'vijaya-dashami-shobha-yatra-2024',
@@ -538,8 +538,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'ఆలయ ప్రాంగణంలో తీర్థప్రసాదాలు స్వీకరిస్తున్న భక్తజనం'
         },
         photographerCredit: {
-          en: 'Seva Samiti Media Volunteer (Sample)',
-          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు (నమూనా)'
+          en: 'Seva Samiti Media Volunteer',
+          te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
         albumSlug: 'vijaya-dashami-shobha-yatra-2024',
@@ -576,8 +576,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'సమిధలు మరియు ఘృత సమర్పణతో వెలుగుతున్న యజ్ఞ కుండం'
         },
         photographerCredit: {
-          en: 'Seva Samiti Archive (Sample)',
-          te: 'సేవా సమితి ఆర్కైవ్ (నమూనా)'
+          en: 'Seva Samiti Archive',
+          te: 'సేవా సమితి ఆర్కైవ్'
         },
         year: 2024,
         albumSlug: 'chandi-homam-rituals-2024',
@@ -595,8 +595,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'పట్టు వస్త్రాలు ధరించి వేద మంత్రాలు పఠిస్తున్న అర్చకులు'
         },
         photographerCredit: {
-          en: 'Seva Samiti Archive (Sample)',
-          te: 'సేవా సమితి ఆర్కైవ్ (నమూనా)'
+          en: 'Seva Samiti Archive',
+          te: 'సేవా సమితి ఆర్కైవ్'
         },
         year: 2024,
         albumSlug: 'chandi-homam-rituals-2024',
@@ -614,8 +614,8 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'హోమ గుండంలో పూర్ణాహుతి సమర్పిస్తున్న దృశ్యం'
         },
         photographerCredit: {
-          en: 'Seva Samiti Archive (Sample)',
-          te: 'సేవా సమితి ఆర్కైవ్ (నమూనా)'
+          en: 'Seva Samiti Archive',
+          te: 'సేవా సమితి ఆర్కైవ్'
         },
         year: 2024,
         albumSlug: 'chandi-homam-rituals-2024',

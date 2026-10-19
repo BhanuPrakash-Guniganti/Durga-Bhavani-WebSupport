@@ -34,8 +34,6 @@ export const Footer: React.FC = () => {
                 <li><Link to="/years">{t('nav.years')}</Link></li>
                 <li><Link to="/years/2024">{isTelugu ? 'ఉత్సవం 2024 విశేషాలు' : 'Navaratri 2024 Highlights'}</Link></li>
                 <li><Link to="/history">{t('nav.history')}</Link></li>
-                <li><Link to="/events">{t('nav.events')}</Link></li>
-                <li><Link to="/announcements">{t('nav.announcements')}</Link></li>
               </ul>
             </div>
 

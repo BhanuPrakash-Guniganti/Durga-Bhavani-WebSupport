@@ -14,9 +14,9 @@ export const Navbar: React.FC = () => {
       <header className="navbar">
         <div className="navbar-inner">
           {/* Brand Logo & Title */}
-          <Link to="/" className="navbar-brand">
+          <Link to="/" className="navbar-brand" aria-label="Durga Bhavani Seva Samiti Home">
             <div className="brand-icon-wrapper" aria-hidden="true">
-              <span style={{ fontSize: '1.25rem' }}>🪔</span>
+              <span className="brand-diya-icon">🪔</span>
             </div>
             <div className="brand-text">
               <span className="brand-title">{t('nav.portalTitle')}</span>
@@ -37,12 +37,6 @@ export const Navbar: React.FC = () => {
             </NavLink>
             <NavLink to="/years" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               {t('nav.years')}
-            </NavLink>
-            <NavLink to="/events" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              {t('nav.events')}
-            </NavLink>
-            <NavLink to="/announcements" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              {t('nav.announcements')}
             </NavLink>
             <NavLink to="/contact" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               {t('nav.contact')}
@@ -65,17 +59,11 @@ export const Navbar: React.FC = () => {
               <ShieldCheck size={16} />
               <span>Admin</span>
             </NavLink>
-            {/* Desktop Language Switcher */}
-            <div style={{ marginLeft: 'var(--space-2)' }}>
-              <LanguageSwitcher />
-            </div>
           </nav>
 
-          {/* Header Mobile Actions: Language Switcher + Menu Toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ display: 'flex' }} className="mobile-header-lang">
-              <LanguageSwitcher showIcon={false} />
-            </div>
+          {/* Single Header Actions: Language Switcher + Mobile Toggle */}
+          <div className="navbar-actions">
+            <LanguageSwitcher />
             <button
               type="button"
               className="nav-toggle-btn"

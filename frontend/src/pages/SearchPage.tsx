@@ -9,7 +9,6 @@ import {
   sampleAnnouncements,
   sampleHistoryMilestones
 } from '../data/sampleData';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAppLanguage, getLocalized } from '../i18n';
 
@@ -88,7 +87,7 @@ export const SearchPage: React.FC = () => {
         titleTe,
         descEn,
         descTe,
-        link: '/events',
+        link: e.year ? `/years/${e.year}` : '/years',
         badgeEn: `Event · ${isUpcoming ? 'Upcoming' : 'Concluded'}`,
         badgeTe: `కార్యక్రమం · ${isUpcoming ? 'రాబోయేది' : 'పూర్తయినది'}`
       });
@@ -107,7 +106,7 @@ export const SearchPage: React.FC = () => {
         titleTe,
         descEn,
         descTe,
-        link: '/announcements',
+        link: '/',
         badgeEn: 'Announcement',
         badgeTe: 'ప్రకటన'
       });
@@ -171,9 +170,6 @@ export const SearchPage: React.FC = () => {
           <span className="sub-heading">{t('search.sub')}</span>
           <h1>{t('search.title')}</h1>
           <p>{t('search.desc')}</p>
-          <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label={t('search.badge')} />
-          </div>
         </div>
 
         {/* Search Bar Input */}
@@ -254,7 +250,6 @@ export const SearchPage: React.FC = () => {
                     <span className="badge badge-gold" style={{ fontSize: 'var(--font-size-xs)' }}>
                       {displayBadge}
                     </span>
-                    <SampleBadge size="sm" />
                   </div>
 
                   <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>

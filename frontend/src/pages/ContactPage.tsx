@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Mail, Phone, Send, CheckCircle2 } from 'lucide-react';
 import { sampleSiteSettings } from '../data/sampleData';
-import { SampleBadge } from '../components/common/SampleBadge';
 import { useAppLanguage, getLocalized } from '../i18n';
 
 export const ContactPage: React.FC = () => {
@@ -57,9 +56,6 @@ export const ContactPage: React.FC = () => {
           <span className="sub-heading">{t('contact.sub')}</span>
           <h1>{t('contact.title')}</h1>
           <p>{t('contact.desc')}</p>
-          <div style={{ marginTop: 'var(--space-3)' }}>
-            <SampleBadge label={t('contact.badge')} />
-          </div>
         </div>
 
         <div className="grid-2" style={{ gap: 'var(--space-10)', alignItems: 'flex-start' }}>
