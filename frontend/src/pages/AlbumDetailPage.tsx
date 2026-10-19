@@ -90,15 +90,15 @@ export const AlbumDetailPage: React.FC = () => {
   );
 
   // For Devi Alankaranalu (filter strictly by current album / year)
-  const albumAvatars = avatars.filter(
-    (a) => a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year)
+  const albumAvatars = (avatars || []).filter(
+    (a) => a && (a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year))
   );
-  const sortedAvatars = (albumAvatars.length > 0 ? albumAvatars : avatars.filter((a) => a.year === album.year))
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+  const sortedAvatars = (albumAvatars.length > 0 ? albumAvatars : (avatars || []).filter((a) => a && a.year === album.year))
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
   // For Auction Winners (filter strictly by current album / year)
-  const albumAuctions = auctions.filter(
-    (a) => a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year)
+  const albumAuctions = (auctions || []).filter(
+    (a) => a && (a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year))
   );
   const confirmedAuctions = albumAuctions.filter((a) => a.status === 'published' && a.isComplete);
   const filteredConfirmedAuctions = confirmedAuctions.filter((item) => {
@@ -109,8 +109,8 @@ export const AlbumDetailPage: React.FC = () => {
   });
 
   // For Donors (filter strictly by current album / year)
-  const albumDonors = donors.filter(
-    (d) => d.albumSlug === album.slug || (!d.albumSlug && d.year === album.year)
+  const albumDonors = (donors || []).filter(
+    (d) => d && (d.albumSlug === album.slug || (!d.albumSlug && d.year === album.year))
   );
   const publishedDonors = albumDonors.filter((d) => d.status === 'published');
 
@@ -213,9 +213,14 @@ export const AlbumDetailPage: React.FC = () => {
             {/* Grid of 10 Avatars */}
             <div className="grid-2" style={{ gap: 'var(--space-6)' }}>
               {sortedAvatars.map((avatar) => {
-                const primaryName = currentLang === 'te' ? avatar.name.te : avatar.name.en;
-                const secondaryName = currentLang === 'te' ? avatar.name.en : avatar.name.te;
-                const desc = getLocalized(avatar.description);
+                const primaryName = currentLang === 'te'
+                  ? (avatar.name?.te || avatar.name?.en || '')
+                  : (avatar.name?.en || avatar.name?.te || '');
+                const secondaryName = currentLang === 'te'
+                  ? (avatar.name?.en || avatar.name?.te || '')
+                  : (avatar.name?.te || avatar.name?.en || '');
+                const desc = avatar.description ? getLocalized(avatar.description) : '';
+                const avatarPhotos = avatar.photos || [];
 
                 return (
                   <article
@@ -241,18 +246,18 @@ export const AlbumDetailPage: React.FC = () => {
                         overflow: 'hidden'
                       }}
                     >
-                      {avatar.photos.length > 0 ? (
+                      {avatarPhotos.length > 0 && avatarPhotos[0]?.url ? (
                         <>
                           <img
-                            src={avatar.photos[0].url}
-                            alt={getLocalized(avatar.photos[0].altText) || primaryName}
+                            src={avatarPhotos[0].url}
+                            alt={getLocalized(avatarPhotos[0].altText) || primaryName}
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             loading="lazy"
                           />
                           <button
                             type="button"
                             onClick={() => {
-                              setActivePhotosList(avatar.photos);
+                              setActivePhotosList(avatarPhotos);
                               setActivePhotoIndex(0);
                               setLightboxOpen(true);
                             }}
@@ -992,43 +997,50 @@ export const AlbumDetailPage: React.FC = () => {
 
               {/* Avatar Photos */}
               <div style={{ marginBottom: 'var(--space-6)' }}>
-                <h4 style={{ fontSize: 'var(--font-size-sm)', margin: '0 0 10px 0', color: 'var(--color-maroon-primary)' }}>
-                  {currentLang === 'te' ? 'ఛాయాచిత్రాలు' : 'Photographs'} ({selectedAvatarModal.photos.length})
-                </h4>
+                {(() => {
+                  const modalPhotos = selectedAvatarModal?.photos || [];
+                  return (
+                    <>
+                      <h4 style={{ fontSize: 'var(--font-size-sm)', margin: '0 0 10px 0', color: 'var(--color-maroon-primary)' }}>
+                        {currentLang === 'te' ? 'ఛాయాచిత్రాలు' : 'Photographs'} ({modalPhotos.length})
+                      </h4>
 
-                {selectedAvatarModal.photos.length === 0 ? (
-                  <div
-                    style={{
-                      padding: 'var(--space-6)',
-                      background: 'var(--color-cream-alt)',
-                      borderRadius: 'var(--radius-md)',
-                      textAlign: 'center',
-                      border: '1px dashed var(--color-border-medium)'
-                    }}
-                  >
-                    <Flower2 size={32} color="var(--color-maroon-primary)" style={{ marginBottom: '6px' }} />
-                    <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
-                      {t('alankaranalu.noPhotosDesc')}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid-2" style={{ gap: '10px' }}>
-                    {selectedAvatarModal.photos.map((p, pIdx) => (
-                      <div
-                        key={p.id}
-                        style={{ cursor: 'pointer', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--color-border-subtle)' }}
-                        onClick={() => {
-                          setActivePhotosList(selectedAvatarModal.photos);
-                          setActivePhotoIndex(pIdx);
-                          setLightboxOpen(true);
-                        }}
-                      >
-                        <img src={p.url} alt={getLocalized(p.altText)} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
-                        <div style={{ padding: '6px', fontSize: '11px' }}>{getLocalized(p.caption)}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      {modalPhotos.length === 0 ? (
+                        <div
+                          style={{
+                            padding: 'var(--space-6)',
+                            background: 'var(--color-cream-alt)',
+                            borderRadius: 'var(--radius-md)',
+                            textAlign: 'center',
+                            border: '1px dashed var(--color-border-medium)'
+                          }}
+                        >
+                          <Flower2 size={32} color="var(--color-maroon-primary)" style={{ marginBottom: '6px' }} />
+                          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+                            {t('alankaranalu.noPhotosDesc')}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid-2" style={{ gap: '10px' }}>
+                          {modalPhotos.map((p, pIdx) => (
+                            <div
+                              key={p.id}
+                              style={{ cursor: 'pointer', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--color-border-subtle)' }}
+                              onClick={() => {
+                                setActivePhotosList(modalPhotos);
+                                setActivePhotoIndex(pIdx);
+                                setLightboxOpen(true);
+                              }}
+                            >
+                              <img src={p.url} alt={getLocalized(p.altText)} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                              <div style={{ padding: '6px', fontSize: '11px' }}>{getLocalized(p.caption)}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
 
               <div style={{ textAlign: 'right' }}>
@@ -1251,7 +1263,7 @@ export const AlbumDetailPage: React.FC = () => {
 
         {/* Lightbox Modal */}
         <Lightbox
-          photos={activePhotosList.length > 0 ? activePhotosList : album.photos}
+          photos={activePhotosList.length > 0 ? activePhotosList : (album.photos || [])}
           currentIndex={activePhotoIndex}
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}

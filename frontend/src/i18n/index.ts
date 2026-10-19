@@ -4,17 +4,17 @@ import enCommon from '../locales/en/common.json';
 import teCommon from '../locales/te/common.json';
 import type { LocalizedString, LocalizedArray } from '../types';
 
+import { safeStorage } from '../utils/storage';
+
 export const LANGUAGE_STORAGE_KEY = 'durga_bhavani_language';
 
 export type SupportedLanguage = 'en' | 'te';
 
 // Detect initial language: localStorage preference if available, else 'en'
 const getInitialLanguage = (): SupportedLanguage => {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (saved === 'te' || saved === 'en') {
-      return saved;
-    }
+  const saved = safeStorage.getItem(LANGUAGE_STORAGE_KEY);
+  if (saved === 'te' || saved === 'en') {
+    return saved;
   }
   return 'en';
 };
@@ -47,9 +47,7 @@ i18n.on('languageChanged', (lng: string) => {
     document.documentElement.lang = lng;
     document.documentElement.setAttribute('data-lang', lng);
   }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
-  }
+  safeStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
 });
 
 export default i18n;

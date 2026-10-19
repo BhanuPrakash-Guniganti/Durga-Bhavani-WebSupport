@@ -8,36 +8,28 @@ import type {
   AdminUser
 } from '../types';
 
+import { safeStorage } from '../utils/storage';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 const TOKEN_KEY = 'durga_bhavani_admin_token';
 const USER_KEY = 'durga_bhavani_admin_user';
 
 export const getStoredToken = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(TOKEN_KEY);
+  return safeStorage.getItem(TOKEN_KEY);
 };
 
 export const setStoredAuth = (token: string, user: AdminUser): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  safeStorage.setItem(TOKEN_KEY, token);
+  safeStorage.setJson(USER_KEY, user);
 };
 
 export const clearStoredAuth = (): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  safeStorage.removeItem(TOKEN_KEY);
+  safeStorage.removeItem(USER_KEY);
 };
 
 export const getStoredUser = (): AdminUser | null => {
-  if (typeof window === 'undefined') return null;
-  const raw = localStorage.getItem(USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+  return safeStorage.getJson<AdminUser | null>(USER_KEY, null);
 };
 
 interface RequestOptions extends RequestInit {

@@ -32,7 +32,7 @@ export const AdminDonorsPage: React.FC = () => {
       photoOrLogoUrl: '',
       notes: { en: '', te: '' },
       status: 'published',
-      sortOrder: donors.length + 1,
+      sortOrder: (donors || []).length + 1,
       isSample: false
     });
   };

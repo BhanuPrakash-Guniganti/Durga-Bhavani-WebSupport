@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Durga Bhavani Seva Samiti - Dodlapahad Web Application",
+  "type": "module",
   "scripts": {
     "dev:frontend": "npm --prefix frontend run dev",
     "dev:backend": "npm --prefix backend run dev",
@@ -12,7 +13,10 @@
     "install:all": "npm --prefix frontend install && npm --prefix backend install",
     "typecheck:frontend": "npm --prefix frontend run typecheck",
     "typecheck:backend": "npm --prefix backend run typecheck",
-    "typecheck": "npm run typecheck:frontend && npm run typecheck:backend"
+    "typecheck": "npm run typecheck:frontend && npm run typecheck:backend",
+    "test:bilingual": "node scripts/verify-bilingual.js",
+    "test:storage": "node --experimental-strip-types scripts/test-storage-and-navigation.js",
+    "test": "npm run test:bilingual && npm run test:storage"
   },
   "keywords": [
     "durga-bhavani",

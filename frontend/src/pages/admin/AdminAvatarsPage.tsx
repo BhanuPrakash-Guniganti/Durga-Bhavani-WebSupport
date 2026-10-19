@@ -125,17 +125,11 @@ export const AdminAvatarsPage: React.FC = () => {
     try {
       const res = await api.uploadImage(file, 'durga-bhavani/avatars');
       setNewPhotoFileUrl(res.url);
+      setUploadError(null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Photo upload failed';
-      setUploadError(msg);
-      // Fallback to data URL so preview works
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setNewPhotoFileUrl(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      setUploadError(`${msg}. Please ensure Cloudinary credentials are configured or provide an external image URL below.`);
+      setNewPhotoFileUrl('');
     } finally {
       setUploadingPhoto(false);
     }
@@ -144,14 +138,20 @@ export const AdminAvatarsPage: React.FC = () => {
   const handleAddPhotoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!photoManagingAvatar) return;
-    if (!newPhotoFileUrl) {
-      alert('Please select or upload an image file first.');
+    if (!newPhotoFileUrl || !newPhotoFileUrl.trim()) {
+      alert(currentLang === 'te' ? 'దయచేసి సరైన ఫోటో URL ను నమోదు చేయండి లేదా అప్‌లోడ్ చేయండి.' : 'Please provide or upload a valid photo URL first.');
       return;
     }
 
+    if (newPhotoFileUrl.startsWith('data:')) {
+      alert(currentLang === 'te' ? 'బేస్64 ఇమేజ్‌లను నిల్వ చేయడం అనుమతించబడదు. దయచేసి వెబ్ URL ఉపయోగించండి.' : 'Base64 image blobs cannot be saved directly into shared storage. Please use a hosted Cloudinary/Web URL.');
+      return;
+    }
+
+    const currentPhotos = photoManagingAvatar.photos || [];
     const newPhoto: MediaPhoto = {
       id: `p-${Date.now()}`,
-      url: newPhotoFileUrl,
+      url: newPhotoFileUrl.trim(),
       caption: newPhotoCaption,
       altText: newPhotoAlt.en ? newPhotoAlt : { en: getLocalized(photoManagingAvatar.name), te: getLocalized(photoManagingAvatar.name) },
       year: 2025,
@@ -163,7 +163,7 @@ export const AdminAvatarsPage: React.FC = () => {
     // Update local state in photo managing modal
     setPhotoManagingAvatar({
       ...photoManagingAvatar,
-      photos: [...photoManagingAvatar.photos, newPhoto]
+      photos: [...currentPhotos, newPhoto]
     });
     // Reset form
     setNewPhotoFileUrl('');
@@ -346,9 +346,9 @@ export const AdminAvatarsPage: React.FC = () => {
                     onClick={() => setPhotoManagingAvatar(avatar)}
                     className="badge"
                     style={{
-                      background: avatar.photos.length > 0 ? 'var(--color-gold-pale)' : '#FFF3E0',
-                      border: `1px solid ${avatar.photos.length > 0 ? 'var(--color-gold-primary)' : 'var(--color-warning)'}`,
-                      color: avatar.photos.length > 0 ? 'var(--color-gold-dark)' : 'var(--color-warning)',
+                      background: (avatar.photos || []).length > 0 ? 'var(--color-gold-pale)' : '#FFF3E0',
+                      border: `1px solid ${(avatar.photos || []).length > 0 ? 'var(--color-gold-primary)' : 'var(--color-warning)'}`,
+                      color: (avatar.photos || []).length > 0 ? 'var(--color-gold-dark)' : 'var(--color-warning)',
                       cursor: 'pointer',
                       padding: '4px 8px',
                       display: 'inline-flex',
@@ -358,7 +358,7 @@ export const AdminAvatarsPage: React.FC = () => {
                     title="Click to view/upload photos"
                   >
                     <ImageIcon size={12} />
-                    <span>{avatar.photos.length} Photos</span>
+                    <span>{(avatar.photos || []).length} Photos</span>
                   </button>
                 </td>
 
@@ -575,7 +575,7 @@ export const AdminAvatarsPage: React.FC = () => {
                   Manage Photographs: {getLocalized(photoManagingAvatar.name)}
                 </h2>
                 <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                  Day {photoManagingAvatar.dayNumber} · {photoManagingAvatar.photos.length} Photos Uploaded
+                  Day {photoManagingAvatar.dayNumber} · {(photoManagingAvatar.photos || []).length} Photos Uploaded
                 </span>
               </div>
               <button
@@ -593,7 +593,7 @@ export const AdminAvatarsPage: React.FC = () => {
                 Current Avatar Photos
               </h3>
 
-              {photoManagingAvatar.photos.length === 0 ? (
+              {(photoManagingAvatar.photos || []).length === 0 ? (
                 <div
                   style={{
                     padding: 'var(--space-6)',
@@ -609,7 +609,7 @@ export const AdminAvatarsPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid-3" style={{ gap: '12px' }}>
-                  {photoManagingAvatar.photos.map((p) => (
+                  {(photoManagingAvatar.photos || []).map((p) => (
                     <div
                       key={p.id}
                       style={{
@@ -634,7 +634,7 @@ export const AdminAvatarsPage: React.FC = () => {
                             deleteAvatarPhoto(photoManagingAvatar.id, p.id);
                             setPhotoManagingAvatar({
                               ...photoManagingAvatar,
-                              photos: photoManagingAvatar.photos.filter((photo) => photo.id !== p.id)
+                              photos: (photoManagingAvatar.photos || []).filter((photo) => photo.id !== p.id)
                             });
                           }}
                           className="btn btn-secondary btn-sm"
@@ -784,7 +784,7 @@ export const AdminAvatarsPage: React.FC = () => {
                   borderBottom: '1px solid var(--color-border-subtle)'
                 }}
               >
-                {previewAvatar.photos.length > 0 ? (
+                {(previewAvatar.photos || []).length > 0 && previewAvatar.photos[0]?.url ? (
                   <img
                     src={previewAvatar.photos[0].url}
                     alt={getLocalized(previewAvatar.photos[0].altText)}

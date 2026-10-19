@@ -26,11 +26,14 @@ import { AdminAuctionsPage } from './pages/admin/AdminAuctionsPage';
 import { AdminDonorsPage } from './pages/admin/AdminDonorsPage';
 import { AdminAuditLogsPage } from './pages/admin/AdminAuditLogsPage';
 
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+
 export const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <DataProvider>
-        <BrowserRouter>
+    <ErrorBoundary sectionName="Application Root">
+      <AuthProvider>
+        <DataProvider>
+          <BrowserRouter>
           <Routes>
             {/* Public Website Routes */}
             <Route path="/" element={<PublicLayout />}>
@@ -71,6 +74,7 @@ export const App: React.FC = () => {
         </BrowserRouter>
       </DataProvider>
     </AuthProvider>
+  </ErrorBoundary>
   );
 };
 

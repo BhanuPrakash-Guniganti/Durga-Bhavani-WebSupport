@@ -18,6 +18,17 @@ import {
 } from '../data/sampleData';
 import { useAuth } from './AuthContext';
 import { api } from '../services/api';
+import {
+  safeStorage,
+  sanitizeAvatars,
+  sanitizeAlbums,
+  sanitizeAuctions,
+  sanitizeDonors,
+  sanitizeYears,
+  cleanupObsoleteCache,
+  isBase64DataUrl,
+  STORAGE_KEYS
+} from '../utils/storage';
 
 interface DataContextType {
   albums: AlbumRecord[];
@@ -57,62 +68,6 @@ interface DataContextType {
   refreshData: () => Promise<void>;
 }
 
-const STORAGE_KEYS = {
-  ALBUMS: 'durga_bhavani_albums_v5',
-  AVATARS: 'durga_bhavani_avatars_v4',
-  AUCTIONS: 'durga_bhavani_auctions_v4',
-  DONORS: 'durga_bhavani_donors_v4',
-  AUDIT: 'durga_bhavani_audit_logs_v4',
-  YEARS: 'durga_bhavani_years_v5'
-};
-
-const resolveCoverImage = (a: Partial<AlbumRecord>): string => {
-  if (a.coverImage && !a.coverImage.startsWith('data:image') && a.coverImage.trim() !== '') {
-    return a.coverImage;
-  }
-  const slug = a.slug || '';
-  const type = a.albumType;
-  if (slug.includes('alankaranalu') || type === 'avatars') {
-    return '/images/covers/cover-devi-alankaranalu.webp';
-  }
-  if (slug.includes('auction') || type === 'auction') {
-    return '/images/covers/cover-auction-winners.webp';
-  }
-  if (slug.includes('donor') || type === 'donors') {
-    return '/images/covers/cover-donors-sponsors.webp';
-  }
-  if (slug.includes('annadanam')) {
-    return '/images/covers/cover-annadanam-seva.webp';
-  }
-  if (slug.includes('shobha-yatra')) {
-    return '/images/covers/cover-shobha-yatra.webp';
-  }
-  if (slug.includes('chandi-homam')) {
-    return '/images/covers/cover-chandi-homam.webp';
-  }
-  if (slug.includes('utsav-celebrations') || slug.includes('utsav-2026')) {
-    return '/images/covers/cover-utsav-highlights.webp';
-  }
-  return '/images/covers/cover-devi-alankaranalu.webp';
-};
-
-const resolveYearCover = (y: Partial<YearRecord>): string => {
-  if (y.coverImage && !y.coverImage.startsWith('data:image') && y.coverImage.trim() !== '') {
-    return y.coverImage;
-  }
-  if (y.year === 2026) return '/images/covers/cover-utsav-highlights.webp';
-  if (y.year === 2025) return '/images/covers/cover-devi-alankaranalu.webp';
-  if (y.year === 2024) return '/images/covers/cover-shobha-yatra.webp';
-  return '/images/covers/cover-devi-alankaranalu.webp';
-};
-
-const sanitizeYears = (list: YearRecord[]): YearRecord[] => {
-  return list.map((y) => ({
-    ...y,
-    coverImage: resolveYearCover(y)
-  }));
-};
-
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -120,131 +75,115 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
 
-const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
-  return list.map((a) => {
-    const albumType =
-      a.albumType ||
-      (a.slug?.includes('auction')
-        ? 'auction'
-        : a.slug?.includes('alankaranalu') || a.slug?.includes('avatar')
-        ? 'avatars'
-        : a.slug?.includes('donor')
-        ? 'donors'
-        : 'general');
-    return {
-      ...a,
-      albumType,
-      coverImage: resolveCoverImage({ ...a, albumType }),
-      photos: a.photos || []
-    };
-  });
-};
+  // Run safe cache cleanup on initialization: removes obsolete/oversized application cache keys
+  useEffect(() => {
+    cleanupObsoleteCache();
+  }, []);
 
-  // Initialize from cache or sample data
+  // Initialize from clean, sanitized sample data for immediate fast first-paint
   const [albums, setAlbums] = useState<AlbumRecord[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(STORAGE_KEYS.ALBUMS);
-      if (saved) {
-        try {
-          return sanitizeAlbums(JSON.parse(saved));
-        } catch {}
-      }
+    const cached = safeStorage.getJson<AlbumRecord[] | null>(STORAGE_KEYS.ALBUMS_META, null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return sanitizeAlbums(cached);
     }
     return sanitizeAlbums(sampleAlbums);
   });
 
   const [avatars, setAvatars] = useState<AvatarRecord[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(STORAGE_KEYS.AVATARS);
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {}
-      }
+    const cached = safeStorage.getJson<AvatarRecord[] | null>(STORAGE_KEYS.AVATARS_META, null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return sanitizeAvatars(cached);
     }
-    return sampleAvatars;
+    return sanitizeAvatars(sampleAvatars);
   });
 
   const [auctions, setAuctions] = useState<AuctionItemRecord[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(STORAGE_KEYS.AUCTIONS);
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {}
-      }
+    const cached = safeStorage.getJson<AuctionItemRecord[] | null>(STORAGE_KEYS.AUCTIONS_META, null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return sanitizeAuctions(cached);
     }
-    return sampleAuctionItems;
+    return sanitizeAuctions(sampleAuctionItems);
   });
 
   const [donors, setDonors] = useState<DonorRecord[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(STORAGE_KEYS.DONORS);
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {}
-      }
+    const cached = safeStorage.getJson<DonorRecord[] | null>(STORAGE_KEYS.DONORS_META, null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return sanitizeDonors(cached);
     }
-    return sampleDonors;
+    return sanitizeDonors(sampleDonors);
   });
 
-  const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(STORAGE_KEYS.AUDIT);
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {}
-      }
-    }
-    return sampleAuditLogs;
-  });
+  const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>(() => sampleAuditLogs);
 
   const [years, setYears] = useState<YearRecord[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(STORAGE_KEYS.YEARS);
-      if (saved) {
-        try {
-          return sanitizeYears(JSON.parse(saved));
-        } catch {}
-      }
+    const cached = safeStorage.getJson<YearRecord[] | null>(STORAGE_KEYS.YEARS_META, null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return sanitizeYears(cached);
     }
     return sanitizeYears(sampleYears);
   });
 
-  // Sync state to local cache
+  // Safe bounded metadata caching:
+  // Instead of storing multi-megabyte payloads with raw image data, store bounded metadata
+  // using safeStorage.setJson which catches QuotaExceededError and never throws to React.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.ALBUMS, JSON.stringify(albums));
-  }, [albums]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.AVATARS, JSON.stringify(avatars));
+    // Only cache lean metadata summaries (without heavy photos/blobs)
+    const leanAvatars = avatars.map((a) => ({
+      id: a.id,
+      albumSlug: a.albumSlug,
+      year: a.year,
+      dayNumber: a.dayNumber,
+      name: a.name,
+      description: a.description,
+      photos: (a.photos || []).slice(0, 2), // Keep at most 2 external photo references
+      sortOrder: a.sortOrder,
+      status: a.status
+    }));
+    safeStorage.setJson(STORAGE_KEYS.AVATARS_META, leanAvatars);
   }, [avatars]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.AUCTIONS, JSON.stringify(auctions));
+    const leanAlbums = albums.map((a) => ({
+      id: a.id,
+      slug: a.slug,
+      title: a.title,
+      description: a.description,
+      year: a.year,
+      coverImage: a.coverImage,
+      photoCount: a.photoCount,
+      photos: (a.photos || []).slice(0, 2),
+      status: a.status,
+      isSample: a.isSample,
+      albumType: a.albumType
+    }));
+    safeStorage.setJson(STORAGE_KEYS.ALBUMS_META, leanAlbums);
+  }, [albums]);
+
+  useEffect(() => {
+    safeStorage.setJson(STORAGE_KEYS.AUCTIONS_META, auctions);
   }, [auctions]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.DONORS, JSON.stringify(donors));
+    safeStorage.setJson(STORAGE_KEYS.DONORS_META, donors);
   }, [donors]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify(auditLogs));
-  }, [auditLogs]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.YEARS, JSON.stringify(years));
+    safeStorage.setJson(STORAGE_KEYS.YEARS_META, years);
   }, [years]);
 
-  // Fetch shared central data from Backend API
+  // Fetch shared central data from Backend API (MongoDB is the source of truth)
   const refreshData = useCallback(async () => {
     setIsLoadingData(true);
+
+    // Timeout guard: 9 seconds so Render free-tier cold starts never block UI indefinitely
+    const timeoutPromise = new Promise<{ isTimeout: true }>((resolve) => {
+      setTimeout(() => resolve({ isTimeout: true }), 9000);
+    });
+
     try {
       if (isAuthenticated) {
         // Authenticated admin: load full records including drafts
-        const [albData, avData, aucData, donData, logs] = await Promise.all([
+        const fetchPromise = Promise.all([
           api.getAdminAlbums().catch(() => null),
           api.getAdminAvatars().catch(() => null),
           api.getAdminAuctions().catch(() => null),
@@ -252,16 +191,26 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
           api.getAdminAuditLogs().catch(() => null)
         ]);
 
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
+
+        if ('isTimeout' in result) {
+          console.warn('[Data] Backend API request timed out, continuing with cached/sample data.');
+          setIsBackendConnected(false);
+          return;
+        }
+
+        const [albData, avData, aucData, donData, logs] = result;
+
         if (albData && albData.length > 0) setAlbums(sanitizeAlbums(albData));
-        if (avData && avData.length > 0) setAvatars(avData);
-        if (aucData && aucData.length > 0) setAuctions(aucData);
-        if (donData && donData.length > 0) setDonors(donData);
+        if (avData && avData.length > 0) setAvatars(sanitizeAvatars(avData));
+        if (aucData && aucData.length > 0) setAuctions(sanitizeAuctions(aucData));
+        if (donData && donData.length > 0) setDonors(sanitizeDonors(donData));
         if (logs && logs.length > 0) setAuditLogs(logs);
 
         setIsBackendConnected(Boolean(albData || avData || aucData));
       } else {
         // Public visitor: load strictly published records
-        const [albData, avData, aucData, donData, yrsData] = await Promise.all([
+        const fetchPromise = Promise.all([
           api.getAlbums().catch(() => null),
           api.getAvatars().catch(() => null),
           api.getAuctions().catch(() => null),
@@ -269,10 +218,20 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
           api.getYears().catch(() => null)
         ]);
 
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
+
+        if ('isTimeout' in result) {
+          console.warn('[Data] Backend API request timed out, continuing with cached/sample data.');
+          setIsBackendConnected(false);
+          return;
+        }
+
+        const [albData, avData, aucData, donData, yrsData] = result;
+
         if (albData && albData.length > 0) setAlbums(sanitizeAlbums(albData));
-        if (avData && avData.length > 0) setAvatars(avData);
-        if (aucData && aucData.length > 0) setAuctions(aucData);
-        if (donData && donData.length > 0) setDonors(donData);
+        if (avData && avData.length > 0) setAvatars(sanitizeAvatars(avData));
+        if (aucData && aucData.length > 0) setAuctions(sanitizeAuctions(aucData));
+        if (donData && donData.length > 0) setDonors(sanitizeDonors(donData));
         if (yrsData && yrsData.length > 0) setYears(sanitizeYears(yrsData));
 
         setIsBackendConnected(Boolean(albData || avData || aucData));
@@ -300,14 +259,15 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
 
   // --- ALBUM OPERATIONS ---
   const saveAlbum = async (album: AlbumRecord) => {
+    const sanitized = sanitizeAlbums([album])[0];
     setAlbums((prev) => {
-      const idx = prev.findIndex((a) => a.id === album.id);
+      const idx = prev.findIndex((a) => a.id === sanitized.id);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = album;
+        next[idx] = sanitized;
         return next;
       }
-      return [...prev, album];
+      return [...prev, sanitized];
     });
 
     addAuditLog({
@@ -315,14 +275,13 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
       actorRole: user?.role || 'super-admin',
       action: 'update',
       resourceType: 'Album',
-      resourceId: album.id,
-      resourceTitle: typeof album.title === 'string' ? album.title : album.title.en,
-      details: `Saved album "${typeof album.title === 'string' ? album.title : album.title.en}" (Status: ${album.status}).`
+      resourceId: sanitized.id,
+      resourceTitle: typeof sanitized.title === 'string' ? sanitized.title : sanitized.title.en,
+      details: `Saved album "${typeof sanitized.title === 'string' ? sanitized.title : sanitized.title.en}" (Status: ${sanitized.status}).`
     });
 
-    // Send to central backend
     try {
-      await api.saveAdminAlbum(album);
+      await api.saveAdminAlbum(sanitized);
       refreshData();
     } catch (err) {
       console.warn('[Data] Failed to sync album to backend:', err);
@@ -356,7 +315,7 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
     const target = albums.find((a) => a.id === id);
     if (!target) return;
     const nextStatus = target.status === 'published' ? 'draft' : 'published';
-    const updated = { ...target, status: nextStatus as 'draft' | 'published' };
+    const updated: AlbumRecord = { ...target, status: nextStatus };
 
     setAlbums((prev) => prev.map((a) => (a.id === id ? updated : a)));
     addAuditLog({
@@ -366,7 +325,7 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
       resourceType: 'Album',
       resourceId: target.id,
       resourceTitle: typeof target.title === 'string' ? target.title : target.title.en,
-      details: `Changed album status to ${nextStatus}.`
+      details: `Toggled album status to ${nextStatus}.`
     });
 
     try {
@@ -378,14 +337,15 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
 
   // --- AVATAR OPERATIONS ---
   const saveAvatar = async (avatar: AvatarRecord) => {
+    const sanitized = sanitizeAvatars([avatar])[0];
     setAvatars((prev) => {
-      const idx = prev.findIndex((a) => a.id === avatar.id);
+      const idx = prev.findIndex((a) => a.id === sanitized.id);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = avatar;
+        next[idx] = sanitized;
         return next;
       }
-      return [...prev, avatar];
+      return [...prev, sanitized];
     });
 
     addAuditLog({
@@ -393,13 +353,13 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
       actorRole: user?.role || 'super-admin',
       action: 'update',
       resourceType: 'Avatar',
-      resourceId: avatar.id,
-      resourceTitle: avatar.name.en,
-      details: `Updated Day ${avatar.dayNumber} avatar: "${avatar.name.en}".`
+      resourceId: sanitized.id,
+      resourceTitle: sanitized.name.en,
+      details: `Updated Day ${sanitized.dayNumber} avatar "${sanitized.name.en}".`
     });
 
     try {
-      await api.saveAdminAvatar(avatar);
+      await api.saveAdminAvatar(sanitized);
       refreshData();
     } catch (err) {
       console.warn('[Data] Failed to sync avatar to backend:', err);
@@ -429,28 +389,41 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
   };
 
   const reorderAvatars = async (newOrder: AvatarRecord[]) => {
-    setAvatars(newOrder);
+    const sanitized = sanitizeAvatars(
+      newOrder.map((av, index) => ({
+        ...av,
+        sortOrder: index + 1
+      }))
+    );
+    setAvatars(sanitized);
+
     addAuditLog({
       actorName: user?.name || 'Administrator',
       actorRole: user?.role || 'super-admin',
       action: 'update',
       resourceType: 'Avatar',
-      details: 'Reordered daily avatars sequence.'
+      details: `Reordered avatars sequence (${sanitized.length} items).`
     });
 
     try {
-      await Promise.all(newOrder.map((av, index) => api.saveAdminAvatar({ id: av.id, sortOrder: index })));
+      await Promise.all(sanitized.map((av) => api.saveAdminAvatar({ id: av.id, sortOrder: av.sortOrder })));
     } catch (err) {
       console.warn('[Data] Failed to sync reordered avatars to backend:', err);
     }
   };
 
   const addAvatarPhoto = async (avatarId: string, photo: MediaPhoto) => {
+    if (isBase64DataUrl(photo.url)) {
+      console.warn('[Data] Rejected photo: Base64 data URLs must not be stored in avatar records. Upload to Cloudinary or use a hosted URL.');
+      return;
+    }
+
     let updatedAvatar: AvatarRecord | undefined;
     setAvatars((prev) =>
       prev.map((a) => {
         if (a.id === avatarId) {
-          updatedAvatar = { ...a, photos: [...a.photos, photo] };
+          const currentPhotos = a.photos || [];
+          updatedAvatar = { ...a, photos: [...currentPhotos, photo] };
           return updatedAvatar;
         }
         return a;
@@ -480,7 +453,8 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
     setAvatars((prev) =>
       prev.map((a) => {
         if (a.id === avatarId) {
-          updatedAvatar = { ...a, photos: a.photos.filter((p) => p.id !== photoId) };
+          const currentPhotos = a.photos || [];
+          updatedAvatar = { ...a, photos: currentPhotos.filter((p) => p.id !== photoId) };
           return updatedAvatar;
         }
         return a;
@@ -507,29 +481,30 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
 
   // --- AUCTION OPERATIONS ---
   const saveAuctionItem = async (item: AuctionItemRecord) => {
+    const sanitized = sanitizeAuctions([item])[0];
     setAuctions((prev) => {
-      const idx = prev.findIndex((a) => a.id === item.id);
+      const idx = prev.findIndex((a) => a.id === sanitized.id);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = item;
+        next[idx] = sanitized;
         return next;
       }
-      return [...prev, item];
+      return [...prev, sanitized];
     });
 
-    const winnerStr = typeof item.winnerName === 'object' ? item.winnerName.en : (item.winnerName || 'N/A');
+    const winnerStr = typeof sanitized.winnerName === 'object' ? sanitized.winnerName.en : (sanitized.winnerName || 'N/A');
     addAuditLog({
       actorName: user?.name || 'Administrator',
       actorRole: user?.role || 'super-admin',
       action: 'update',
       resourceType: 'Auction',
-      resourceId: item.id,
-      resourceTitle: item.itemName.en,
-      details: `Saved auction record "${item.itemName.en}" (Winner: ${winnerStr}, Amount: ₹${item.winningAmount ?? 'N/A'}).`
+      resourceId: sanitized.id,
+      resourceTitle: sanitized.itemName.en,
+      details: `Saved auction record "${sanitized.itemName.en}" (Winner: ${winnerStr}, Amount: ₹${sanitized.winningAmount ?? 'N/A'}).`
     });
 
     try {
-      await api.saveAdminAuction(item);
+      await api.saveAdminAuction(sanitized);
       refreshData();
     } catch (err) {
       console.warn('[Data] Failed to sync auction item to backend:', err);
@@ -584,14 +559,15 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
 
   // --- DONOR OPERATIONS ---
   const saveDonor = async (donor: DonorRecord) => {
+    const sanitized = sanitizeDonors([donor])[0];
     setDonors((prev) => {
-      const idx = prev.findIndex((d) => d.id === donor.id);
+      const idx = prev.findIndex((d) => d.id === sanitized.id);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = donor;
+        next[idx] = sanitized;
         return next;
       }
-      return [...prev, donor];
+      return [...prev, sanitized];
     });
 
     addAuditLog({
@@ -599,13 +575,13 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
       actorRole: user?.role || 'super-admin',
       action: 'update',
       resourceType: 'Donor',
-      resourceId: donor.id,
-      resourceTitle: donor.name.en,
-      details: `Saved donor record "${donor.name.en}".`
+      resourceId: sanitized.id,
+      resourceTitle: sanitized.name.en,
+      details: `Saved donor record "${sanitized.name.en}".`
     });
 
     try {
-      await api.saveAdminDonor(donor);
+      await api.saveAdminDonor(sanitized);
     } catch (err) {
       console.warn('[Data] Failed to sync donor to backend:', err);
     }
@@ -658,19 +634,14 @@ const sanitizeAlbums = (list: AlbumRecord[]): AlbumRecord[] => {
   };
 
   const resetToInitial = () => {
-    setAlbums(sampleAlbums);
-    setAvatars(sampleAvatars);
-    setAuctions(sampleAuctionItems);
-    setDonors(sampleDonors);
+    setAlbums(sanitizeAlbums(sampleAlbums));
+    setAvatars(sanitizeAvatars(sampleAvatars));
+    setAuctions(sanitizeAuctions(sampleAuctionItems));
+    setDonors(sanitizeDonors(sampleDonors));
     setAuditLogs(sampleAuditLogs);
-    setYears(sampleYears);
+    setYears(sanitizeYears(sampleYears));
 
-    localStorage.removeItem(STORAGE_KEYS.ALBUMS);
-    localStorage.removeItem(STORAGE_KEYS.AVATARS);
-    localStorage.removeItem(STORAGE_KEYS.AUCTIONS);
-    localStorage.removeItem(STORAGE_KEYS.DONORS);
-    localStorage.removeItem(STORAGE_KEYS.AUDIT);
-    localStorage.removeItem(STORAGE_KEYS.YEARS);
+    cleanupObsoleteCache(true);
   };
 
   return (

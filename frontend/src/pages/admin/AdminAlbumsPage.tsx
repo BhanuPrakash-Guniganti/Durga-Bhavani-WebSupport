@@ -23,7 +23,7 @@ export const AdminAlbumsPage: React.FC = () => {
   const [editingAlbum, setEditingAlbum] = useState<AlbumRecord | null>(null);
   const [isNew, setIsNew] = useState(false);
 
-  const filteredAlbums = albums.filter((a) => {
+  const filteredAlbums = (albums || []).filter((a) => {
     if (yearFilter === 'all') return true;
     return a.year.toString() === yearFilter;
   });

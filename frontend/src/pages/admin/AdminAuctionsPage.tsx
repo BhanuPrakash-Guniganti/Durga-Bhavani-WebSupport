@@ -91,8 +91,8 @@ export const AdminAuctionsPage: React.FC = () => {
     };
 
     // 2. Avatar photos
-    avatars.forEach((av) => {
-      av.photos.forEach((p, idx) => {
+    (avatars || []).forEach((av) => {
+      (av.photos || []).forEach((p, idx) => {
         list.push({
           id: `med-av-${av.id}-${idx}`,
           url: p.url,
@@ -104,8 +104,8 @@ export const AdminAuctionsPage: React.FC = () => {
     });
 
     // 3. Album photos
-    albums.forEach((alb) => {
-      alb.photos.forEach((p, idx) => {
+    (albums || []).forEach((alb) => {
+      (alb.photos || []).forEach((p, idx) => {
         list.push({
           id: `med-alb-${alb.id}-${idx}`,
           url: p.url,
@@ -196,17 +196,10 @@ export const AdminAuctionsPage: React.FC = () => {
     try {
       const res = await api.uploadImage(file, 'durga-bhavani/auctions');
       setEditingItem((prev) => (prev ? { ...prev, photoUrl: res.url, photoPublicId: res.publicId } : null));
+      setUploadError(null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Image upload failed';
-      setUploadError(msg);
-      // Fallback to local data URL so admin preview still works
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setEditingItem((prev) => (prev ? { ...prev, photoUrl: reader.result as string } : null));
-        }
-      };
-      reader.readAsDataURL(file);
+      setUploadError(`${msg}. Please ensure Cloudinary credentials are configured or provide an external image URL.`);
     } finally {
       setUploadingImage(false);
     }
@@ -218,6 +211,11 @@ export const AdminAuctionsPage: React.FC = () => {
 
     if (!editingItem.itemName.en && !editingItem.itemName.te) {
       alert(currentLang === 'te' ? 'దయచేసి కనీసం ఒక భాషలో వస్తువు పేరును నమోదు చేయండి.' : 'Please provide item name in at least one language.');
+      return;
+    }
+
+    if (editingItem.photoUrl && editingItem.photoUrl.startsWith('data:')) {
+      alert(currentLang === 'te' ? 'బేస్64 ఇమేజ్‌లను నిల్వ చేయడం అనుమతించబడదు. దయచేసి వెబ్ URL ఉపయోగించండి.' : 'Base64 image blobs cannot be saved directly into shared storage. Please use a hosted Cloudinary/Web URL.');
       return;
     }
 

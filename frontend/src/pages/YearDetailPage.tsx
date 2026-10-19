@@ -21,9 +21,9 @@ export const YearDetailPage: React.FC = () => {
   const { currentLang } = useAppLanguage();
   const { albums, years, avatars } = useData();
 
-  const yearRecord = years.find((y) => y.year === yearNumber);
-  const yearAlbums = albums.filter((a) => a.year === yearNumber && a.status === 'published');
-  const yearEvents = sampleEvents.filter((e) => e.year === yearNumber);
+  const yearRecord = (years || []).find((y) => y && y.year === yearNumber);
+  const yearAlbums = (albums || []).filter((a) => a && a.year === yearNumber && a.status === 'published');
+  const yearEvents = (sampleEvents || []).filter((e) => e && e.year === yearNumber);
 
   if (!yearRecord) {
     return (

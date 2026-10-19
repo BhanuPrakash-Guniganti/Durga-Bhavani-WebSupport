@@ -18,10 +18,10 @@ export const AdminDashboardPage: React.FC = () => {
   const { albums, avatars, auctions, donors, auditLogs } = useData();
   const { currentLang, getLocalized } = useAppLanguage();
 
-  const albums2025 = albums.filter((a) => a.year === 2025);
-  const avatars2025 = avatars.filter((a) => a.year === 2025);
-  const confirmedAuctions = auctions.filter((a) => a.status === 'published' && a.isComplete);
-  const incompleteAuctions = auctions.filter((a) => !a.isComplete || a.status === 'draft');
+  const albums2025 = (albums || []).filter((a) => a && a.year === 2025);
+  const avatars2025 = (avatars || []).filter((a) => a && a.year === 2025);
+  const confirmedAuctions = (auctions || []).filter((a) => a && a.status === 'published' && a.isComplete);
+  const incompleteAuctions = (auctions || []).filter((a) => a && (!a.isComplete || a.status === 'draft'));
   const totalAuctionRaised = confirmedAuctions.reduce(
     (acc, curr) => acc + (curr.winningAmount || 0),
     0

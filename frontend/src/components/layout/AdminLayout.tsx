@@ -20,6 +20,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { useAppLanguage } from '../../i18n';
+import { ErrorBoundary } from '../common/ErrorBoundary';
 
 export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -476,7 +477,9 @@ export const AdminLayout: React.FC = () => {
             boxSizing: 'border-box'
           }}
         >
-          <Outlet />
+          <ErrorBoundary sectionName="Admin Layout">
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
     </div>
