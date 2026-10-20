@@ -593,6 +593,27 @@ export const AdminAuctionsPage: React.FC = () => {
                 </tr>
               );
             })}
+            {filteredAuctions.length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ textAlign: 'center', padding: 'var(--space-8) var(--space-4)', color: 'var(--color-text-secondary)' }}>
+                  <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <Trophy size={40} color="var(--color-gold-dark)" style={{ opacity: 0.6 }} />
+                    <div style={{ fontWeight: 600, fontSize: 'var(--font-size-base)', color: 'var(--color-text-primary)' }}>
+                      {currentLang === 'te' ? 'వేలం పాట రికార్డులు కనుగొనబడలేదు' : 'No auction records found'}
+                    </div>
+                    <p style={{ margin: 0, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', maxWidth: '420px' }}>
+                      {currentLang === 'te'
+                        ? 'ఎంచుకున్న సంవత్సరానికి లేదా ఫిల్టర్‌కు సరిపోయే రికార్డులు లేవు. కొత్త వేలం రికార్డును చేర్చడానికి క్రింది బటన్‌పై క్లిక్ చేయండి.'
+                        : 'No auction records match the selected year or filter. Click below to add a new auction record.'}
+                    </p>
+                    <button type="button" onClick={handleOpenAdd} className="btn btn-primary btn-sm" style={{ marginTop: '8px' }}>
+                      <Plus size={14} />
+                      <span>{currentLang === 'te' ? 'కొత్త వేలం రికార్డు చేర్చండి' : 'Add Auction Record'}</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -77,7 +77,7 @@ export const AdminLayout: React.FC = () => {
     },
     {
       to: '/admin/auctions',
-      label: currentLang === 'te' ? 'వేలం పాట రికార్డులు' : 'Auction Winners',
+      label: currentLang === 'te' ? 'వేలం పాటల జాబితా' : 'Auction List',
       icon: <Trophy size={18} />
     },
     {

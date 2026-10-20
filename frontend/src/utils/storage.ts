@@ -21,7 +21,7 @@ export const STORAGE_KEYS = {
   // Bounded offline metadata cache keys (lean summaries, never storing base64 blobs)
   ALBUMS_META: 'durga_bhavani_albums_meta_v1',
   AVATARS_META: 'durga_bhavani_avatars_meta_v1',
-  AUCTIONS_META: 'durga_bhavani_auctions_meta_v1',
+  AUCTIONS_META: 'durga_bhavani_auctions_meta_v2',
   DONORS_META: 'durga_bhavani_donors_meta_v1',
   YEARS_META: 'durga_bhavani_years_meta_v1'
 } as const;
@@ -252,6 +252,7 @@ export const cleanupObsoleteCache = (forcePurgeCache = false): void => {
 
       // Identify specifically problematic old keys
       const isLegacyFullCache =
+        key === 'durga_bhavani_auctions_meta_v1' ||
         key === 'durga_bhavani_avatars_v4' ||
         key === 'durga_bhavani_albums_v5' ||
         key === 'durga_bhavani_auctions_v4' ||

@@ -128,6 +128,11 @@ test('cleanupObsoleteCache removes durga_bhavani_avatars_v4 and legacy caches sa
 
   cleanupObsoleteCache(false);
 
+  // Test obsolete auctions_meta_v1 eviction
+  mockStorage.setItem('durga_bhavani_auctions_meta_v1', '[{"stale": true}]');
+  cleanupObsoleteCache(false);
+  assert.strictEqual(mockStorage.getItem('durga_bhavani_auctions_meta_v1'), null, 'stale auctions_meta_v1 MUST be removed');
+
   assert.strictEqual(mockStorage.getItem('durga_bhavani_avatars_v4'), null, 'v4 cache should be removed');
   assert.strictEqual(mockStorage.getItem('durga_bhavani_albums_v5'), null, 'old albums_v5 should be removed');
   assert.strictEqual(mockStorage.getItem('durga_bhavani_avatars_v1'), null, 'v1 cache should be removed');
@@ -137,7 +142,7 @@ test('cleanupObsoleteCache removes durga_bhavani_avatars_v4 and legacy caches sa
 });
 
 // 6. Test avatar sanitization and order preservation
-const { sampleAvatars2025 } = await import('../frontend/src/data/sampleData.ts');
+const { sampleAvatars2025, sampleAuctionItems2024, sampleAuctionItems2025, sampleAuctionItems } = await import('../frontend/src/data/sampleData.ts');
 
 test('Preserves all 11 published 2025 Devi avatars and their exact sequence', () => {
   assert.strictEqual(sampleAvatars2025.length, 11, 'Must have exactly 11 avatars for 2025');
@@ -169,6 +174,29 @@ test('Preserves all 11 published 2025 Devi avatars and their exact sequence', ()
     assert.strictEqual(Array.isArray(av.photos), true);
     assert.strictEqual(av.name.en, expectedNames[idx]);
   });
+});
+
+test('Validates 2024 and 2025 auction records count and data integrity', () => {
+  assert.strictEqual(sampleAuctionItems2024.length, 14, 'Must have exactly 14 auction records for 2024');
+  assert.strictEqual(sampleAuctionItems2025.length, 14, 'Must have exactly 14 auction records for 2025');
+  assert.strictEqual(sampleAuctionItems.length, 28, 'Must have exactly 28 auction records total');
+
+  // Verify 2024 special items and sarees
+  const special2024 = sampleAuctionItems2024.filter((a) => a.itemType === 'special_item');
+  const sarees2024 = sampleAuctionItems2024.filter((a) => a.itemType === 'saree');
+  assert.strictEqual(special2024.length, 4, '2024 must have 4 special item auctions (Mukku Pudaka, Kalasham, Dhanalakshmi Maala, etc.)');
+  assert.strictEqual(sarees2024.length, 10, '2024 must have 10 saree auctions');
+
+  // Verify 2025 special items and sarees (11 sarees including Medalu Meeda Cheera + 3 festival special items)
+  const special2025 = sampleAuctionItems2025.filter((a) => a.itemType === 'special_item');
+  const sarees2025 = sampleAuctionItems2025.filter((a) => a.itemType === 'saree');
+  assert.strictEqual(special2025.length, 3, '2025 must have 3 special item auctions (Kalasham, Mukku Pudaka, Laddu Prasad)');
+  assert.strictEqual(sarees2025.length, 11, '2025 must have 11 saree auctions (10 avatar sarees + Medalu Meeda Cheera)');
+
+  const sanitized = sanitizeAuctions(sampleAuctionItems);
+  assert.strictEqual(sanitized.length, 28);
+  assert.strictEqual(sanitized.filter((a) => a.year === 2024).length, 14);
+  assert.strictEqual(sanitized.filter((a) => a.year === 2025).length, 14);
 });
 
 console.log('\n===========================================================');

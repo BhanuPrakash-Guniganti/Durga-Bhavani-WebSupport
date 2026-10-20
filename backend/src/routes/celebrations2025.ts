@@ -272,6 +272,15 @@ router.get('/auctions', async (req: Request, res: Response) => {
 
   if (isDbConnected()) {
     try {
+      if (parsedYear === 2024 || !parsedYear) {
+        const count2024 = await AuctionItemModel.countDocuments({ year: 2024 });
+        if (count2024 === 0) {
+          const items2024 = initialAuctionItems.filter((a) => a.year === 2024);
+          if (items2024.length > 0) {
+            await AuctionItemModel.insertMany(items2024, { ordered: false }).catch(() => {});
+          }
+        }
+      }
       const filter: Record<string, unknown> = { status: 'published', isComplete: true };
       if (parsedYear) filter.year = parsedYear;
       if (albumSlug) filter.albumSlug = albumSlug;
@@ -523,6 +532,20 @@ router.delete('/admin/avatars/:id', requireAuth, requirePublisher, async (req: R
 router.get('/admin/auctions', requireAuth, async (_req: Request, res: Response) => {
   if (isDbConnected()) {
     try {
+      const count2024 = await AuctionItemModel.countDocuments({ year: 2024 });
+      if (count2024 === 0) {
+        const items2024 = initialAuctionItems.filter((a) => a.year === 2024);
+        if (items2024.length > 0) {
+          await AuctionItemModel.insertMany(items2024, { ordered: false }).catch(() => {});
+        }
+      }
+      const count2025 = await AuctionItemModel.countDocuments({ year: 2025 });
+      if (count2025 === 0) {
+        const items2025 = initialAuctionItems.filter((a) => a.year === 2025);
+        if (items2025.length > 0) {
+          await AuctionItemModel.insertMany(items2025, { ordered: false }).catch(() => {});
+        }
+      }
       const auctions = await AuctionItemModel.find({}).sort({ sortOrder: 1 }).lean();
       res.status(200).json({ success: true, data: auctions });
       return;

@@ -67,6 +67,8 @@ export const App: React.FC = () => {
               <Route path="albums" element={<AdminAlbumsPage />} />
               <Route path="avatars" element={<AdminAvatarsPage />} />
               <Route path="auctions" element={<AdminAuctionsPage />} />
+              <Route path="auction-list" element={<Navigate to="/admin/auctions" replace />} />
+              <Route path="auction" element={<Navigate to="/admin/auctions" replace />} />
               <Route path="donors" element={<AdminDonorsPage />} />
               <Route path="audit-logs" element={<AdminAuditLogsPage />} />
             </Route>

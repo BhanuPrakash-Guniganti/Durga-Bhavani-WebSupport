@@ -70,6 +70,72 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
+const DELETED_AUCTIONS_KEY = 'durga_bhavani_deleted_auction_ids';
+
+const getDeletedAuctionIds = (): Set<string> => {
+  const list = safeStorage.getJson<string[]>(DELETED_AUCTIONS_KEY, []);
+  return new Set(Array.isArray(list) ? list : []);
+};
+
+const recordDeletedAuctionId = (id: string) => {
+  const current = getDeletedAuctionIds();
+  current.add(id);
+  safeStorage.setJson(DELETED_AUCTIONS_KEY, Array.from(current));
+};
+
+const clearDeletedAuctionIds = () => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem(DELETED_AUCTIONS_KEY);
+    }
+  } catch {
+    // Ignore error
+  }
+};
+
+/**
+ * Merge loaded auctions with canonical defaults (2024 & 2025).
+ * Ensures all 14 records for 2024 and 14 records for 2025 are always loaded,
+ * while preserving custom edits, amounts, winner photos, and newly created items.
+ */
+const mergeAuctionsWithDefaults = (items?: AuctionItemRecord[] | null): AuctionItemRecord[] => {
+  const map = new Map<string, AuctionItemRecord>();
+  const deletedIds = getDeletedAuctionIds();
+
+  // 1. Seed canonical records (all 14 for 2024 and all 14 for 2025)
+  for (const seed of sampleAuctionItems) {
+    if (!deletedIds.has(seed.id)) {
+      map.set(seed.id, seed);
+    }
+  }
+
+  // 2. Overlay any cached or backend records (preserving updates, custom amounts, winner photos)
+  if (items && Array.isArray(items)) {
+    for (const item of items) {
+      if (!item || !item.id || deletedIds.has(item.id)) continue;
+      const existing = map.get(item.id);
+      if (existing) {
+        map.set(item.id, {
+          ...existing,
+          ...item,
+          year: item.year || existing.year,
+          itemName: item.itemName?.en || item.itemName?.te ? item.itemName : existing.itemName,
+          winningAmount: item.winningAmount !== undefined ? item.winningAmount : existing.winningAmount,
+          photoUrl: item.photoUrl || existing.photoUrl
+        });
+      } else {
+        map.set(item.id, item);
+      }
+    }
+  }
+
+  const merged = Array.from(map.values()).sort((a, b) => {
+    if ((a.year ?? 0) !== (b.year ?? 0)) return (b.year ?? 0) - (a.year ?? 0);
+    return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+  });
+  return sanitizeAuctions(merged);
+};
+
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
@@ -99,10 +165,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [auctions, setAuctions] = useState<AuctionItemRecord[]>(() => {
     const cached = safeStorage.getJson<AuctionItemRecord[] | null>(STORAGE_KEYS.AUCTIONS_META, null);
-    if (cached && Array.isArray(cached) && cached.length > 0) {
-      return sanitizeAuctions(cached);
-    }
-    return sanitizeAuctions(sampleAuctionItems);
+    return mergeAuctionsWithDefaults(cached);
   });
 
   const [donors, setDonors] = useState<DonorRecord[]>(() => {
@@ -203,7 +266,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (albData && albData.length > 0) setAlbums(sanitizeAlbums(albData));
         if (avData && avData.length > 0) setAvatars(sanitizeAvatars(avData));
-        if (aucData && aucData.length > 0) setAuctions(sanitizeAuctions(aucData));
+        if (aucData && aucData.length > 0) setAuctions(mergeAuctionsWithDefaults(aucData));
         if (donData && donData.length > 0) setDonors(sanitizeDonors(donData));
         if (logs && logs.length > 0) setAuditLogs(logs);
 
@@ -230,7 +293,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (albData && albData.length > 0) setAlbums(sanitizeAlbums(albData));
         if (avData && avData.length > 0) setAvatars(sanitizeAvatars(avData));
-        if (aucData && aucData.length > 0) setAuctions(sanitizeAuctions(aucData));
+        if (aucData && aucData.length > 0) setAuctions(mergeAuctionsWithDefaults(aucData));
         if (donData && donData.length > 0) setDonors(sanitizeDonors(donData));
         if (yrsData && yrsData.length > 0) setYears(sanitizeYears(yrsData));
 
@@ -512,6 +575,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const deleteAuctionItem = async (id: string) => {
+    recordDeletedAuctionId(id);
     const target = auctions.find((a) => a.id === id);
     setAuctions((prev) => prev.filter((a) => a.id !== id));
     if (target) {
@@ -634,9 +698,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetToInitial = () => {
+    clearDeletedAuctionIds();
     setAlbums(sanitizeAlbums(sampleAlbums));
     setAvatars(sanitizeAvatars(sampleAvatars));
-    setAuctions(sanitizeAuctions(sampleAuctionItems));
+    setAuctions(mergeAuctionsWithDefaults(sampleAuctionItems));
     setDonors(sanitizeDonors(sampleDonors));
     setAuditLogs(sampleAuditLogs);
     setYears(sanitizeYears(sampleYears));

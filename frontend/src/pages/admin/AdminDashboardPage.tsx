@@ -226,20 +226,20 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
             <div>
               <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)' }}>
-                {currentLang === 'te' ? 'వేలం పాట విజేతలు' : 'Auction Winners'}
+                {currentLang === 'te' ? 'వేలం పాటల జాబితా' : 'Auction List'}
               </h3>
               <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                15 {currentLang === 'te' ? 'మొత్తం వస్తువులు' : 'Total Items (11 Confirmed)'}
+                {currentLang === 'te' ? 'వేలం పాటల రికార్డులు & విజేతలు' : 'Auction Records & Winners'}
               </span>
             </div>
           </div>
           <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>
             {currentLang === 'te'
-              ? 'పది చీరలు, మెడలు మీద చీర మరియు విశేష వస్తువుల వేలం పాట విజేతలు, తండ్రి పేర్లు, పాట మొత్తాలను నిర్వహించండి.'
-              : 'Manage 10 saree auctions linked to avatars, Medalu Meeda Cheera, and special item auction records with Indian Rupee formatting.'}
+              ? '2024, 2025 పవిత్ర చీరల వేలం, విశేష వస్తువుల వేలం విజేతలు, తండ్రి పేర్లు, పాట మొత్తాలను సమగ్రంగా నిర్వహించండి.'
+              : 'View, filter, and manage 2024 & 2025 sacred saree and festival item auctions, winner details, and amounts.'}
           </p>
           <Link to="/admin/auctions" className="btn btn-primary btn-sm" style={{ width: '100%', justifyContent: 'center' }}>
-            <span>{currentLang === 'te' ? 'వేలం పాటల నిర్వహణ' : 'Manage Auctions'}</span>
+            <span>{currentLang === 'te' ? 'వేలం పాటల జాబితా తెరవండి' : 'Open Auction List'}</span>
             <ArrowRight size={14} />
           </Link>
         </div>
