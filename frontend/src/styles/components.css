@@ -41,23 +41,69 @@
 }
 
 .brand-icon-wrapper {
-  width: clamp(30px, 3.8vw, 44px);
-  height: clamp(30px, 3.8vw, 44px);
+  width: clamp(32px, 3.8vw, 44px);
+  height: clamp(32px, 3.8vw, 44px);
   border-radius: var(--radius-full);
-  background: radial-gradient(circle, #B38F24 0%, #7A0C0C 100%);
+  background: #FCF9EA;
   border: 1.5px solid var(--color-gold-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFF3E0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
+  overflow: hidden;
+  padding: 1px;
 }
 
-.brand-diya-icon {
-  font-size: clamp(0.95rem, 1.8vw, 1.35rem);
-  line-height: 1;
-  display: inline-block;
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.footer-logo-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: #FCF9EA;
+  border: 1.5px solid var(--color-gold-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: 1px;
+}
+
+.footer-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.admin-logo-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: #FCF9EA;
+  border: 1.5px solid var(--color-gold-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: 1px;
+}
+
+.admin-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .brand-text {

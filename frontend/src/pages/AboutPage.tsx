@@ -19,8 +19,16 @@ export const AboutPage: React.FC = () => {
 
         {/* 1. Our Journey Since 2024 (Devotional Chronological Story) */}
         <div className="card card-cultural-top" style={{ padding: 'clamp(var(--space-6), 4vw, var(--space-10))', marginBottom: 'var(--space-12)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: 'var(--space-4)', borderBottom: '2px solid var(--color-gold-primary)', paddingBottom: 'var(--space-3)' }}>
-            <span style={{ fontSize: '1.8rem' }}>🪔</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: 'var(--space-4)', borderBottom: '2px solid var(--color-gold-primary)', paddingBottom: 'var(--space-3)' }}>
+            <div className="brand-icon-wrapper" style={{ width: '44px', height: '44px' }} aria-hidden="true">
+              <img
+                src="/assets/logo-emblem.webp"
+                alt="Durga Bhavani Seva Samiti Logo"
+                className="brand-logo-img"
+                width="44"
+                height="44"
+              />
+            </div>
             <h2 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2rem)', margin: 0, color: 'var(--color-maroon-dark)' }}>
               {t('about.journeyTitle')}
             </h2>

@@ -151,20 +151,14 @@ export const AdminLayout: React.FC = () => {
         {/* Brand */}
         <div style={{ padding: 'var(--space-6)', borderBottom: '1px solid rgba(212, 175, 55, 0.3)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--color-gold-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-maroon-dark)',
-                fontWeight: 700
-              }}
-            >
-              🔱
+            <div className="admin-logo-wrapper" aria-hidden="true">
+              <img
+                src="/assets/logo-emblem.webp"
+                alt="Durga Bhavani Seva Samiti Logo"
+                className="admin-logo-img"
+                width="36"
+                height="36"
+              />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 'var(--font-size-sm)', color: '#FFE082' }}>
@@ -273,20 +267,14 @@ export const AdminLayout: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'var(--color-gold-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--color-maroon-dark)',
-                  fontWeight: 700
-                }}
-              >
-                🔱
+              <div className="admin-logo-wrapper" style={{ width: '32px', height: '32px' }} aria-hidden="true">
+                <img
+                  src="/assets/logo-emblem.webp"
+                  alt="Durga Bhavani Seva Samiti Logo"
+                  className="admin-logo-img"
+                  width="32"
+                  height="32"
+                />
               </div>
               <div style={{ fontWeight: 700, fontSize: 'var(--font-size-sm)', color: '#FFE082' }}>
                 {currentLang === 'te' ? 'అడ్మిన్ మెను' : 'Admin Menu'}

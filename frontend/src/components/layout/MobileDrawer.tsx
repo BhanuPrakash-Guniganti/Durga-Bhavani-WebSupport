@@ -62,13 +62,24 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
         aria-label="Mobile Navigation Drawer"
       >
         <div className="drawer-header">
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: isTelugu ? 'var(--font-telugu)' : 'var(--font-heading)', fontWeight: 700, fontSize: '0.95rem', color: '#FFF' }}>
-              {t('nav.portalTitle')}
-            </span>
-            <span style={{ fontSize: '0.72rem', color: 'var(--color-gold-primary)', letterSpacing: '0.06em' }}>
-              {t('nav.portalSubtitle')}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="brand-icon-wrapper" style={{ width: '36px', height: '36px' }} aria-hidden="true">
+              <img
+                src="/assets/logo-emblem.webp"
+                alt="Durga Bhavani Seva Samiti Logo"
+                className="brand-logo-img"
+                width="36"
+                height="36"
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontFamily: isTelugu ? 'var(--font-telugu)' : 'var(--font-heading)', fontWeight: 700, fontSize: '0.95rem', color: '#FFF' }}>
+                {t('nav.portalTitle')}
+              </span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--color-gold-primary)', letterSpacing: '0.06em' }}>
+                {t('nav.portalSubtitle')}
+              </span>
+            </div>
           </div>
           <button
             type="button"

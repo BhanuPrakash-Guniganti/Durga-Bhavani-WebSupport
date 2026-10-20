@@ -16,8 +16,16 @@ export const Footer: React.FC = () => {
           <div className="footer-grid">
             {/* Col 1: About & Identity */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '1.5rem' }}>🪔</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                <div className="footer-logo-wrapper" aria-hidden="true">
+                  <img
+                    src="/assets/logo-emblem.webp"
+                    alt="Durga Bhavani Seva Samiti Logo"
+                    className="footer-logo-img"
+                    width="44"
+                    height="44"
+                  />
+                </div>
                 <h3 className="footer-brand-title" style={{ margin: 0 }}>
                   {t('nav.portalTitle')}
                 </h3>

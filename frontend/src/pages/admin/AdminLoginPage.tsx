@@ -132,19 +132,27 @@ export const AdminLoginPage: React.FC = () => {
         <div style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>
           <div
             style={{
-              width: '64px',
-              height: '64px',
+              width: '72px',
+              height: '72px',
               margin: '0 auto var(--space-3)',
               borderRadius: 'var(--radius-full)',
-              background: 'linear-gradient(135deg, var(--color-gold-primary), #B8860B)',
+              background: '#FCF9EA',
+              border: '2px solid var(--color-gold-primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '28px',
-              boxShadow: '0 4px 15px rgba(212, 175, 55, 0.4)'
+              boxShadow: '0 4px 15px rgba(212, 175, 55, 0.4)',
+              overflow: 'hidden',
+              padding: '2px'
             }}
           >
-            🔱
+            <img
+              src="/assets/logo-emblem.webp"
+              alt="Durga Bhavani Seva Samiti Logo"
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+              width="72"
+              height="72"
+            />
           </div>
           <h1
             style={{

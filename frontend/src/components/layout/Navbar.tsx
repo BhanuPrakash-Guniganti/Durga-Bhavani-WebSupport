@@ -16,7 +16,14 @@ export const Navbar: React.FC = () => {
           {/* Brand Logo & Title */}
           <Link to="/" className="navbar-brand" aria-label="Durga Bhavani Seva Samiti Home">
             <div className="brand-icon-wrapper" aria-hidden="true">
-              <span className="brand-diya-icon">🪔</span>
+              <img
+                src="/assets/logo-emblem.webp"
+                alt="Durga Bhavani Seva Samiti Logo"
+                className="brand-logo-img"
+                width="44"
+                height="44"
+                loading="eager"
+              />
             </div>
             <div className="brand-text">
               <span className="brand-title">{t('nav.portalTitle')}</span>
