@@ -128,10 +128,12 @@ test('cleanupObsoleteCache removes durga_bhavani_avatars_v4 and legacy caches sa
 
   cleanupObsoleteCache(false);
 
-  // Test obsolete auctions_meta_v1 eviction
+  // Test obsolete auctions_meta_v1 and albums_meta_v1 eviction
   mockStorage.setItem('durga_bhavani_auctions_meta_v1', '[{"stale": true}]');
+  mockStorage.setItem('durga_bhavani_albums_meta_v1', '[{"stale": true}]');
   cleanupObsoleteCache(false);
   assert.strictEqual(mockStorage.getItem('durga_bhavani_auctions_meta_v1'), null, 'stale auctions_meta_v1 MUST be removed');
+  assert.strictEqual(mockStorage.getItem('durga_bhavani_albums_meta_v1'), null, 'stale albums_meta_v1 MUST be removed');
 
   assert.strictEqual(mockStorage.getItem('durga_bhavani_avatars_v4'), null, 'v4 cache should be removed');
   assert.strictEqual(mockStorage.getItem('durga_bhavani_albums_v5'), null, 'old albums_v5 should be removed');
@@ -142,7 +144,7 @@ test('cleanupObsoleteCache removes durga_bhavani_avatars_v4 and legacy caches sa
 });
 
 // 6. Test avatar sanitization and order preservation
-const { sampleAvatars2025, sampleAuctionItems2024, sampleAuctionItems2025, sampleAuctionItems } = await import('../frontend/src/data/sampleData.ts');
+const { sampleAvatars2025, sampleAuctionItems2024, sampleAuctionItems2025, sampleAuctionItems, sampleAlbums } = await import('../frontend/src/data/sampleData.ts');
 
 test('Preserves all 11 published 2025 Devi avatars and their exact sequence', () => {
   assert.strictEqual(sampleAvatars2025.length, 11, 'Must have exactly 11 avatars for 2025');
@@ -197,6 +199,32 @@ test('Validates 2024 and 2025 auction records count and data integrity', () => {
   assert.strictEqual(sanitized.length, 28);
   assert.strictEqual(sanitized.filter((a) => a.year === 2024).length, 14);
   assert.strictEqual(sanitized.filter((a) => a.year === 2025).length, 14);
+});
+
+test('Verifies 2024 album updates: Sri Chandi Homam removed and video recap renamed', () => {
+  const albums2024 = sampleAlbums.filter((a) => a.year === 2024);
+  assert.strictEqual(albums2024.length, 3, '2024 must have exactly 3 albums (Devi Alankaranalu, Auction Winners & Video Recap)');
+
+  // Ensure Sri Chandi Homam & Vedic Rituals 2024 is completely removed
+  const chandiAlbum = sampleAlbums.find((a) => a.id === 'alb-2024-02' || a.slug === 'chandi-homam-rituals-2024');
+  assert.strictEqual(chandiAlbum, undefined, 'Sri Chandi Homam 2024 album must NOT exist');
+
+  // Verify renamed video recap album
+  const recapAlbum = sampleAlbums.find((a) => a.id === 'alb-2024-01');
+  assert.notStrictEqual(recapAlbum, undefined, '2024 video recap album alb-2024-01 must exist');
+  assert.strictEqual(recapAlbum?.title.en, 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap');
+  assert.strictEqual(recapAlbum?.title.te, 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష');
+  assert.strictEqual(recapAlbum?.videoUrl, 'https://youtu.be/dpYr12ArtVY');
+
+  // Test sanitizeAlbums purges obsolete chandi homam even if present in legacy array
+  const legacyAlbums = [
+    { id: 'alb-2024-02', slug: 'chandi-homam-rituals-2024', title: { en: 'Old Chandi', te: 'పాత చండీ' }, year: 2024, coverImage: '', photoCount: 0, photos: [], status: 'published', isSample: true },
+    recapAlbum
+  ];
+  const sanitized = sanitizeAlbums(legacyAlbums);
+  assert.strictEqual(sanitized.length, 1, 'sanitizeAlbums must filter out alb-2024-02');
+  assert.strictEqual(sanitized[0].id, 'alb-2024-01');
+  assert.strictEqual(sanitized[0].videoUrl, 'https://youtu.be/dpYr12ArtVY');
 });
 
 console.log('\n===========================================================');

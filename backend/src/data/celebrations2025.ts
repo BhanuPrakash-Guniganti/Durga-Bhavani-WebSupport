@@ -61,6 +61,7 @@ export interface IAlbum {
   photoCount: number;
   status: 'published' | 'draft' | 'archived';
   sortOrder: number;
+  videoUrl?: string;
 }
 
 export interface IAuditLog {
@@ -246,39 +247,22 @@ export const initialAlbums: IAlbum[] = [
   },
   {
     id: 'alb-2024-01',
-    slug: 'vijaya-dashami-shobha-yatra-2024',
+    slug: 'devi-navaratri-utsav-2024-recap',
     title: {
-      en: 'Vijaya Dashami Shobha Yatra 2024',
-      te: 'విజయదశమి శోభాయాత్ర 2024'
+      en: 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap',
+      te: 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష'
     },
     description: {
-      en: 'Grand procession of Sri Durga Bhavani through the streets of Dodlapahad marking the culmination of the inaugural celebrations.',
-      te: 'ప్రారంభ సంవత్సర ఉత్సవ ముగింపు సందర్భంగా దొడ్లపహాడ్ పురవీధుల్లో సాగిన శ్రీ దుర్గాభవాని అమ్మవారి దివ్య రథోత్సవం.'
+      en: 'Complete recap of all nine days of the 2024 inaugural Sri Durga Bhavani Devi Navaratri Utsav celebrations at Dodlapahad.',
+      te: 'దొడ్లపహాడ్ గ్రామ ప్రారంభ శ్రీ దుర్గాభవాని దేవీ నవరాత్రి తొమ్మిది రోజుల దివ్య ఉత్సవాల సమగ్ర వీడియో సమీక్ష.'
     },
     year: 2024,
     albumType: 'general',
     coverImage: '/images/covers/cover-shobha-yatra.webp',
     photoCount: 4,
     status: 'published',
-    sortOrder: 3
-  },
-  {
-    id: 'alb-2024-02',
-    slug: 'chandi-homam-rituals-2024',
-    title: {
-      en: 'Sri Chandi Homam & Vedic Rituals 2024',
-      te: 'శ్రీ చండీ హోమం & వేద క్రతువులు 2024'
-    },
-    description: {
-      en: 'Sacred fire rituals, Chandi Parayanam, and Poornahuti performed for the prosperity and welfare of Dodlapahad village.',
-      te: 'దొడ్లపహాడ్ గ్రామ క్షేమం మరియు ఆయురారోగ్యాల కొరకు వేద పండితులచే నిర్వహించబడిన పవిత్ర చండీ హోమం.'
-    },
-    year: 2024,
-    albumType: 'general',
-    coverImage: '/images/covers/cover-chandi-homam.webp',
-    photoCount: 3,
-    status: 'published',
-    sortOrder: 4
+    sortOrder: 3,
+    videoUrl: 'https://youtu.be/dpYr12ArtVY'
   }
 ];
 

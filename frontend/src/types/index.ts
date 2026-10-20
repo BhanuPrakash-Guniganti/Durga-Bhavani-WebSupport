@@ -45,6 +45,7 @@ export interface AlbumRecord {
   status: PublicationStatus;
   isSample: boolean;
   albumType?: AlbumType;
+  videoUrl?: string;
 }
 
 export interface AvatarRecord {

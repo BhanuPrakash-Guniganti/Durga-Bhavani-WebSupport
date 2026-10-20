@@ -468,20 +468,21 @@ export const sampleAlbums: AlbumRecord[] = [
   },
   {
     id: 'alb-2024-01',
-    slug: 'vijaya-dashami-shobha-yatra-2024',
+    slug: 'devi-navaratri-utsav-2024-recap',
     title: {
-      en: 'Vijaya Dashami Shobha Yatra 2024',
-      te: 'విజయదశమి శోభాయాత్ర 2024'
+      en: 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap',
+      te: 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష'
     },
     description: {
-      en: 'Grand procession of Sri Durga Bhavani through the streets of Dodlapahad marking the culmination of the inaugural celebrations.',
-      te: 'ప్రారంభ సంవత్సర ఉత్సవ ముగింపు సందర్భంగా దొడ్లపహాడ్ పురవీధుల్లో సాగిన శ్రీ దుర్గాభవాని అమ్మవారి దివ్య రథోత్సవం.'
+      en: 'Complete recap of all nine days of the 2024 inaugural Sri Durga Bhavani Devi Navaratri Utsav celebrations at Dodlapahad.',
+      te: 'దొడ్లపహాడ్ గ్రామ ప్రారంభ శ్రీ దుర్గాభవాని దేవీ నవరాత్రి తొమ్మిది రోజుల దివ్య ఉత్సవాల సమగ్ర వీడియో సమీక్ష.'
     },
     year: 2024,
     coverImage: '/images/covers/cover-shobha-yatra.webp',
     photoCount: 4,
     status: 'published',
     isSample: true,
+    videoUrl: 'https://youtu.be/dpYr12ArtVY',
     photos: [
       {
         id: 'p-1',
@@ -499,7 +500,7 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
-        albumSlug: 'vijaya-dashami-shobha-yatra-2024',
+        albumSlug: 'devi-navaratri-utsav-2024-recap',
         isSample: true
       },
       {
@@ -518,7 +519,7 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
-        albumSlug: 'vijaya-dashami-shobha-yatra-2024',
+        albumSlug: 'devi-navaratri-utsav-2024-recap',
         isSample: true
       },
       {
@@ -537,7 +538,7 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
-        albumSlug: 'vijaya-dashami-shobha-yatra-2024',
+        albumSlug: 'devi-navaratri-utsav-2024-recap',
         isSample: true
       },
       {
@@ -556,83 +557,7 @@ export const sampleAlbums: AlbumRecord[] = [
           te: 'సేవా సమితి మీడియా స్వచ్ఛంద సేవకుడు'
         },
         year: 2024,
-        albumSlug: 'vijaya-dashami-shobha-yatra-2024',
-        isSample: true
-      }
-    ]
-  },
-  {
-    id: 'alb-2024-02',
-    slug: 'chandi-homam-rituals-2024',
-    title: {
-      en: 'Sri Chandi Homam & Vedic Rituals 2024',
-      te: 'శ్రీ చండీ హోమం & వేద క్రతువులు 2024'
-    },
-    description: {
-      en: 'Sacred fire rituals, Chandi Parayanam, and Poornahuti performed for the prosperity and welfare of Dodlapahad village.',
-      te: 'దొడ్లపహాడ్ గ్రామ క్షేమం మరియు ఆయురారోగ్యాల కొరకు వేద పండితులచే నిర్వహించబడిన పవిత్ర చండీ హోమం.'
-    },
-    year: 2024,
-    coverImage: '/images/covers/cover-chandi-homam.webp',
-    photoCount: 3,
-    status: 'published',
-    isSample: true,
-    photos: [
-      {
-        id: 'p-5',
-        url: createSampleSvgImage('Yajna Kunda Setup', 'Photo', '#7A0C0C', 'diya'),
-        caption: {
-          en: 'Sacred Yajna Kunda prepared with ceremonial bricks and sacred offerings',
-          te: 'శాస్త్రోక్తంగా అలంకరించబడిన పవిత్ర యజ్ఞ గుండం మరియు హోమ సామగ్రి'
-        },
-        altText: {
-          en: 'Ceremonial sacred fire pit with wooden samidha and ghee offerings',
-          te: 'సమిధలు మరియు ఘృత సమర్పణతో వెలుగుతున్న యజ్ఞ కుండం'
-        },
-        photographerCredit: {
-          en: 'Seva Samiti Archive',
-          te: 'సేవా సమితి ఆర్కైవ్'
-        },
-        year: 2024,
-        albumSlug: 'chandi-homam-rituals-2024',
-        isSample: true
-      },
-      {
-        id: 'p-6',
-        url: createSampleSvgImage('Priests Chanting Hymns', 'Photo', '#7A0C0C', 'kalash'),
-        caption: {
-          en: 'Vedic pandits reciting Sri Devi Mahatmyam during the afternoon session',
-          te: 'శ్రీ దేవీ మహాత్మ్య పారాయణం చేస్తున్న వేద పండితులు'
-        },
-        altText: {
-          en: 'Vedic priests in traditional silk attire chanting sacred verses',
-          te: 'పట్టు వస్త్రాలు ధరించి వేద మంత్రాలు పఠిస్తున్న అర్చకులు'
-        },
-        photographerCredit: {
-          en: 'Seva Samiti Archive',
-          te: 'సేవా సమితి ఆర్కైవ్'
-        },
-        year: 2024,
-        albumSlug: 'chandi-homam-rituals-2024',
-        isSample: true
-      },
-      {
-        id: 'p-7',
-        url: createSampleSvgImage('Maha Poornahuti', 'Photo', '#7A0C0C', 'diya'),
-        caption: {
-          en: 'Concluding silk cloth and coconut offerings placed into the sacred flame',
-          te: 'యజ్ఞ పూర్ణాహుతి సమర్పణతో సాఫల్యమైన చండీ యాగం'
-        },
-        altText: {
-          en: 'Offering Poornahuti into the auspicious sacrificial fire',
-          te: 'హోమ గుండంలో పూర్ణాహుతి సమర్పిస్తున్న దృశ్యం'
-        },
-        photographerCredit: {
-          en: 'Seva Samiti Archive',
-          te: 'సేవా సమితి ఆర్కైవ్'
-        },
-        year: 2024,
-        albumSlug: 'chandi-homam-rituals-2024',
+        albumSlug: 'devi-navaratri-utsav-2024-recap',
         isSample: true
       }
     ]

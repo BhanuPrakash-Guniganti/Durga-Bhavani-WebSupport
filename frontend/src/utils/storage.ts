@@ -19,7 +19,7 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'durga_bhavani_admin_token',
   AUTH_USER: 'durga_bhavani_admin_user',
   // Bounded offline metadata cache keys (lean summaries, never storing base64 blobs)
-  ALBUMS_META: 'durga_bhavani_albums_meta_v1',
+  ALBUMS_META: 'durga_bhavani_albums_meta_v2',
   AVATARS_META: 'durga_bhavani_avatars_meta_v1',
   AUCTIONS_META: 'durga_bhavani_auctions_meta_v2',
   DONORS_META: 'durga_bhavani_donors_meta_v1',
@@ -86,7 +86,7 @@ export const resolveCoverImage = (a: Partial<AlbumRecord>): string => {
   if (slug.includes('annadanam')) {
     return '/images/covers/cover-annadanam-seva.webp';
   }
-  if (slug.includes('shobha-yatra')) {
+  if (slug.includes('shobha-yatra') || slug.includes('recap') || slug.includes('navaratri-utsav-2024')) {
     return '/images/covers/cover-shobha-yatra.webp';
   }
   if (slug.includes('chandi-homam')) {
@@ -151,23 +151,26 @@ export const sanitizeAvatars = (list?: AvatarRecord[] | null): AvatarRecord[] =>
  */
 export const sanitizeAlbums = (list?: AlbumRecord[] | null): AlbumRecord[] => {
   if (!Array.isArray(list)) return [];
-  return list.map((a) => {
-    const albumType =
-      a.albumType ||
-      (a.slug?.includes('auction')
-        ? 'auction'
-        : a.slug?.includes('alankaranalu') || a.slug?.includes('avatar')
-        ? 'avatars'
-        : a.slug?.includes('donor')
-        ? 'donors'
-        : 'general');
-    return {
-      ...a,
-      albumType,
-      coverImage: resolveCoverImage({ ...a, albumType }),
-      photos: stripBase64FromPhotos(a.photos)
-    };
-  });
+  return list
+    .filter((a) => a && a.id !== 'alb-2024-02' && a.slug !== 'chandi-homam-rituals-2024')
+    .map((a) => {
+      const albumType =
+        a.albumType ||
+        (a.slug?.includes('auction')
+          ? 'auction'
+          : a.slug?.includes('alankaranalu') || a.slug?.includes('avatar')
+          ? 'avatars'
+          : a.slug?.includes('donor')
+          ? 'donors'
+          : 'general');
+      return {
+        ...a,
+        albumType,
+        coverImage: resolveCoverImage({ ...a, albumType }),
+        photos: stripBase64FromPhotos(a.photos),
+        videoUrl: a.videoUrl || (a.id === 'alb-2024-01' ? 'https://youtu.be/dpYr12ArtVY' : undefined)
+      };
+    });
 };
 
 /**
@@ -252,6 +255,7 @@ export const cleanupObsoleteCache = (forcePurgeCache = false): void => {
 
       // Identify specifically problematic old keys
       const isLegacyFullCache =
+        key === 'durga_bhavani_albums_meta_v1' ||
         key === 'durga_bhavani_auctions_meta_v1' ||
         key === 'durga_bhavani_avatars_v4' ||
         key === 'durga_bhavani_albums_v5' ||

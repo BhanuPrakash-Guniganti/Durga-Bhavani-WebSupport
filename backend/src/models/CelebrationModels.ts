@@ -56,6 +56,7 @@ export interface IAlbumDoc extends Document {
   photos: Array<{ id: string; url: string; caption?: { en: string; te: string }; altText?: { en: string; te: string }; publicId?: string }>;
   sortOrder: number;
   status: 'draft' | 'published';
+  videoUrl?: string;
 }
 const albumSchema = new Schema<IAlbumDoc>(
   {
@@ -75,7 +76,8 @@ const albumSchema = new Schema<IAlbumDoc>(
     photoCount: { type: Number, default: 0 },
     photos: { type: [mediaPhotoSchema], default: [] },
     sortOrder: { type: Number, default: 0 },
-    status: { type: String, enum: ['draft', 'published'], default: 'published' }
+    status: { type: String, enum: ['draft', 'published'], default: 'published' },
+    videoUrl: { type: String }
   },
   { timestamps: true, strict: false }
 );

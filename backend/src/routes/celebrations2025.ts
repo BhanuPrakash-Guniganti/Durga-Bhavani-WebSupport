@@ -148,7 +148,7 @@ const ensureAlbumType = <T extends { slug?: string; albumType?: string; coverIma
       alb.coverImage = '/images/covers/cover-donors-sponsors.webp';
     } else if (slug.includes('annadanam')) {
       alb.coverImage = '/images/covers/cover-annadanam-seva.webp';
-    } else if (slug.includes('shobha-yatra')) {
+    } else if (slug.includes('shobha-yatra') || slug.includes('recap') || slug.includes('navaratri-utsav-2024')) {
       alb.coverImage = '/images/covers/cover-shobha-yatra.webp';
     } else if (slug.includes('chandi-homam')) {
       alb.coverImage = '/images/covers/cover-chandi-homam.webp';
@@ -168,7 +168,11 @@ router.get('/albums', async (req: Request, res: Response) => {
 
   if (isDbConnected()) {
     try {
-      const filter: Record<string, unknown> = { status: 'published' };
+      const filter: Record<string, unknown> = {
+        status: 'published',
+        id: { $ne: 'alb-2024-02' },
+        slug: { $ne: 'chandi-homam-rituals-2024' }
+      };
       if (parsedYear) filter.year = parsedYear;
       const albums = await AlbumModel.find(filter).sort({ sortOrder: 1 }).lean();
       res.status(200).json({ success: true, data: albums.map(ensureAlbumType) });
@@ -178,7 +182,9 @@ router.get('/albums', async (req: Request, res: Response) => {
     }
   }
 
-  let result = albumsStore.filter((a) => a.status === 'published').map(ensureAlbumType);
+  let result = albumsStore
+    .filter((a) => a.status === 'published' && a.id !== 'alb-2024-02' && a.slug !== 'chandi-homam-rituals-2024')
+    .map(ensureAlbumType);
   if (parsedYear) {
     result = result.filter((a) => a.year === parsedYear);
   }
@@ -188,10 +194,15 @@ router.get('/albums', async (req: Request, res: Response) => {
 
 // GET /albums/:slug (Public)
 router.get('/albums/:slug', async (req: Request, res: Response) => {
+  const reqSlug = req.params.slug;
+  const searchSlugs = reqSlug === 'vijaya-dashami-shobha-yatra-2024' || reqSlug === 'devi-navaratri-utsav-2024-recap'
+    ? ['devi-navaratri-utsav-2024-recap', 'vijaya-dashami-shobha-yatra-2024']
+    : [reqSlug];
+
   if (isDbConnected()) {
     try {
-      const album = await AlbumModel.findOne({ slug: req.params.slug, status: 'published' }).lean();
-      if (album) {
+      const album = await AlbumModel.findOne({ slug: { $in: searchSlugs }, status: 'published' }).lean();
+      if (album && album.id !== 'alb-2024-02') {
         res.status(200).json({ success: true, data: ensureAlbumType(album) });
         return;
       }
@@ -200,7 +211,7 @@ router.get('/albums/:slug', async (req: Request, res: Response) => {
     }
   }
 
-  const album = albumsStore.find((a) => a.slug === req.params.slug && a.status === 'published');
+  const album = albumsStore.find((a) => searchSlugs.includes(a.slug) && a.status === 'published' && a.id !== 'alb-2024-02');
   if (!album) {
     res.status(404).json({
       success: false,

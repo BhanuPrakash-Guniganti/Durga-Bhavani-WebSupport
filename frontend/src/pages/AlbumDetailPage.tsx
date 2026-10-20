@@ -14,7 +14,8 @@ import {
   HeartHandshake,
   X,
   LayoutGrid,
-  List
+  List,
+  Video
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { Lightbox } from '../components/common/Lightbox';
@@ -56,7 +57,11 @@ export const AlbumDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { currentLang, getLocalized } = useAppLanguage();
 
-  const album = albums.find((a) => a.slug === slug);
+  const album = albums.find(
+    (a) => a.slug === slug ||
+    (slug === 'vijaya-dashami-shobha-yatra-2024' && (a.id === 'alb-2024-01' || a.slug === 'devi-navaratri-utsav-2024-recap')) ||
+    (slug === 'devi-navaratri-utsav-2024-recap' && (a.id === 'alb-2024-01' || a.slug === 'vijaya-dashami-shobha-yatra-2024'))
+  );
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -948,6 +953,66 @@ export const AlbumDetailPage: React.FC = () => {
             ========================================================================= */}
         {effectiveAlbumType === 'general' && (
           <div style={{ marginBottom: 'var(--space-10)' }}>
+            {/* Embedded Festival Video Presentation */}
+            {(album.videoUrl || album.id === 'alb-2024-01') && (
+              <div
+                className="card"
+                style={{
+                  padding: 'var(--space-6)',
+                  background: 'var(--color-maroon-dark)',
+                  color: '#FFF',
+                  marginBottom: 'var(--space-8)',
+                  border: '2px solid var(--color-gold-dark)'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Video size={20} color="var(--color-gold-light)" />
+                    <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: '#FFE082' }}>
+                      {currentLang === 'te'
+                        ? 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష'
+                        : 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap'}
+                    </h3>
+                  </div>
+                  <a
+                    href="https://youtu.be/dpYr12ArtVY"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '12px', padding: '4px 10px' }}
+                  >
+                    <span>{currentLang === 'te' ? 'యూట్యూబ్‌లో చూడండి' : 'Watch on YouTube'}</span>
+                    <Share2 size={12} />
+                  </a>
+                </div>
+
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    aspectRatio: '16 / 9',
+                    borderRadius: 'var(--radius-md)',
+                    overflow: 'hidden',
+                    background: '#000',
+                    boxShadow: 'var(--shadow-md)'
+                  }}
+                >
+                  <iframe
+                    src="https://www.youtube-nocookie.com/embed/dpYr12ArtVY"
+                    title={currentLang === 'te' ? 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష' : 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap'}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ width: '100%', height: '100%', border: 0 }}
+                  />
+                </div>
+                <p style={{ margin: 'var(--space-3) 0 0 0', fontSize: 'var(--font-size-xs)', color: '#D6C8B8' }}>
+                  {currentLang === 'te'
+                    ? '2024 ప్రారంభ ఉత్సవాల తొమ్మిది రోజుల దివ్య శోభాయాత్ర, హోమాలు, నిత్య పూజలు మరియు భక్తుల సమర్పణల సమగ్ర అధికారిక వీడియో సమీక్ష.'
+                    : 'Official video recap recording capturing all nine days of the inaugural 2024 Sri Durga Bhavani Utsav celebrations at Dodlapahad.'}
+                </p>
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
               <h2 style={{ fontSize: 'var(--font-size-2xl)', margin: 0 }}>
                 {currentLang === 'te' ? 'ఉత్సవ ఛాయాచిత్రాలు' : 'Photographs'}

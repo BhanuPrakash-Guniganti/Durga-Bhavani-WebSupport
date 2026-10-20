@@ -107,7 +107,7 @@ const seedInitialDataIfEmpty = async () => {
 
 const syncDatabaseSchemas = async () => {
   try {
-    // 1. Sync Albums: Ensure all 2024, 2025, 2026 albums exist and have correct titles/types
+    // 1. Sync Albums: Ensure all 2024, 2025, 2026 albums exist and have correct titles/types/videoUrl
     for (const initAlb of initialAlbums) {
       const existing = await AlbumModel.findOne({ $or: [{ id: initAlb.id }, { slug: initAlb.slug }] });
       if (existing) {
@@ -115,6 +115,7 @@ const syncDatabaseSchemas = async () => {
           { _id: existing._id },
           {
             $set: {
+              slug: initAlb.slug,
               title: initAlb.title,
               description: initAlb.description,
               albumType: initAlb.albumType,
@@ -122,7 +123,8 @@ const syncDatabaseSchemas = async () => {
               photoCount: initAlb.photoCount,
               year: initAlb.year,
               status: initAlb.status,
-              sortOrder: initAlb.sortOrder
+              sortOrder: initAlb.sortOrder,
+              videoUrl: initAlb.videoUrl
             }
           }
         );
@@ -130,6 +132,15 @@ const syncDatabaseSchemas = async () => {
         await AlbumModel.create(initAlb);
       }
     }
+
+    // Explicitly delete removed 2024 album entry "Sri Chandi Homam & Vedic Rituals 2024"
+    await AlbumModel.deleteMany({
+      $or: [
+        { id: 'alb-2024-02' },
+        { slug: 'chandi-homam-rituals-2024' },
+        { 'title.en': 'Sri Chandi Homam & Vedic Rituals 2024' }
+      ]
+    });
 
     // 2. Sync Avatars: Ensure all 31 avatars (11 for 2025, 10 for 2024, 10 for 2026) exist and are published
     for (const initAv of initialAvatars) {

@@ -247,26 +247,55 @@ export const YearDetailPage: React.FC = () => {
           </div>
 
           <div className="card" style={{ padding: 'var(--space-5)', background: 'var(--color-maroon-dark)', color: '#FFF' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 'var(--space-3)' }}>
-              <Video size={18} color="var(--color-gold-light)" />
-              <span style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)', color: 'var(--color-gold-light)' }}>
-                {currentLang === 'te'
-                  ? `దొడ్లపహాడ్ శోభాయాత్ర ${yearRecord.year} ఉత్సవ వీడియో`
-                  : `Video Showcase: Dodlapahad Shobha Yatra ${yearRecord.year}`}
-              </span>
-            </div>
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#1A0202', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--color-gold-border)' }}>
-              <div style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '8px' }}>▶️</span>
-                <p style={{ margin: 0, fontWeight: 600, color: '#FFE082' }}>
-                  {currentLang === 'te' ? 'యూట్యూబ్ వీడియో ప్రసారం' : 'YouTube Video Stream'}
-                </p>
-                <p style={{ fontSize: 'var(--font-size-xs)', color: '#D6C8B8', margin: '4px 0 0 0' }}>
-                  {currentLang === 'te'
-                    ? 'అధికారిక ఉత్సవ వీడియోలు సర్వర్ బ్యాండ్‌విడ్త్‌పై భారం పడకుండా ఇక్కడ ప్రసారం చేయబడతాయి.'
-                    : 'Official festival video embeds will be streamed here without loading backend server bandwidth.'}
-                </p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-3)', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Video size={18} color="var(--color-gold-light)" />
+                <span style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)', color: 'var(--color-gold-light)' }}>
+                  {yearRecord.year === 2024
+                    ? (currentLang === 'te'
+                        ? 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష'
+                        : 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap')
+                    : (currentLang === 'te'
+                        ? `దొడ్లపహాడ్ శోభాయాత్ర ${yearRecord.year} ఉత్సవ వీడియో`
+                        : `Video Showcase: Dodlapahad Shobha Yatra ${yearRecord.year}`)}
+                </span>
               </div>
+              {yearRecord.year === 2024 && (
+                <a
+                  href="https://youtu.be/dpYr12ArtVY"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-secondary btn-sm"
+                  style={{ fontSize: '12px', padding: '4px 10px' }}
+                >
+                  <span>{currentLang === 'te' ? 'యూట్యూబ్‌లో చూడండి' : 'Watch on YouTube'}</span>
+                </a>
+              )}
+            </div>
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#1A0202', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--color-gold-border)' }}>
+              {yearRecord.year === 2024 ? (
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/dpYr12ArtVY"
+                  title={currentLang === 'te' ? 'దేవీ నవరాత్రి ఉత్సవాలు 2024 – తొమ్మిది రోజుల వేడుకల సమీక్ష' : 'Devi Navaratri Utsav 2024 – 9-Day Celebration Recap'}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ width: '100%', height: '100%', border: 0 }}
+                />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: 'var(--space-4)' }}>
+                  <div>
+                    <span style={{ fontSize: '3rem', display: 'block', marginBottom: '8px' }}>▶️</span>
+                    <p style={{ margin: 0, fontWeight: 600, color: '#FFE082' }}>
+                      {currentLang === 'te' ? 'యూట్యూబ్ వీడియో ప్రసారం' : 'YouTube Video Stream'}
+                    </p>
+                    <p style={{ fontSize: 'var(--font-size-xs)', color: '#D6C8B8', margin: '4px 0 0 0' }}>
+                      {currentLang === 'te'
+                        ? 'అధికారిక ఉత్సవ వీడియోలు సర్వర్ బ్యాండ్‌విడ్త్‌పై భారం పడకుండా ఇక్కడ ప్రసారం చేయబడతాయి.'
+                        : 'Official festival video embeds will be streamed here without loading backend server bandwidth.'}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
