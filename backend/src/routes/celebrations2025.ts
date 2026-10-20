@@ -534,9 +534,10 @@ router.get('/admin/auctions', requireAuth, async (_req: Request, res: Response) 
 });
 
 router.post('/admin/auctions', requireAuth, requirePublisher, async (req: Request, res: Response) => {
+  const yr = req.body.year || 2024;
   const newItem: IAuctionItem = {
     ...req.body,
-    id: req.body.id || `auc-2025-${Date.now()}`
+    id: req.body.id || `auc-${yr}-${Date.now()}`
   };
   auctionsStore.push(newItem);
 

@@ -121,11 +121,12 @@ export function formatRupees(amount?: number | null): string {
   if (amount === undefined || amount === null || isNaN(amount)) {
     return '';
   }
-  return new Intl.NumberFormat('en-IN', {
+  const formatted = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0
   }).format(amount);
+  return formatted.endsWith('/-') ? formatted : `${formatted}/-`;
 }
 
 export interface YearRecord {

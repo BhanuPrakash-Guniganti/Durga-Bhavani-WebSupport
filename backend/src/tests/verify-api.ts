@@ -138,9 +138,25 @@ const runVerification = async () => {
     const returnedItems = publicAuctions.body?.data || [];
     const hasIncomplete = returnedItems.some((item: any) => !item.isComplete || item.status !== 'published');
     assert(
-      '7. Public auctions API returns ONLY confirmed published records (14 items, drafts excluded)',
-      publicAuctions.status === 200 && returnedItems.length === 14 && !hasIncomplete,
+      '7. Public auctions API returns ONLY confirmed published records (28 items across 2024 & 2025, drafts excluded)',
+      publicAuctions.status === 200 && returnedItems.length === 28 && !hasIncomplete,
       `Returned ${returnedItems.length} items, has incomplete: ${hasIncomplete}`
+    );
+
+    const public2024 = await makeRequest(baseUrl, 'GET', '/api/v1/auctions?year=2024');
+    const items2024 = public2024.body?.data || [];
+    assert(
+      '7b. Public auctions API for 2024 returns exactly 14 confirmed records',
+      public2024.status === 200 && items2024.length === 14,
+      `Returned ${items2024.length} items for 2024`
+    );
+
+    const public2025 = await makeRequest(baseUrl, 'GET', '/api/v1/auctions?year=2025');
+    const items2025 = public2025.body?.data || [];
+    assert(
+      '7c. Public auctions API for 2025 returns exactly 14 confirmed records',
+      public2025.status === 200 && items2025.length === 14,
+      `Returned ${items2025.length} items for 2025`
     );
 
     // 8. Admin Auctions API returns full records including drafts
@@ -149,8 +165,8 @@ const runVerification = async () => {
     });
     const adminItems = adminAuctions.body?.data || [];
     assert(
-      '8. Admin auctions API returns all 14 records',
-      adminAuctions.status === 200 && adminItems.length === 14,
+      '8. Admin auctions API returns all 28 records across 2024 and 2025',
+      adminAuctions.status === 200 && adminItems.length === 28,
       `Returned ${adminItems.length} records`
     );
 

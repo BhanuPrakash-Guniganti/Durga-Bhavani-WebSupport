@@ -101,10 +101,25 @@ export const AlbumDetailPage: React.FC = () => {
     (a) => a && (a.albumSlug === album.slug || (!a.albumSlug && a.year === album.year))
   );
   const confirmedAuctions = albumAuctions.filter((a) => a.status === 'published' && a.isComplete);
+
+  const isItemSaree = (item: AuctionItemRecord): boolean => {
+    if (item.itemType === 'saree') return true;
+    if (item.itemType === 'special_item') return false;
+    if (item.avatarId) return true;
+    if (album.year === 2025 && item.sortOrder && item.sortOrder <= 11) return true;
+    return false;
+  };
+
+  const sareeAuctions = confirmedAuctions
+    .filter(isItemSaree)
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  const festivalItemAuctions = confirmedAuctions
+    .filter((item) => !isItemSaree(item))
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+
   const filteredConfirmedAuctions = confirmedAuctions.filter((item) => {
-    const isSaree = Boolean(item.itemType === 'saree' || item.avatarId || (item.sortOrder && item.sortOrder <= 11));
-    if (auctionFilter === 'sarees') return isSaree;
-    if (auctionFilter === 'additional') return !isSaree;
+    if (auctionFilter === 'sarees') return isItemSaree(item);
+    if (auctionFilter === 'additional') return !isItemSaree(item);
     return true;
   });
 
@@ -179,6 +194,8 @@ export const AlbumDetailPage: React.FC = () => {
             {(album.slug === 'auction-winners-2025' || (effectiveAlbumType === 'auction' && album.year === 2025)) ||
              (album.slug === 'donors-and-sponsors-2025' || (effectiveAlbumType === 'donors' && album.year === 2025))
               ? (currentLang === 'te' ? '2025 దుర్గ భవాని ఉత్సవం – దొడ్లపహాడ్' : '2025 Durga Bhavani Utsav – Dodlapahad')
+              : (album.slug === 'auction-winners-2024' || (effectiveAlbumType === 'auction' && album.year === 2024))
+              ? (currentLang === 'te' ? '2024 దుర్గ భవాని ఉత్సవం – వేలం పాట విజేతలు' : '2024 Durga Bhavani Utsav – Auction Winners')
               : localizedTitle}
           </h1>
 
@@ -398,6 +415,8 @@ export const AlbumDetailPage: React.FC = () => {
                     <h2 style={{ margin: 0, fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'var(--color-maroon-primary)' }}>
                       {album.year === 2025
                         ? (currentLang === 'te' ? 'అమ్మవారి చీరల వేలం విజేతల వివరాలు' : 'Matha Avatar Saree Auction List')
+                        : album.year === 2024
+                        ? (currentLang === 'te' ? '2024 వేలం పాట విజేతల వివరాలు' : '2024 Auction Winners List')
                         : (currentLang === 'te' ? 'వేలం పాట విజేతల వివరాలు' : 'Auction Winners List')}
                     </h2>
                   </div>
@@ -417,14 +436,14 @@ export const AlbumDetailPage: React.FC = () => {
                         onClick={() => setAuctionFilter('sarees')}
                         className={`btn btn-sm ${auctionFilter === 'sarees' ? 'btn-gold' : 'btn-secondary'}`}
                       >
-                        {currentLang === 'te' ? 'చీరలు (11)' : 'Sarees (11)'}
+                        {currentLang === 'te' ? `చీరలు (${sareeAuctions.length})` : `Sarees (${sareeAuctions.length})`}
                       </button>
                       <button
                         type="button"
                         onClick={() => setAuctionFilter('additional')}
                         className={`btn btn-sm ${auctionFilter === 'additional' ? 'btn-gold' : 'btn-secondary'}`}
                       >
-                        {currentLang === 'te' ? 'ప్రత్యేక వస్తువులు (3)' : 'Special Items (3)'}
+                        {currentLang === 'te' ? `విశేష వస్తువులు (${festivalItemAuctions.length})` : `Special Items (${festivalItemAuctions.length})`}
                       </button>
                     </div>
 
@@ -451,289 +470,355 @@ export const AlbumDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-            {/* When auctionViewMode === 'cards' */}
-            {auctionViewMode === 'cards' ? (
-              <div className="grid-2" style={{ gap: 'var(--space-6)', marginBottom: 'var(--space-8)' }}>
-                {filteredConfirmedAuctions.map((item) => {
-                  const itemPrimaryName = currentLang === 'te' ? item.itemName.te : item.itemName.en;
-                  const itemSecondaryName = currentLang === 'te' ? item.itemName.en : item.itemName.te;
-                  const avatarName = item.avatarName ? getLocalized(item.avatarName) : null;
-                  const winnerDisplay = getWinnerDisplay(item.winnerName, currentLang);
-                  const fatherNameDisplay = getFatherDisplay(item.fatherName, currentLang);
+                {(() => {
+                  const renderAuctionCard = (item: AuctionItemRecord) => {
+                    const itemPrimaryName = currentLang === 'te' ? item.itemName.te : item.itemName.en;
+                    const itemSecondaryName = currentLang === 'te' ? item.itemName.en : item.itemName.te;
+                    const avatarName = item.avatarName ? getLocalized(item.avatarName) : null;
+                    const winnerDisplay = getWinnerDisplay(item.winnerName, currentLang);
+                    const fatherNameDisplay = getFatherDisplay(item.fatherName, currentLang);
 
-                  return (
-                    <article
-                      key={item.id}
-                      className="card card-gold-top card-hover"
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        overflow: 'hidden',
-                        background: 'var(--color-surface)',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => setSelectedAuctionModal(item)}
-                      tabIndex={0}
-                      role="button"
-                      aria-label={`${itemPrimaryName} - ${winnerDisplay.primary}`}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setSelectedAuctionModal(item);
-                        }
-                      }}
-                    >
-                      {/* Media representation or neutral placeholder */}
-                      <div
+                    return (
+                      <article
+                        key={item.id}
+                        className="card card-gold-top card-hover"
                         style={{
-                          position: 'relative',
-                          height: '220px',
-                          background: 'var(--color-cream-alt)',
                           display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderBottom: '1px solid var(--color-border-subtle)',
-                          overflow: 'hidden'
+                          flexDirection: 'column',
+                          overflow: 'hidden',
+                          background: 'var(--color-surface)',
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => setSelectedAuctionModal(item)}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`${itemPrimaryName} - ${winnerDisplay.primary}`}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedAuctionModal(item);
+                          }
                         }}
                       >
-                        {item.photoUrl && item.photoUrl.trim().length > 0 ? (
-                          <>
-                            <img
-                              src={item.photoUrl}
-                              alt={itemPrimaryName}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                              loading="lazy"
-                            />
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActivePhotosList([{
-                                  id: item.id,
-                                  url: item.photoUrl!,
-                                  caption: {
-                                    en: `${item.itemName.en}${winnerDisplay.primary ? ` - ${winnerDisplay.primary}` : ''}`,
-                                    te: `${item.itemName.te}${winnerDisplay.primary ? ` - ${winnerDisplay.primary}` : ''}`
-                                  },
-                                  altText: { en: item.itemName.en, te: item.itemName.te },
-                                  isSample: false
-                                }]);
-                                setActivePhotoIndex(0);
-                                setLightboxOpen(true);
-                              }}
-                              style={{
-                                position: 'absolute',
-                                top: '10px',
-                                right: '10px',
-                                width: '32px',
-                                height: '32px',
-                                borderRadius: 'var(--radius-full)',
-                                background: 'rgba(0,0,0,0.6)',
-                                color: '#FFF',
-                                border: 'none',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                zIndex: 2
-                              }}
-                              title={t('albums.openPhoto')}
-                            >
-                              <Maximize2 size={16} />
-                            </button>
-                          </>
-                        ) : (
-                          <div style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
-                            <Trophy size={40} color="var(--color-gold-dark)" style={{ marginBottom: '8px' }} />
-                            <p style={{ margin: 0, fontWeight: 600, color: 'var(--color-maroon-primary)', fontSize: 'var(--font-size-sm)' }}>
-                              {t('auctions.noPhotoTitle')}
-                            </p>
-                            <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', maxWidth: '300px' }}>
-                              {t('auctions.noPhotoDesc')}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Item Type Badge Overlay (Top Left) */}
-                        <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1 }}>
-                          <span className="badge badge-maroon" style={{ fontSize: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}>
-                            {item.avatarId ? t('auctions.sacredSaree') : t('auctions.specialItem')}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Card Body */}
-                      <div style={{ padding: 'var(--space-5)', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                        {/* Associated Devi Name Badge if applicable */}
-                        {avatarName && (
-                          <div style={{ marginBottom: 'var(--space-2)' }}>
-                            <span
-                              className="badge"
-                              style={{
-                                background: 'var(--color-maroon-subtle)',
-                                color: 'var(--color-maroon-primary)',
-                                fontSize: '12px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '4px'
-                              }}
-                            >
-                              🌺 {avatarName}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Auction Item Name in Telugu and English */}
-                        <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--font-size-xl)', color: 'var(--color-maroon-primary)' }}>
-                          {itemPrimaryName}
-                        </h3>
-                        {itemSecondaryName && itemSecondaryName !== itemPrimaryName && (
-                          <h4 style={{ margin: '0 0 var(--space-3) 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', fontWeight: 500 }}>
-                            {itemSecondaryName}
-                          </h4>
-                        )}
-
-                        {/* Winner Details & Amount Box */}
+                        {/* Media representation or neutral placeholder */}
                         <div
                           style={{
-                            padding: 'var(--space-3) var(--space-4)',
+                            position: 'relative',
+                            height: '220px',
                             background: 'var(--color-cream-alt)',
-                            borderRadius: 'var(--radius-sm)',
-                            border: '1px solid var(--color-border-subtle)',
-                            marginBottom: 'var(--space-4)',
-                            marginTop: 'auto'
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderBottom: '1px solid var(--color-border-subtle)',
+                            overflow: 'hidden'
                           }}
                         >
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
-                            <div style={{ flex: 1, minWidth: '130px' }}>
-                              <div style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-text-muted)', marginBottom: '2px' }}>
-                                {t('auctions.tableWinner')}
-                              </div>
-                              <div style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-maroon-primary)' }}>
-                                {winnerDisplay.primary || t('auctions.notSupplied')}
-                              </div>
-                              {winnerDisplay.secondary && (
-                                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 500, marginTop: '1px' }}>
-                                  {winnerDisplay.secondary}
-                                </div>
-                              )}
-                              {fatherNameDisplay && (
-                                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '3px' }}>
-                                  <span style={{ color: 'var(--color-text-muted)' }}>{t('auctions.tableFather')}: </span>
-                                  <span>{fatherNameDisplay}</span>
-                                </div>
-                              )}
+                          {item.photoUrl && item.photoUrl.trim().length > 0 ? (
+                            <>
+                              <img
+                                src={item.photoUrl}
+                                alt={itemPrimaryName}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                loading="lazy"
+                              />
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActivePhotosList([{
+                                    id: item.id,
+                                    url: item.photoUrl!,
+                                    caption: {
+                                      en: `${item.itemName.en}${winnerDisplay.primary ? ` - ${winnerDisplay.primary}` : ''}`,
+                                      te: `${item.itemName.te}${winnerDisplay.primary ? ` - ${winnerDisplay.primary}` : ''}`
+                                    },
+                                    altText: { en: item.itemName.en, te: item.itemName.te },
+                                    isSample: false
+                                  }]);
+                                  setActivePhotoIndex(0);
+                                  setLightboxOpen(true);
+                                }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '10px',
+                                  right: '10px',
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: 'var(--radius-full)',
+                                  background: 'rgba(0,0,0,0.6)',
+                                  color: '#FFF',
+                                  border: 'none',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                  zIndex: 2
+                                }}
+                                title={t('albums.openPhoto')}
+                              >
+                                <Maximize2 size={16} />
+                              </button>
+                            </>
+                          ) : (
+                            <div style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
+                              <Trophy size={40} color="var(--color-gold-dark)" style={{ marginBottom: '8px' }} />
+                              <p style={{ margin: 0, fontWeight: 600, color: 'var(--color-maroon-primary)', fontSize: 'var(--font-size-sm)' }}>
+                                {t('auctions.noPhotoTitle')}
+                              </p>
+                              <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', maxWidth: '300px' }}>
+                                {t('auctions.noPhotoDesc')}
+                              </p>
                             </div>
+                          )}
 
-                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                              <div style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-text-muted)', marginBottom: '2px' }}>
-                                {t('auctions.tableAmount')}
-                              </div>
-                              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-gold-dark)' }}>
-                                {formatRupees(item.winningAmount)}
-                              </div>
-                            </div>
+                          {/* Item Type Badge Overlay (Top Left) */}
+                          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1 }}>
+                            <span className="badge badge-maroon" style={{ fontSize: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}>
+                              {isItemSaree(item) ? t('auctions.sacredSaree') : t('auctions.specialItem')}
+                            </span>
                           </div>
                         </div>
 
-                        {/* Action Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedAuctionModal(item);
-                          }}
-                          className="btn btn-secondary btn-sm"
-                          style={{ width: '100%', justifyContent: 'center' }}
-                        >
-                          <Trophy size={14} />
-                          <span>{t('auctions.cardDetails')}</span>
-                        </button>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Confirmed Auction Items Table */
-              <div className="card" style={{ padding: 'var(--space-6)', overflowX: 'auto', marginBottom: 'var(--space-8)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-base)' }}>
-                  <thead>
-                    <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>
-                      <th style={{ padding: '14px 16px', width: '60px' }}>#</th>
-                      <th style={{ padding: '14px 16px' }}>{t('auctions.tableItem')}</th>
-                      <th style={{ padding: '14px 16px' }}>{t('auctions.tableAvatar')}</th>
-                      <th style={{ padding: '14px 16px' }}>{t('auctions.tableWinner')}</th>
-                      <th style={{ padding: '14px 16px' }}>{t('auctions.tableFather')}</th>
-                      <th style={{ padding: '14px 16px', width: '160px', textAlign: 'right' }}>{t('auctions.tableAmount')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredConfirmedAuctions.map((item, idx) => {
-                      const itemName = getLocalized(item.itemName);
-                      const avatarName = item.avatarName ? getLocalized(item.avatarName) : null;
-                      const winnerDisplay = getWinnerDisplay(item.winnerName, currentLang);
-                      const fatherNameDisplay = getFatherDisplay(item.fatherName, currentLang);
-                      return (
-                        <tr
-                          key={item.id}
-                          style={{ borderBottom: '1px solid var(--color-border-subtle)', cursor: 'pointer' }}
-                          onClick={() => setSelectedAuctionModal(item)}
-                        >
-                          <td style={{ padding: '14px 16px', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-                            {idx + 1}
-                          </td>
-                          <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              {item.photoUrl ? (
-                                <img
-                                  src={item.photoUrl}
-                                  alt={itemName}
-                                  style={{ width: '32px', height: '32px', borderRadius: 'var(--radius-xs)', objectFit: 'cover' }}
-                                />
-                              ) : null}
-                              <span>{itemName}</span>
-                            </div>
-                          </td>
-                          <td style={{ padding: '14px 16px' }}>
-                            {avatarName ? (
+                        {/* Card Body */}
+                        <div style={{ padding: 'var(--space-5)', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                          {/* Associated Devi Name Badge if applicable */}
+                          {avatarName && (
+                            <div style={{ marginBottom: 'var(--space-2)' }}>
                               <span
                                 className="badge"
                                 style={{
                                   background: 'var(--color-maroon-subtle)',
                                   color: 'var(--color-maroon-primary)',
-                                  fontSize: '12px'
+                                  fontSize: '12px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
                                 }}
                               >
                                 🌺 {avatarName}
                               </span>
-                            ) : (
-                              <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', fontStyle: 'italic' }}>
-                                {t('auctions.unassignedAvatar')}
-                              </span>
-                            )}
-                          </td>
-                          <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--color-maroon-primary)' }}>
-                            <div>{winnerDisplay.primary || t('auctions.notSupplied')}</div>
-                            {winnerDisplay.secondary && (
-                              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 400 }}>
-                                {winnerDisplay.secondary}
+                            </div>
+                          )}
+
+                          {/* Auction Item Name in Telugu and English */}
+                          <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--font-size-xl)', color: 'var(--color-maroon-primary)' }}>
+                            {itemPrimaryName}
+                          </h3>
+                          {itemSecondaryName && itemSecondaryName !== itemPrimaryName && (
+                            <h4 style={{ margin: '0 0 var(--space-3) 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+                              {itemSecondaryName}
+                            </h4>
+                          )}
+
+                          {/* Winner Details & Amount Box */}
+                          <div
+                            style={{
+                              padding: 'var(--space-3) var(--space-4)',
+                              background: 'var(--color-cream-alt)',
+                              borderRadius: 'var(--radius-sm)',
+                              border: '1px solid var(--color-border-subtle)',
+                              marginBottom: 'var(--space-4)',
+                              marginTop: 'auto'
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+                              <div style={{ flex: 1, minWidth: '130px' }}>
+                                <div style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-text-muted)', marginBottom: '2px' }}>
+                                  {t('auctions.tableWinner')}
+                                </div>
+                                <div style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-maroon-primary)' }}>
+                                  {winnerDisplay.primary || t('auctions.notSupplied')}
+                                </div>
+                                {winnerDisplay.secondary && (
+                                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 500, marginTop: '1px' }}>
+                                    {winnerDisplay.secondary}
+                                  </div>
+                                )}
+                                {fatherNameDisplay && (
+                                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '3px' }}>
+                                    <span style={{ color: 'var(--color-text-muted)' }}>{t('auctions.tableFather')}: </span>
+                                    <span>{fatherNameDisplay}</span>
+                                  </div>
+                                )}
                               </div>
+
+                              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                <div style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-text-muted)', marginBottom: '2px' }}>
+                                  {t('auctions.tableAmount')}
+                                </div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-gold-dark)' }}>
+                                  {formatRupees(item.winningAmount)}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Action Button */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedAuctionModal(item);
+                            }}
+                            className="btn btn-secondary btn-sm"
+                            style={{ width: '100%', justifyContent: 'center' }}
+                          >
+                            <Trophy size={14} />
+                            <span>{t('auctions.cardDetails')}</span>
+                          </button>
+                        </div>
+                      </article>
+                    );
+                  };
+
+                  const renderAuctionTable = (items: AuctionItemRecord[], startIdx = 0) => (
+                    <div className="card" style={{ padding: 'var(--space-6)', overflowX: 'auto', marginBottom: 'var(--space-8)' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-base)' }}>
+                        <thead>
+                          <tr style={{ background: 'var(--color-cream-alt)', borderBottom: '2px solid var(--color-border-subtle)', textAlign: 'left' }}>
+                            <th style={{ padding: '14px 16px', width: '60px' }}>#</th>
+                            <th style={{ padding: '14px 16px' }}>{t('auctions.tableItem')}</th>
+                            <th style={{ padding: '14px 16px' }}>{t('auctions.tableAvatar')}</th>
+                            <th style={{ padding: '14px 16px' }}>{t('auctions.tableWinner')}</th>
+                            <th style={{ padding: '14px 16px' }}>{t('auctions.tableFather')}</th>
+                            <th style={{ padding: '14px 16px', width: '160px', textAlign: 'right' }}>{t('auctions.tableAmount')}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {items.map((item, idx) => {
+                            const itemName = getLocalized(item.itemName);
+                            const avatarName = item.avatarName ? getLocalized(item.avatarName) : null;
+                            const winnerDisplay = getWinnerDisplay(item.winnerName, currentLang);
+                            const fatherNameDisplay = getFatherDisplay(item.fatherName, currentLang);
+                            return (
+                              <tr
+                                key={item.id}
+                                style={{ borderBottom: '1px solid var(--color-border-subtle)', cursor: 'pointer' }}
+                                onClick={() => setSelectedAuctionModal(item)}
+                              >
+                                <td style={{ padding: '14px 16px', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                                  {startIdx + idx + 1}
+                                </td>
+                                <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    {item.photoUrl ? (
+                                      <img
+                                        src={item.photoUrl}
+                                        alt={itemName}
+                                        style={{ width: '32px', height: '32px', borderRadius: 'var(--radius-xs)', objectFit: 'cover' }}
+                                      />
+                                    ) : null}
+                                    <span>{itemName}</span>
+                                  </div>
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  {avatarName ? (
+                                    <span
+                                      className="badge"
+                                      style={{
+                                        background: 'var(--color-maroon-subtle)',
+                                        color: 'var(--color-maroon-primary)',
+                                        fontSize: '12px'
+                                      }}
+                                    >
+                                      🌺 {avatarName}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', fontStyle: 'italic' }}>
+                                      {t('auctions.unassignedAvatar')}
+                                    </span>
+                                  )}
+                                </td>
+                                <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--color-maroon-primary)' }}>
+                                  <div>{winnerDisplay.primary || t('auctions.notSupplied')}</div>
+                                  {winnerDisplay.secondary && (
+                                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 400 }}>
+                                      {winnerDisplay.secondary}
+                                    </div>
+                                  )}
+                                </td>
+                                <td style={{ padding: '14px 16px', color: 'var(--color-text-secondary)' }}>
+                                  {fatherNameDisplay ? fatherNameDisplay : <span style={{ color: 'var(--color-text-muted)' }}>—</span>}
+                                </td>
+                                <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--color-maroon-primary)', fontSize: '1.1rem' }}>
+                                  {formatRupees(item.winningAmount)}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+
+                  // Dedicated 2024 Layout: 4 festival items and 10 saree items separated into distinct subsections
+                  if (album.year === 2024) {
+                    return (
+                      <>
+                        {/* 1. Festival Items Subsection (4 items) */}
+                        {(auctionFilter === 'all' || auctionFilter === 'additional') && (
+                          <div style={{ marginBottom: 'var(--space-10)' }}>
+                            <div style={{ marginBottom: 'var(--space-5)', borderBottom: '2px solid var(--color-gold-pale)', paddingBottom: 'var(--space-3)' }}>
+                              <span className="sub-heading" style={{ fontSize: 'var(--font-size-xs)' }}>
+                                {currentLang === 'te' ? 'ఉత్సవ సమర్పణలు' : 'Festival Offerings'}
+                              </span>
+                              <h3 style={{ margin: '2px 0 0 0', fontSize: 'var(--font-size-xl)', color: 'var(--color-maroon-primary)' }}>
+                                {currentLang === 'te' ? 'ఉత్సవ విశేష వస్తువుల వేలం వివరాలు' : 'Festival Item Auction Details'}
+                              </h3>
+                              <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+                                {currentLang === 'te'
+                                  ? 'ముక్కు పుడక, కలశం, ధనలక్ష్మి మాల మరియు లడ్డు వేలం పాట విజేతల వివరాలు.'
+                                  : 'Auction records for Mukku Pudaka, Kalasham, Dhanalakshmi Maala, and Laddu.'}
+                              </p>
+                            </div>
+                            {auctionViewMode === 'cards' ? (
+                              <div className="grid-2" style={{ gap: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
+                                {festivalItemAuctions.map(renderAuctionCard)}
+                              </div>
+                            ) : (
+                              renderAuctionTable(festivalItemAuctions, 0)
                             )}
-                          </td>
-                          <td style={{ padding: '14px 16px', color: 'var(--color-text-secondary)' }}>
-                            {fatherNameDisplay ? fatherNameDisplay : <span style={{ color: 'var(--color-text-muted)' }}>—</span>}
-                          </td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--color-maroon-primary)', fontSize: '1.1rem' }}>
-                            {formatRupees(item.winningAmount)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                          </div>
+                        )}
+
+                        {/* 2. Devi Saree Auction Subsection (10 items) */}
+                        {(auctionFilter === 'all' || auctionFilter === 'sarees') && (
+                          <div style={{ marginBottom: 'var(--space-10)' }}>
+                            <div style={{ marginBottom: 'var(--space-5)', borderBottom: '2px solid var(--color-gold-pale)', paddingBottom: 'var(--space-3)' }}>
+                              <span className="sub-heading" style={{ fontSize: 'var(--font-size-xs)' }}>
+                                {currentLang === 'te' ? 'అమ్మవారి పవిత్ర చీరలు' : 'Sacred Devi Sarees'}
+                              </span>
+                              <h3 style={{ margin: '2px 0 0 0', fontSize: 'var(--font-size-xl)', color: 'var(--color-maroon-primary)' }}>
+                                చీరల వివరాలు | Saree Auction Details
+                              </h3>
+                              <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+                                {currentLang === 'te'
+                                  ? 'శ్రీ దుర్గాభవాని అమ్మవారి దివ్య అవతారాల పవిత్ర చీరల వేలం పాట విజేతల వివరాలు.'
+                                  : 'Auction records and winners for sacred sarees of Sri Durga Bhavani Devi avatars.'}
+                              </p>
+                            </div>
+                            {auctionViewMode === 'cards' ? (
+                              <div className="grid-2" style={{ gap: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
+                                {sareeAuctions.map(renderAuctionCard)}
+                              </div>
+                            ) : (
+                              renderAuctionTable(sareeAuctions, 0)
+                            )}
+                          </div>
+                        )}
+                      </>
+                    );
+                  }
+
+                  // Standard layout for other celebration years (2025, 2026)
+                  return auctionViewMode === 'cards' ? (
+                    <div className="grid-2" style={{ gap: 'var(--space-6)', marginBottom: 'var(--space-8)' }}>
+                      {filteredConfirmedAuctions.map(renderAuctionCard)}
+                    </div>
+                  ) : (
+                    renderAuctionTable(filteredConfirmedAuctions, 0)
+                  );
+                })()}
           </>
         )}
       </div>

@@ -167,10 +167,11 @@ export const AdminAuctionsPage: React.FC = () => {
 
   const handleOpenAdd = () => {
     setIsNew(true);
+    const targetYear = yearFilter !== 'all' ? parseInt(yearFilter, 10) : 2024;
     setEditingItem({
-      id: `auc-2025-${Date.now()}`,
-      albumSlug: 'auction-winners-2025',
-      year: 2025,
+      id: `auc-${targetYear}-${Date.now()}`,
+      albumSlug: `auction-winners-${targetYear}`,
+      year: targetYear,
       itemName: { en: '', te: '' },
       avatarId: undefined,
       avatarName: undefined,
@@ -261,16 +262,20 @@ export const AdminAuctionsPage: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <span className="sub-heading">
-            {currentLang === 'te' ? 'ఆల్బమ్ 2 నిర్వహణ' : 'Album 2 Management'}
+            {currentLang === 'te' ? 'వేలం పాట ఆల్బమ్ నిర్వహణ' : 'Auction Album Management'}
           </span>
           <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Trophy color="var(--color-gold-dark)" />
-            <span>{currentLang === 'te' ? 'వేలం పాట రికార్డులు (2025)' : 'Auction Records (2025)'}</span>
+            <span>
+              {currentLang === 'te'
+                ? `వేలం పాట రికార్డులు${yearFilter !== 'all' ? ` (${yearFilter})` : ''}`
+                : `Auction Records${yearFilter !== 'all' ? ` (${yearFilter})` : ''}`}
+            </span>
           </h1>
           <p style={{ margin: '4px 0 0 0', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
             {currentLang === 'te'
-              ? 'పది చీరలు, మెడలు మీద చీర మరియు విశేష వస్తువుల వేలం వివరాలు, ఛాయాచిత్రాలు, విజేతల పేర్లు, పాట మొత్తాల నిర్వహణ.'
-              : 'Manage the 10 saree auctions linked to avatars, Medalu Meeda Cheera, special item drafts, individual winner images, and Rupee amounts.'}
+              ? 'పవిత్ర చీరల వేలం, విశేష వస్తువుల వేలం వివరాలు, ఛాయాచిత్రాలు, విజేతల పేర్లు, పాట మొత్తాల సమగ్ర నిర్వహణ.'
+              : 'Manage sacred saree auctions linked to avatars, special festival item auctions, winner images, and Rupee amounts.'}
           </p>
         </div>
 

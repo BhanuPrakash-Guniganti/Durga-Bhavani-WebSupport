@@ -240,7 +240,7 @@ export const initialAlbums: IAlbum[] = [
     year: 2024,
     albumType: 'auction',
     coverImage: '/images/covers/cover-auction-winners.webp',
-    photoCount: 0,
+    photoCount: 14,
     status: 'published',
     sortOrder: 2
   },
@@ -515,7 +515,7 @@ export const initialAvatars: IAvatar[] = [
 ];
 
 // Final 14 Auction Records for 2025
-export const initialAuctionItems: IAuctionItem[] = [
+export const initialAuctionItems2025: IAuctionItem[] = [
   {
     id: 'auc-2025-01',
     albumSlug: 'auction-winners-2025',
@@ -837,6 +837,346 @@ export const initialAuctionItems: IAuctionItem[] = [
     isComplete: true,
     sortOrder: 14
   }
+];
+
+// Final 14 Auction Records for 2024
+export const initialAuctionItems2024: IAuctionItem[] = [
+  // Four festival-item auction records for 2024
+  {
+    id: 'auc-2024-01',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Mukku Pudaka',
+      te: 'ముక్కు పుడక'
+    },
+    winnerName: {
+      en: 'Gudi Devuni Vijay',
+      te: 'గుడి దేవుని విజయ్'
+    },
+    fatherName: '',
+    winningAmount: 51000,
+    itemType: 'special_item',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 1
+  },
+  {
+    id: 'auc-2024-02',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Kalasham',
+      te: 'కలశం'
+    },
+    winnerName: {
+      en: 'Orsu Shankar',
+      te: 'ఒర్సు శంకర్'
+    },
+    fatherName: '',
+    winningAmount: 21000,
+    itemType: 'special_item',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 2
+  },
+  {
+    id: 'auc-2024-03',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Dhanalakshmi Maala',
+      te: 'ధనలక్ష్మి మాల'
+    },
+    winnerName: {
+      en: 'Karing Chinna Jangaiah',
+      te: 'కారింగ్ చిన్న జంగయ్య'
+    },
+    fatherName: '',
+    winningAmount: 25000,
+    itemType: 'special_item',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 3
+  },
+  {
+    id: 'auc-2024-04',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Laddu',
+      te: 'లడ్డు'
+    },
+    winnerName: {
+      en: 'Mucharla Edamaiah',
+      te: 'ముచ్చర్ల ఈదమయ్య'
+    },
+    fatherName: '',
+    winningAmount: 11000,
+    itemType: 'special_item',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 4
+  },
+
+  // Ten Devi saree auction records for 2024
+  {
+    id: 'auc-2024-05',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Bala Tripura Sundari Devi',
+      te: 'శ్రీ బాలా త్రిపుర సుందరీ దేవి'
+    },
+    avatarId: 'avatar-2024-01',
+    avatarName: {
+      en: 'Sri Bala Tripura Sundari Devi',
+      te: 'శ్రీ బాలా త్రిపుర సుందరీ దేవి'
+    },
+    winnerName: {
+      en: 'Mucharla Pandu, S/o Jangaiah',
+      te: 'ముచ్చర్ల పాండు S/o జంగయ్య'
+    },
+    fatherName: {
+      en: 'Jangaiah',
+      te: 'జంగయ్య'
+    },
+    winningAmount: 15000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 5
+  },
+  {
+    id: 'auc-2024-06',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Gayatri Devi',
+      te: 'శ్రీ గాయత్రీ దేవి'
+    },
+    avatarId: 'avatar-2024-02',
+    avatarName: {
+      en: 'Sri Gayatri Devi',
+      te: 'శ్రీ గాయత్రీ దేవి'
+    },
+    winnerName: {
+      en: 'Matta Nagesh, S/o Laxmaiah',
+      te: 'మట్ట నాగేశ్ S/o లక్ష్మయ్య'
+    },
+    fatherName: {
+      en: 'Laxmaiah',
+      te: 'లక్ష్మయ్య'
+    },
+    winningAmount: 20000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 6
+  },
+  {
+    id: 'auc-2024-07',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Annapurna Devi',
+      te: 'శ్రీ అన్నపూర్ణ దేవి'
+    },
+    avatarId: 'avatar-2024-03',
+    avatarName: {
+      en: 'Sri Annapurna Devi',
+      te: 'శ్రీ అన్నపూర్ణ దేవి'
+    },
+    winnerName: {
+      en: 'Guniganti Narsimha, S/o Yadaiah',
+      te: 'గునిగంటి నర్సింహ S/o యాదయ్య'
+    },
+    fatherName: {
+      en: 'Yadaiah',
+      te: 'యాదయ్య'
+    },
+    winningAmount: 21000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 7
+  },
+  {
+    id: 'auc-2024-08',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Mahalakshmi Devi',
+      te: 'శ్రీ మహాలక్ష్మీ దేవి'
+    },
+    avatarId: 'avatar-2024-04',
+    avatarName: {
+      en: 'Sri Mahalakshmi Devi',
+      te: 'శ్రీ మహాలక్ష్మీ దేవి'
+    },
+    winnerName: {
+      en: 'Mucharla Rama Chandra',
+      te: 'ముచ్చర్ల రామ చంద్రి'
+    },
+    fatherName: '',
+    winningAmount: 20000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 8
+  },
+  {
+    id: 'auc-2024-09',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Lalitha Tripura Sundari Devi',
+      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి'
+    },
+    avatarId: 'avatar-2024-05',
+    avatarName: {
+      en: 'Sri Lalitha Tripura Sundari Devi',
+      te: 'శ్రీ లలితా త్రిపుర సుందరీ దేవి'
+    },
+    winnerName: {
+      en: 'Matta Katamaiah',
+      te: 'మట్ట కాటమయ్య'
+    },
+    fatherName: '',
+    winningAmount: 18000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 9
+  },
+  {
+    id: 'auc-2024-10',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Mahachandi Devi',
+      te: 'శ్రీ మహాచండీ దేవి'
+    },
+    avatarId: 'avatar-2024-06',
+    avatarName: {
+      en: 'Sri Maha Chandi Devi',
+      te: 'శ్రీ మహాచండీ దేవి'
+    },
+    winnerName: {
+      en: 'Matta Nagaraju, S/o Chinna Yadaiah',
+      te: 'మట్ట నాగరాజు S/o చిన్న యాదయ్య'
+    },
+    fatherName: {
+      en: 'Chinna Yadaiah',
+      te: 'చిన్న యాదయ్య'
+    },
+    winningAmount: 21000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 10
+  },
+  {
+    id: 'auc-2024-11',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Saraswati Devi',
+      te: 'శ్రీ సరస్వతీ దేవి'
+    },
+    avatarId: 'avatar-2024-07',
+    avatarName: {
+      en: 'Sri Saraswati Devi',
+      te: 'శ్రీ సరస్వతీ దేవి'
+    },
+    winnerName: {
+      en: 'Vallapoodasu Mallesh',
+      te: 'వల్లపూదాసు మల్లేష్'
+    },
+    fatherName: '',
+    winningAmount: 32000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 11
+  },
+  {
+    id: 'auc-2024-12',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Durga Devi',
+      te: 'శ్రీ దుర్గా దేవి'
+    },
+    avatarId: 'avatar-2024-08',
+    avatarName: {
+      en: 'Sri Durga Devi',
+      te: 'శ్రీ దుర్గా దేవి'
+    },
+    winnerName: {
+      en: 'Matta Katamaiah',
+      te: 'మట్ట కాటమయ్య'
+    },
+    fatherName: '',
+    winningAmount: 22000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 12
+  },
+  {
+    id: 'auc-2024-13',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Mahishasura Mardini Devi',
+      te: 'శ్రీ మహిషాసుర మర్దినీ దేవి'
+    },
+    avatarId: 'avatar-2024-09',
+    avatarName: {
+      en: 'Sri Mahishasura Mardini Devi',
+      te: 'శ్రీ మహిషాసుర మర్దినీ దేవి'
+    },
+    winnerName: {
+      en: 'Matta Arjun',
+      te: 'మట్ట అర్జున్'
+    },
+    fatherName: '',
+    winningAmount: 31000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 13
+  },
+  {
+    id: 'auc-2024-14',
+    albumSlug: 'auction-winners-2024',
+    year: 2024,
+    itemName: {
+      en: 'Sri Rajarajeshwari Devi',
+      te: 'శ్రీ రాజరాజేశ్వరీ దేవి'
+    },
+    avatarId: 'avatar-2024-10',
+    avatarName: {
+      en: 'Sri Raja Rajeshwari Devi',
+      te: 'శ్రీ రాజరాజేశ్వరీ దేవి'
+    },
+    winnerName: {
+      en: 'Siddagoni Satyanarayana',
+      te: 'సిద్దగోని సత్యనారాయణ'
+    },
+    fatherName: '',
+    winningAmount: 30000,
+    itemType: 'saree',
+    status: 'published',
+    isComplete: true,
+    sortOrder: 14
+  }
+];
+
+export const initialAuctionItems: IAuctionItem[] = [
+  ...initialAuctionItems2025,
+  ...initialAuctionItems2024
 ];
 
 // Final 4 Sponsors & Donors for 2025

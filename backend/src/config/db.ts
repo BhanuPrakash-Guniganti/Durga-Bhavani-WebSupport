@@ -161,8 +161,9 @@ const syncDatabaseSchemas = async () => {
       }
     }
 
-    // 3. Sync Auctions: Ensure exactly the 14 2025 auction records, preserving any uploaded photoUrl
-    const validAucIds = initialAuctionItems.map((a) => a.id);
+    // 3. Sync Auctions: Ensure 2025 and 2024 auction records, preserving any uploaded photoUrl
+    const valid2025AucIds = initialAuctionItems.filter((a) => a.year === 2025).map((a) => a.id);
+    const valid2024AucIds = initialAuctionItems.filter((a) => a.year === 2024).map((a) => a.id);
     for (const initAuc of initialAuctionItems) {
       const existing = await AuctionItemModel.findOne({ id: initAuc.id });
       if (existing) {
@@ -193,7 +194,13 @@ const syncDatabaseSchemas = async () => {
     await AuctionItemModel.deleteMany({
       year: 2025,
       albumSlug: 'auction-winners-2025',
-      id: { $nin: validAucIds }
+      id: { $nin: valid2025AucIds }
+    });
+    // Remove obsolete 2024 auction records not in the final 14
+    await AuctionItemModel.deleteMany({
+      year: 2024,
+      albumSlug: 'auction-winners-2024',
+      id: { $nin: valid2024AucIds }
     });
 
     // 4. Sync Donors: Ensure the 4 final sponsors exist with published status
